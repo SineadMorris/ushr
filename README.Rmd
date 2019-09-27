@@ -5,11 +5,6 @@ output: github_document
 bibliography: HIV.bib
 ---
 
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
-</script>
 
 ```{r setup, include=FALSE}
 

@@ -2,11 +2,6 @@ ushr: understanding suppression of HIV in R
 ================
 Sinead E. Morris
 
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
-</script>
 Introduction
 ------------
 
