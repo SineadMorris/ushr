@@ -1,0 +1,7 @@
+"0","require(dplyr)"
+"0","require(tidyr)"
+"0","require(ggplot2)"
+"0","require(mashr)"
+"0","require(cowplot)"
+"0","require(textreadr)"
+"0","knitr::opts_chunk$set(echo = TRUE, fig.height = 3, fig.width = 4, message = FALSE, warning = FALSE, cache= TRUE)"

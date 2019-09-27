@@ -1,0 +1,2 @@
+"0","plot_single <- plot(model_output, type = ""single"", detection_threshold = 10)"
+"0","print(plot_single)"

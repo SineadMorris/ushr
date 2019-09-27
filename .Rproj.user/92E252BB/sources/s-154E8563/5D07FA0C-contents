@@ -1,0 +1,155 @@
+---
+title: "Additional File 1: ushr captures dynamics of previously published data"
+author: "Sinead E. Morris, Luise Dziobek-Garrett, Andrew J. Yates"
+output: pdf_document
+---
+
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, fig.height = 3, fig.width = 4, message = FALSE, warning = FALSE, cache = FALSE)
+
+```
+
+This file includes all code used to model the ACTG315 data with `ushr`. 
+
+<!--## Basic setup
+
+Before looking at the data, we begin by loading all required packages.
+
+```{r packages}
+require(ushr)
+```
+
+-->
+
+## Data
+
+The data consist of 46 chronically-infected adults from the ACTG 315 clinical trial undergoing ART (anti-retroviral treatment). These data are available at https://sph.uth.edu/divisions/biostatistics/wu/datasets/ACTG315LongitudinalDataViralLoad.htm (date accessed: 15 September 2019), and have been described previously (see, for example, Lederman et al 1998; Connick et al 2000; Wu and Ding 1999).
+The data include longitudinal HIV viral load measurements up to 28 weeks following treatment initiation. The detection threshold was 100 copies/ml and observations are recorded as $\log_{10}$ RNA copies/ml. 
+
+
+The raw data are available through \texttt{ushr}. We begin by loading the package and printing the first six rows to identify our columns of interest: the observations themselves ('log.10.RNA.'), the timing of these observations ('Day'), and the identifier for each subject ('Patid'). 
+
+```{r load}
+require(ushr)
+
+print(head(actg315raw))
+```
+
+We then transform the $\log_{10}$ viral load measurements into absolute values, and rename the column headings to those required by `ushr`. 
+ 
+```{r edit, dependson = "load"}
+actg315 <- actg315raw %>%
+    mutate(vl = 10^log10.RNA.) %>% 
+    select(id = Patid, time = Day, vl)
+
+print(head(actg315))
+```
+
+We can also visualize the raw data using the `plot_data()` function.
+
+```{r plotdata, dependson = "edit", fig.height = 8, fig.width = 8}
+plot_data(actg315, detection_threshold = 100)
+
+```
+
+
+
+## Model fitting and output visualization
+
+To fit the model to this data in just one line of code we use the `ushr()` function. This processes the data to discount any individuals who do not meet the inclusion criteria, and then fits either the single or biphasic model to each remaining trajectory, depending on the number of available observations (see the main text for more details).
+
+```{r fits, dependson = "edit"}
+model_output <- ushr(data = actg315, detection_threshold = 100)
+
+```
+
+With the fitted model output, we can then plot both the biphasic and single phase fits as follows
+
+```{r bpfits, dependson = "fits", fig.width = 6, fig.height = 4}
+plot_model(model_output, type = "biphasic", detection_threshold = 100)
+
+```
+
+
+```{r spfits, dependson = "fits"}
+plot_model(model_output, type = "single", detection_threshold = 100)
+
+```
+
+
+We can also visualize a summary of the fitting procedure and parameter estimates using `summarize_model()`. This a summary of which subjects were successfully fit using the biphasic or single phase models, with their corresponding infected cell lifespan estimates ('summary'), in addition to summary statistics for the parameters estimated using the biphasic ('biphasicstats') and single phase ('singlestats') models.  
+
+
+```{r summarize, dependson = "fits"}
+actg315_summary <- summarize_model(model_output, data = actg315, stats = TRUE)
+
+head(actg315_summary$summary)
+
+actg315_summary$biphasicstats
+
+actg315_summary$singlestats
+```
+
+For a better understanding of parameter identifiability, one can also print the parameter estimates for each individual and model, along with their corresponding 95\% confidence intervals.
+
+```{r CIs, dependson = "fits"}
+head(model_output$biphasicCI) 
+
+head(model_output$singleCI)     
+```
+
+
+## Time to suppression
+
+In addition to fitting the biphasic and single phase models, we can calculate the time to viral suppression (TTS) using both the parametric and non-parameteric methods (see main text for more details). Here we set the suppression threshold to be the same as the detection threshold (i.e. we want to know when viral load drops below the detection threshold of the assay). First, to get parameteric estimates from the model output, we use `get_TTS()` with the argument `parametric = TRUE`. We can subsequently obtain median and SD statistics, and the total number of subjects included in the analysis, using the `summarize()` function from `dplyr`.
+
+```{r TTSparametric, dependson = "fits"}
+
+TTSparametric <- get_TTS(model_output = model_output, parametric = TRUE, 
+                             suppression_threshold = 100)
+head(TTSparametric)
+
+TTSparametric %>% summarize(median = median(TTS), SD = sd(TTS), N = n())
+```
+
+Alternatively, to calculate non-parametric TTS estimates, we set the argument `parametric = FALSE`, and supply the original data using `data = actg315`, rather than the model output. The estimates are similar to those for the parametric method but, given the less stringent conditions for inclusion in the non-parametric analysis (there is no minimum requirement on the number of observations), we are able to estimate TTS for more subjects.
+
+```{r TTSnonparametric, dependson = "TTSparametric"}
+
+TTSnonparametric <- get_TTS(data = actg315, parametric = FALSE, 
+                                suppression_threshold = 100)
+head(TTSnonparametric)
+
+TTSnonparametric %>% summarize(median = median(TTS), SD = sd(TTS), N = n())
+```
+
+We can also plot the histograms for both methods using `plot_TTS()`. <!--We combine these plots using `plot_grid()` from the `cowplot` package.-->
+
+```{r TTSplot, dependson = "TTSnonparametric", fig.height = 2, include = FALSE}
+parametricplot <- plot_TTS(TTSparametric, bins = 6, textsize = 7)
+nonparametricplot <- plot_TTS(TTSnonparametric, bins = 6, textsize = 7)
+
+cowplot::plot_grid(parametricplot, nonparametricplot, 
+          labels = c("A", "B"), nrow = 1,  label_size = 10)
+```
+
+```{r TTSplot2, dependson = "TTSnonparametric", fig.height = 2, fig.width = 2.5}
+plot_TTS(TTSparametric, bins = 6, textsize = 7)
+plot_TTS(TTSnonparametric, bins = 6, textsize = 7)
+
+```
+
+## Additional data information 
+
+
+Connick, E., Lederman, M., Kotzin, B., Spritzler, J., Kuritzkes, D., St. Clair, M., Sevin, A., Fox, L., Chiozzi, M., Leonard, J., Rousseau, F., D’Arc Roe, J., Martinez, A., Kessler, H., Landay, A.: Immune Reconstitution in the First Year of Potent Antiretroviral Therapy and Its Relationship to Virologic Response. The Journal of Infectious Diseases 181(1), 358–363 (2000). doi:10.1086/315171
+
+Lederman, M.M., Connick, E., Landay, A., Kuritzkes, D.R., Spritzler, J., St. Clair, M., Kotzin, B.L., Fox, L., Heath Chiozzi, M., Leonard, J.M., Rousseau, F., Wade, M., Roe, J.D., Martinez, A., Kessler, H.: Immunologic Responses Associated with 12 Weeks of Combination Antiretroviral Therapy Consisting of Zidovudine, Lamivudine, and Ritonavir: Results of AIDS Clinical Trials Group Protocol 315. Journal of Infectious Diseases 178(1), 70–79 (1998). doi:10.1086/515591
+
+Wu, H., Ding, A.A.: Population HIV-1 dynamics in vivo: applicable models and inferential tools for virological data from AIDS clinical trials. Biometrics 55(2), 410–418 (1999)
+
+
+
+

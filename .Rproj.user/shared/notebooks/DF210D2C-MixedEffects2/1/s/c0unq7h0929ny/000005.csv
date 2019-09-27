@@ -1,0 +1,8 @@
+"0","data0 %>% group_by(id) %>% 
+            mutate(maxt = max(time), mint = min(time)) %>%
+            distinct(id, A, delta, B, gamma, maxt, mint) %>% 
+            do(simulate_vl(timevec = seq(mint, maxt, length.out = 200), 
+                       params = c(.$A, .$delta, .$B, .$gamma), id = id)) %>% ungroup()
+"
+"2","Error in seq(mint, maxt, length.out = 200) : object 'mint' not found
+"

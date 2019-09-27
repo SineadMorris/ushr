@@ -1,0 +1,300 @@
+---
+title: "Additional File 2: Parameter estimates are accurate for sufficiently high resolution data"
+author: "Sinead E. Morris, Luise Dziobek-Garrett, Andrew J. Yates"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = FALSE)
+
+```
+
+
+
+This file includes all code used to generate simulated from the main text and analyze it using `ushr`. 
+
+## Basic setup
+
+Next we load all required packages and define baseline plot settings. Note the package `parallel` enables our algorithms to be run in parallel, and the packages `cowplot` and `viridis` are used during plot creation.
+
+
+```{r packages}
+require(ushr)
+require(parallel)
+require(cowplot)
+require(viridis)
+
+basetext <- 10
+basepoint <- 2
+baseline <- 1
+
+mytheme <- theme_bw() + theme(axis.text = element_text(size = basetext), 
+                              axis.title = element_text(size = basetext + 1),
+                              legend.text = element_text(size = basetext), 
+                              legend.title = element_text(size = basetext + 1),
+                              strip.text.x = element_text(size = basetext + 1))
+
+```
+
+
+## Simulation function
+
+First we define the function to simulate data, fit the model, and collect the subsequent output.
+
+```{r function, fig.height = 8, fig.width = 10}
+
+simulate_studies <- function(simulation, nsubjects, detection_threshold, mean_params){
+    
+    # 1. simulate data for 3 resolutions: low, intermediate (0), and high
+    data_low <- simulate_data(nsubjects = nsubjects, 
+                              detection_threshold = detection_threshold, 
+                             min_datapoints = 3, max_datapoints = 12, 
+                             mean_params = mean_params) %>%
+        mutate(type = "low")
+    
+    data_int <- simulate_data(nsubjects = nsubjects, 
+                           detection_threshold = detection_threshold, 
+                           min_datapoints = 6, max_datapoints = 24, 
+                           mean_params = mean_params) %>%
+        mutate(type = "intermediate")
+
+    data_high <- simulate_data(nsubjects = nsubjects, 
+                               detection_threshold = detection_threshold, 
+                              min_datapoints = 12, max_datapoints = 48, 
+                              mean_params = mean_params) %>%
+        mutate(type = "high")
+
+    data_params <- rbind(data_low, data_int, data_high) %>% 
+        mutate(simulation = simulation) %>% 
+        distinct(id, A, delta, B, gamma, type, simulation) %>% 
+        mutate(shortlifespan = 1/delta, longlifespan = 1/gamma, 
+               logA = log10(A), logB = log10(B)) %>%
+        mutate(TTS = get_parametricTTS(params = ., rootfunction = biphasic_root, 
+                                       suppression_threshold = detection_threshold, 
+                                       uppertime = 365)) 
+    
+    data_all <- rbind(data_low, data_int, data_high) %>% 
+        mutate(simulation = simulation) 
+        
+    # 2. fit model to each dataset
+    model_low <- ushr(data = data_low, detection_threshold = detection_threshold)
+    
+    model_int <- ushr(data = data_int, detection_threshold = detection_threshold)
+    
+    model_high <- ushr(data = data_high, detection_threshold = detection_threshold)
+
+
+    # 3. get TTS estimates
+    TTS_low <- get_TTS(model_output = model_low, 
+                       suppression_threshold = detection_threshold, parametric = TRUE) %>% 
+        filter(model == "biphasic") %>% 
+        select(id, TTS) %>% mutate(type = "low")
+    
+    TTS_int <- get_TTS(model_output = model_int, 
+                    suppression_threshold = detection_threshold, parametric = TRUE) %>% 
+        filter(model == "biphasic") %>% 
+        select(id, TTS) %>% mutate(type = "intermediate")
+    
+    TTS_high <- get_TTS(model_output = model_high, 
+                        suppression_threshold = detection_threshold, parametric = TRUE) %>% 
+        filter(model == "biphasic") %>% 
+        select(id, TTS) %>% mutate(type = "high")
+    
+    TTS_all <- rbind(TTS_low, TTS_int, TTS_high)
+    
+    
+    # 4. get biphasic CIs
+    biphasic_low <- model_low$biphasicCI %>% mutate(type = "low")
+    
+    biphasic_int <- model_int$biphasicCI %>% mutate(type = "intermediate")
+
+    biphasic_high <- model_high$biphasicCI %>% mutate(type = "high")
+
+    biphasic_all <- rbind(biphasic_low, biphasic_int, biphasic_high) %>% 
+        mutate(simulation = simulation) %>% 
+        distinct(id, param, estimate, type, simulation) %>% 
+        spread(param, estimate) %>%
+        mutate(shortlifespan = 1/delta, longlifespan = 1/gamma, 
+               logA = log10(A), logB = log10(B)) %>%
+        left_join(TTS_all) %>%
+        gather(param, estimate, A:logB, TTS)
+    
+        
+    # 5. get true parameter values for subjects fit with the biphasic model
+    true_low <-  data_low %>% filter(id %in% biphasic_low$id) %>% 
+        distinct(id, A, delta, B, gamma, type) %>%
+        mutate(TTS = get_parametricTTS(params = ., rootfunction = biphasic_root, 
+                                       suppression_threshold = detection_threshold, 
+                                       uppertime = 365))
+    
+    true_int <- data_int %>% filter(id %in% biphasic_int$id) %>% 
+        distinct(id, A, delta, B, gamma, type) %>%
+        mutate(TTS = get_parametricTTS(params = ., rootfunction = biphasic_root, 
+                                       suppression_threshold = detection_threshold, 
+                                       uppertime = 365))
+    
+    true_high <- data_high %>% filter(id %in% biphasic_high$id) %>% 
+        distinct(id, A, delta, B, gamma, type) %>%
+        mutate(TTS = get_parametricTTS(params = ., rootfunction = biphasic_root, 
+                                       suppression_threshold = detection_threshold, 
+                                       uppertime = 365))
+
+    true_all <- rbind(true_low, true_int, true_high) %>% 
+        mutate(shortlifespan = 1/delta, longlifespan = 1/gamma,
+               logA = log10(A), logB = log10(B)) %>%
+        gather(param, true, A:gamma, shortlifespan:logB, TTS) %>% 
+        mutate(simulation = simulation)
+
+    
+    # 7. get deviation scores
+    stats <- biphasic_all  %>%
+        left_join(true_all) %>% 
+        group_by(type, param) %>% mutate(n = n()) %>%
+        mutate(deviation = (true - estimate)/true) %>%
+        summarize(deviation = sum(deviation)/unique(n)) %>% ungroup() %>%
+        arrange(desc(abs(deviation))) %>% mutate(simulation = simulation)
+    
+    return(list(data = data_all, data_params = data_params, 
+                biphasic_all = biphasic_all, stats = stats))
+}
+
+```
+
+## Simulate data, fit model, and collect output
+
+We define the settings for the simulation conditions i.e. detection threshold, number of subjects, and number of repetitions. Then we define the range of mean parameter values from which to sample on each repetition, and generate a matrix of new parameter sets by sampling from this range. 
+
+```{r simsetup, dependson = "function"}
+set.seed(1234567)
+
+detection_threshold <- 100
+
+nsubjects <- 200
+nreps <- 10
+
+param_max <- c(A = 2e5, delta = 0.5, B = 1e4, gamma = 0.05)
+param_min <- c(A = 5e4, delta = 0.2, B = 5e3, gamma = 0.03)
+
+paramset <- runif(n = length(param_max) * nreps, 
+                  min = param_min, max = param_max) %>% 
+    matrix(., byrow = TRUE, nrow = nreps)
+
+colnames(paramset) <- names(param_max)
+```
+            
+            
+Once we have defined our simulation conditions, we then run the main function for each repetition. Note that we run in parallel using `mclapply()` from the parallel package; the number of cores can be changed according to user preference and machine capability. The analysis takes some time, so we specify 'nreps = 10' as an example only. To recreate the analysis presented in the main text, one must set 'nreps = 100'. 
+
+```{r fits, dependson = "simsetup"}
+
+ncores <- 2
+
+output <- mclapply(1:nreps, mc.cores = ncores, 
+                   function(i) simulate_studies(simulation = i, nsubjects, 
+                                                detection_threshold, 
+                                                mean_params = paramset[i,]))
+
+data_params <- lapply(output, function(x) x$data_params) %>% bind_rows()
+data_all <- lapply(output, function(x) x$data_all) %>% bind_rows()
+
+stats <- lapply(output, function(x) x$stats) %>% bind_rows()
+biphasic <- lapply(output, function(x) x$biphasic_all) %>% bind_rows()
+
+```
+
+
+## Process and plot output
+
+### Fig 4: plot deviation scores
+
+To visualize the average deviation values for each parameter and study, we first collect the true mean parameter values used to simulate each dataset and calculate the associated TTS estimates. 
+
+```{r processing, dependson = "fits"}
+
+paramdat <- cbind(paramset, simulation = 1:nreps) %>% tbl_df() %>%
+    mutate(shortlifespan = 1/delta, longlifespan = 1/gamma, 
+           logA = log10(A), logB = log10(B)) %>%
+        mutate(TTS = get_parametricTTS(params = ., rootfunction = biphasic_root, 
+                                       suppression_threshold = detection_threshold, 
+                                       uppertime = 365),
+               model = "biphasic", calculation = "parametric") %>%
+    gather(param, meanvalue, A:gamma, shortlifespan:logB, TTS)
+```
+
+We then plot the true values against the average deviation statistics. From Fig 4 we can see that estimates of the short-lived lifespan from the low resolution study design consistently have the largest deviation from their true value. Moreover, estimates are more likely to be overestimated (i.e. have a negative deviance) for the shortest of these lifespans. Further details can be found in the maint text.
+
+```{r plot_deviation, dependson = "processing", fig.height = 5, fig.width = 5}
+
+stats %>% left_join(paramdat) %>% 
+    filter(param %in% c("logA", "logB", "shortlifespan", "longlifespan", "TTS")) %>%
+    ggplot() + 
+    geom_point(aes(x = deviation, y = meanvalue, colour = type), size = 2, alpha = 0.5) + 
+    facet_wrap(~ param, scales = "free_y", ncol = 2) + mytheme  + 
+    scale_colour_discrete("Resolution") +
+    theme(legend.position = c(0.8, 0.15)) + ylab("True mean parameter value") +
+    scale_x_continuous("Average deviation from true value")
+
+```
+
+### Fig 5: compare estimates with population values
+
+To compare model estimates with the entire study population, we first calculate the median parameter values for each original data set. We do the same for each corresponding subset fit using the biphasic model. Note that we also calculate the number of subjects fit in each dataset (this forms the colour scale in Fig 5).
+
+```{r processing_all, dependson = "fits"}
+
+allvalues <- data_params %>% gather(param, true, A:gamma, shortlifespan:logB, TTS) %>%
+    group_by(simulation, type, param) %>% summarize(true = median(true)) %>%
+    ungroup()
+
+nfits <- biphasic %>% 
+    distinct(id, type, simulation) %>% 
+    group_by(type, simulation) %>% mutate(nfits = n()) %>% ungroup() 
+    
+
+compare_data <- biphasic %>% 
+    group_by(simulation, type, param) %>% summarize(estimate = median(estimate)) %>%
+    ungroup() %>% left_join(allvalues) %>% 
+    left_join(nfits) %>%
+    filter(param %in% c("shortlifespan", "longlifespan", "TTS")) %>%
+    distinct(param, estimate, true, simulation, nfits, type)
+
+```
+
+Finally, we plot the true median values against the corresponding estimates from the fitted subset. From Fig 5 we can see that, in general, estimates from the low resolution studies were the poorest representation of the true population-wide values. In contrast, the intermediate and high resolution studies were in good agreement with the true population average. Further details can be found in the main text.
+
+```{r processing_all_plot, dependson = "processing_all", fig.height = 5, fig.width = 6}
+
+dummy_long <- data.frame(type = rep(c("high", "intermediate", "low"), each = 2),
+                          true = c(1, 35, 1, 35, 1, 35), 
+                         estimate = c(1, 35, 1, 35, 1, 35))
+
+dummy_short <- data.frame(type = rep(c("high", "intermediate", "low"), each = 2),
+                          true = c(1, 20, 1, 20, 1, 20), 
+                          estimate = c(1, 30, 1, 30, 1, 30))
+
+
+longplt <- compare_data %>% filter(param == "longlifespan") %>%
+    ggplot() + 
+    geom_point(aes(x = true, y = estimate, colour = nfits), 
+                           size = 3, alpha = 0.5) + 
+    geom_abline(aes(intercept = 0, slope = 1), linetype = "dashed") +
+    geom_blank(data = dummy_long, aes(x = true, y = estimate)) +
+    facet_wrap(~ type, ncol = 1) + mytheme + 
+    ylab("Estimate (fitted subset)") + xlab("True (all subjects)") + 
+    scale_colour_viridis("Subset \nsize")
+
+shortplt <- compare_data %>% filter(param == "shortlifespan") %>%
+    ggplot() + 
+    geom_point(aes(x = true, y = estimate, colour = nfits), 
+                           size = 3, alpha = 0.5) + 
+    geom_abline(aes(intercept = 0, slope = 1), linetype = "dashed") +
+    geom_blank(data = dummy_short, aes(x = true, y = estimate)) +
+    facet_wrap(~ type, ncol = 1) + mytheme + 
+    ylab("Estimate (fitted subset)") + xlab("True (all subjects)") + 
+    scale_colour_viridis(guide = FALSE)
+
+
+plot_grid(shortplt, longplt, labels = c("A", "B"), 
+          label_size = 14, rel_widths = c(1, 1.4), nrow = 1)
+```

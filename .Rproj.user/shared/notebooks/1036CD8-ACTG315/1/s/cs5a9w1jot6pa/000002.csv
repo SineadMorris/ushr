@@ -1,0 +1,3 @@
+"0","actg315 <- read.delim(""ACTG315-2.txt"", header = TRUE, sep = """") %>% "
+"0","    mutate(vl = 10^log10.RNA.) %>% "
+"0","    select(id = Patid, time = Day, vl)"

@@ -1,0 +1,24 @@
+Package: ushr
+Type: Package
+Title: Understanding suppression of HIV in R
+Version: 0.1.0
+Date: 2019-09-26
+Author: Sinead E. Morris
+Maintainer: Sinead E. Morris <sinead.morris@columbia.edu>
+Contributors: Luise Dziobek-Garrett, Andrew J. Yates
+Description: Applies the classic biphasic exponential decay model to any longitudinal data on HIV decline in patients on antiretroviral therapy (ART). Model fitting and parameter estimation are performed, with additional options for calculation of the time to viral suppression, plus graphic visualization of all results.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Depends: 
+    dplyr (>= 0.8.0.1),
+    tidyr (>= 0.8.3),
+    ggplot2 (>= 3.1.1),
+    stats
+Suggests:
+    knitr (>= 1.22), 
+    rmarkdown (>= 1.12),
+    testthat (>= 2.2.0)
+VignetteBuilder: knitr
+URL: https://github.com/SineadMorris/ushr

@@ -1,0 +1,2 @@
+"0","load(""Processed/Exploratory2data.RData"")"
+"0","dataAll <- bind_rows(datalist)"
