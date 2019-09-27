@@ -1,6 +1,5 @@
 ---
 title: "ushr: understanding suppression of HIV in R"
-author: "Sinead E. Morris"
 output: github_document
 bibliography: HIV.bib
 ---
@@ -20,15 +19,16 @@ Here we present `ushr`, an open-source R package that models the decline of HIV 
 
 More generally, `ushr` enables researchers without a strong mathematical or computational background to model the dynamics of HIV using longitudinal clinical data. Increasing accessibility to such methods may facilitate quantitative analysis across a wide range of independent studies, so that greater insights on HIV infection and treatment dynamics may be gained.
 
+## Author and Contributors
+
+Sinead E Morris (author and maintainer), Luise Dziobek-Garrett (contributer) and Andrew J Yates (contributer).
 
 
 ## Citing this package
 
 Citation information can be found using `citation("ushr")`; updated citations will be available in the upcoming paper: Morris SE et al. "ushr: understanding suppression of HIV in R".
 
-## Contributors
 
-Luise Dziobek-Garrett and Andrew J Yates.
 
 
 ## Getting further information
