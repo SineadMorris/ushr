@@ -1,6 +1,5 @@
 ushr: understanding suppression of HIV in R
 ================
-Sinead E. Morris
 
 Introduction
 ------------
@@ -11,15 +10,15 @@ Here we present `ushr`, an open-source R package that models the decline of HIV 
 
 More generally, `ushr` enables researchers without a strong mathematical or computational background to model the dynamics of HIV using longitudinal clinical data. Increasing accessibility to such methods may facilitate quantitative analysis across a wide range of independent studies, so that greater insights on HIV infection and treatment dynamics may be gained.
 
+Author and Contributors
+-----------------------
+
+Sinead E Morris (author and maintainer), Luise Dziobek-Garrett (contributer) and Andrew J Yates (contributer).
+
 Citing this package
 -------------------
 
 Citation information can be found using `citation("ushr")`; updated citations will be available in the upcoming paper: Morris SE et al. "ushr: understanding suppression of HIV in R".
-
-Contributors
-------------
-
-Luise Dziobek-Garrett and Andrew J Yates.
 
 Getting further information
 ---------------------------
@@ -59,7 +58,7 @@ To distinguish 'true' decay dynamics from instances of viral rebound (due to fac
 <!--In addition to filtering and processing existing data according to the above inclusion criteria, \texttt{ushr} also provides functionality to simulate noisy data from the underlying mathematical model. We use such data below to verify the reliability of the fitting procedure.-->
 ### Model fitting
 
-Parameter estimates with 95% confidence intervals are obtained for each subject by fitting either the biphasic or single phase model to the corresponding viral load data using maximum likelihood optimization (as described previously (Hogan et al. 2015)). Data are log**<sub>10</sub>-transformed prior to fitting and optimization is performed using `optim()`. After fitting, we use the resulting parameter estimates to calculate the lifespans of HIV-infected cells: 1/*δ* and 1/*γ* for short and long-lived infected cells from the biphasic model, respectively, and $1/\\hat{\\gamma}$ for the single phase model.
+Parameter estimates with 95% confidence intervals are obtained for each subject by fitting either the biphasic or single phase model to the corresponding viral load data using maximum likelihood optimization (as described previously (Hogan et al. 2015)). Data are log<sub>10</sub>-transformed prior to fitting and optimization is performed using `optim()`. After fitting, we use the resulting parameter estimates to calculate the lifespans of HIV-infected cells: 1/*δ* and 1/*γ* for short and long-lived infected cells from the biphasic model, respectively, and $1/\\hat{\\gamma}$ for the single phase model.
 
 To improve parameter identifiability, only subjects with a minimum number of measurements above the detection threshold are fit using the biphasic or single phase models. These can be specified by the user, but we recommend at least six observations for the biphasic model and three for the single phase model. Individuals with fewer measurements are not included in the model fitting procedure, although they are still included in non-parametric TTS calculations. <!--Finally, as is common in sparse clinical data, some cases may have large differences in viral load between the first and second measurements, suggesting an unobserved transition from the fast to the slow decay phase. To prevent such occurrences biasing the estimated slope of decay when fitting the single phase model, we remove the first measurement if the difference in viral load is greater than a specified threshold. -->
 
