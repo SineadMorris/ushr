@@ -38,17 +38,19 @@ Background
 
 HIV decline in a patient on ART is typically described using ordinary differential equations (ODEs) that characterize the production and spread of virus by infected target cells, such as CD4 T cells (Perelson et al. 1997, Wu and Ding (1999), Shet, Nagaraja, and Dixit (2016), Perelson et al. (1996), Nowak and May (2000)). Assuming ART completely blocks viral replication, and that viral dynamics occur on a faster timescale than those of infected cells, one can obtain the following expression for the timecourse of viral load, *V*, during treatment
 
-*V*(*t*)=*A*exp(−*δ* *t*)+*B*exp(−*γ* *t*).
+*V*(*t*)  =  *A* exp(−*δ* *t*)  + *B* exp(−*γ* *t*).
 
 Here *δ* and *γ* are the death rates of short and long-lived infected target cells, respectively (Shet, Nagaraja, and Dixit 2016). The parameters *A* and *B* are composite constants without direct interpretation; however, *A* + *B* represents the initial VL (i.e. *V*(*t* = 0)), and *A*/(*A* + *B*) can be understood as the proportion of infected cells at ART initiation that are short-lived.
 
-Eqn. 1 is referred to as the biphasic model. According to this, viral load initially decays rapidly, reflecting the loss of short-lived infected cells (at rate *δ*), and then enters a second, slower decline phase reflecting the loss of longer-lived infected cells (at rate *γ*). For patient data exhibiting only one decline phase (for example, due to sparse or delayed VL measurements), one can use a single phase version of Eqn. 1 given by
+This equation is referred to as the biphasic model. According to this, viral load initially decays rapidly, reflecting the loss of short-lived infected cells (at rate *δ*), and then enters a second, slower decline phase reflecting the loss of longer-lived infected cells (at rate *γ*). For patient data exhibiting only one decline phase (for example, due to sparse or delayed VL measurements), one can use a single phase version of the biphasic model given by
+
+$V(t) = \\hat{B}~\\exp(- \\hat{\\gamma} t),$
 
 where there are no assumptions on whether decay reflects the fast or slow phase of virus suppression.
 
 ### Time to suppression
 
-For each individual, the time to reach virologic suppression below a defined threshold ('time to suppression' (TTS)) can be estimated using both parametric and non-parametric methods. For the parametric approach, TTS was calculated as the first time at which *V*(*t*)=*x*, where *x* is the suppression threshold, and *V*(*t*) is given by Eqn. 1 for the biphasic model and Eqn. 2 for the single phase model. For the non-parametric approach, we first apply linear interpolation between the first measurement below the detection threshold and the preceding measurement. TTS is then defined as the time at which the interpolation line crosses the suppression threshold.
+For each individual, the time to reach virologic suppression below a defined threshold ('time to suppression' (TTS)) can be estimated using both parametric and non-parametric methods. For the parametric approach, TTS was calculated as the first time at which *V*(*t*)=*x*, where *x* is the suppression threshold, and *V*(*t*) is given by the first equation for the biphasic model and the second equation for the single phase model. For the non-parametric approach, we first apply linear interpolation between the first measurement below the detection threshold and the preceding measurement. TTS is then defined as the time at which the interpolation line crosses the suppression threshold.
 
 Implementation
 --------------
