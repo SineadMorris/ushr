@@ -1,5 +1,0 @@
-"0","get_model_fits(data = simulated_data, detection_threshold = 10)
-"
-"2","Error in data.frame(index = i, id = id_vector[i], reason = ""not enough data"") : 
-  arguments imply differing number of rows: 1, 0
-"

@@ -1,3 +1,0 @@
-"0","set.seed(1234567)"
-"0","simulated_data <- simulate_data(nsubjects = 6)"
-"0","plot_data(simulated_data, detection_threshold = 10)"

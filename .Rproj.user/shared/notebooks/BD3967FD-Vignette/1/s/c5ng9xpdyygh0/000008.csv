@@ -1,4 +1,0 @@
-"0","plot_biphasic <- plot(model_output, type = ""biphasic"", detection_threshold = 10)"
-"2","Error in plot.HIVmodel(model_output, type = ""biphasic"", detection_threshold = 10) : 
-  There are no fits of the type you have chosen. Try plotting the other type of fit ('biphasic', or 'single').
-"

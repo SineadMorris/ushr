@@ -1,8 +1,0 @@
-"0","## Pizzolla et al analysis ----------------------------------"
-"0","# 1. Model fitting"
-"0","params_pizzolla <- data_pizzolla %>% group_by(tissue, study) %>% do(getparams(data = .) )"
-"0","resids_pizzolla <- data_pizzolla %>% group_by(tissue, study) %>% do(testresids(data = .) )"
-"0","# 2. Model predictions"
-"0","xnew <- data.frame(day = seq(0, 250, by = 0.5))"
-"0","predict_pizzolla <- data_pizzolla %>% group_by(tissue, study) %>% "
-"0","    do(getpredictions(data = ., xnew = xnew) ) %>% ungroup()"

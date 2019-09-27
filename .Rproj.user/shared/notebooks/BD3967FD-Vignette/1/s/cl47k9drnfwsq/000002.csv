@@ -1,4 +1,0 @@
-"0","plot_biphasic <- plot(model_output, type = ""biphasic"", detection_threshold = 10)"
-"0","print(plot_biphasic)"
-"2","Error: Faceting variables must have at least one value
-"
