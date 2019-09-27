@@ -39,8 +39,12 @@ Background
 HIV decline in a patient on ART is typically described using ordinary differential equations (ODEs) that characterize the production and spread of virus by infected target cells, such as CD4 T cells (Perelson et al. 1997, Wu and Ding (1999), Shet, Nagaraja, and Dixit (2016), Perelson et al. (1996), Nowak and May (2000)). Assuming ART completely blocks viral replication, and that viral dynamics occur on a faster timescale than those of infected cells, one can obtain the following expression for the timecourse of viral load, *V*, during treatment
 
 <!--\begin{equation}-->
-*V*(*t*)=*A*exp(−*δ**t*)+*B*exp(−*γ**t*).
- <!--\end{equation}--> Here *δ* and *γ* are the death rates of short and long-lived infected target cells, respectively (Shet, Nagaraja, and Dixit 2016). The parameters *A* and *B* are composite constants without direct interpretation; however, *A* + *B* represents the initial VL (i.e. *V*(*t* = 0)), and *A*/(*A* + *B*) can be understood as the proportion of infected cells at ART initiation that are short-lived.
+*V*(*t*)=*A*exp(−*δ* *t*)+*B*exp(−*γ* *t*).
+ <!--\end{equation}--> Here
+*δ*
+ and
+*γ*
+ are the death rates of short and long-lived infected target cells, respectively (Shet, Nagaraja, and Dixit 2016). The parameters *A* and *B* are composite constants without direct interpretation; however, *A* + *B* represents the initial VL (i.e. *V*(*t* = 0)), and *A*/(*A* + *B*) can be understood as the proportion of infected cells at ART initiation that are short-lived.
 
 Eqn. 1 is referred to as the biphasic model. According to this, viral load initially decays rapidly, reflecting the loss of short-lived infected cells (at rate *δ*), and then enters a second, slower decline phase reflecting the loss of longer-lived infected cells (at rate *γ*). For patient data exhibiting only one decline phase (for example, due to sparse or delayed VL measurements), one can use a single phase version of Eqn. 1 given by
 
