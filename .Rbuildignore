@@ -2,3 +2,7 @@
 ^\.Rproj\.user$
 ^doc$
 ^Meta$
+^README\.Rmd$
+^README\.md$
+^HIV\.bib$
+^README_files$
