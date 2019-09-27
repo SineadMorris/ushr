@@ -11,20 +11,20 @@ Here we present `ushr`, an open-source R package that models the decline of HIV 
 
 More generally, `ushr` enables researchers without a strong mathematical or computational background to model the dynamics of HIV using longitudinal clinical data. Increasing accessibility to such methods may facilitate quantitative analysis across a wide range of independent studies, so that greater insights on HIV infection and treatment dynamics may be gained.
 
-<!--In adult patients, mathematical modeling has provided many insights into the dynamics of HIV infection during treatment [@ho1995rapid, @perelson1997a, @wu1999biometrics, @Shet2016, @perelson1996hiv, @nowak2000book]. For example, simple frameworks describing the evolution of viral load (VL) have identified distinct populations of infected cells that decay at different rates and differentially impact overall viremia [@ho1995rapid, @perelson1997a, @wu1999biometrics, @Shet2016, @perelson1996hiv, @nowak2000book]. These models accurately capture the classic `biphasic' kinetics of viral decline, with an initial fast phase dominated by the rapid loss of short-lived infected cells (such as CD4 T cells), and a second slower phase driven by the loss of other long-lived infected populations [@ho1995rapid, @perelson1997a, @Markowitz2003]. Despite the extensive characterization of infected cell populations in adults on ART, -->
-<!--However, much less is known about the corresponding dynamics in younger age groups. Hence there is a greater need for mathematical analysis of existing and future clinical data.Through this package, we provide a tool for researchers to model the dynamics of HIV infection in a cohort of patients undergoing ART. The package implements an established model for viral decay, and estimates the lifespans of key infected cell populations and the time at which patients achieve viral suppression. Overall, we hope this package will make mathematical modeling of clinical data more accessible, so that HIV dynamics may be better understood across all age groups.-->
 Citing this package
 -------------------
 
 Citation information can be found using `citation("ushr")`; updated citations will be available in the upcoming paper: Morris SE et al. "ushr: understanding suppression of HIV in R".
 
-<!--## Contributors
+Contributors
+------------
 
-Luise Dziobek-Garrett and Andrew J Yates.-->
+Luise Dziobek-Garrett and Andrew J Yates.
+
 Getting further information
 ---------------------------
 
-If you encounter any bugs related to this package please contact the package author directly. Additional descriptions of the model and analysis performed by this package will be available in the upcoming papers: Morris SE et al. "Quantifying the dynamics of HIV decline in perinatally-infected infants on ART"; Morris SE et al. "ushr: understanding suppression of HIV in R" (manuscripts available upon request from the package author). Further details on the mathematical theory can also be found in the references cited below. <!--Package documentation is also available from CRAN-->
+If you encounter any bugs related to this package please contact the package author directly. Additional descriptions of the model and analysis performed by this package will be available in the upcoming papers: Morris SE et al. "Quantifying the dynamics of HIV decline in perinatally-infected infants on ART"; Morris SE et al. "ushr: understanding suppression of HIV in R" (manuscripts available upon request from the package author). Further details on the mathematical theory can also be found in the references cited below.
 
 Background
 ----------
@@ -39,7 +39,7 @@ Here *δ* and *γ* are the death rates of short and long-lived infected target c
 
 This equation is referred to as the biphasic model. According to this, viral load initially decays rapidly, reflecting the loss of short-lived infected cells (at rate *δ*), and then enters a second, slower decline phase reflecting the loss of longer-lived infected cells (at rate *γ*). For patient data exhibiting only one decline phase (for example, due to sparse or delayed VL measurements), one can use a single phase version of the biphasic model given by
 
-$$V(t) = \\hat{ B }~\\exp(- \\hat{ \\gamma }~ t),$$
+$$V(t) = \\hat{B}\\exp(- \\hat{\\gamma}~ t),$$
 
 where there are no assumptions on whether decay reflects the fast or slow phase of virus suppression.
 
