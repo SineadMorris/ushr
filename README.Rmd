@@ -46,7 +46,7 @@ Please read the package vignette for full details on the mathematical model and 
 
 HIV decline in a patient on ART can be mathematically described as the production and spread of virus by two groups of infected target cells: so called 'short-lived' infected cells that die at a fast rate (such as CD4 T cells), and other 'long-lived' infected cells that die at a much slower rate (**Fig A**) [@perelson1996hiv, @perelson1997a, @nowak2000book, @Shet2016].
 
-![](ModelSchematic.png){width=800px}
+![](ModelSchematic.png){width=600px}
 
 After some mathematical manipulation, the timecourse of HIV viral load, $V$, during ART can be modelled using the following expression
 

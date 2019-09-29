@@ -35,7 +35,7 @@ Please read the package vignette for full details on the mathematical model and 
 <!--HIV decline in a patient on ART is typically described using ordinary differential equations (ODEs) that characterize the production and spread of virus by infected target cells, such as CD4 T cells [@perelson1997a, @wu1999biometrics, @Shet2016, @perelson1996hiv, @nowak2000book]. Assuming ART completely blocks viral replication, and that viral dynamics occur on a faster timescale than those of infected cells, one can obtain the following expression for the timecourse of viral load, $V$, during treatment-->
 HIV decline in a patient on ART can be mathematically described as the production and spread of virus by two groups of infected target cells: so called 'short-lived' infected cells that die at a fast rate (such as CD4 T cells), and other 'long-lived' infected cells that die at a much slower rate (**Fig A**) (Perelson et al. 1996, Perelson et al. (1997), Nowak and May (2000), Shet, Nagaraja, and Dixit (2016)).
 
-<img src="ModelSchematic.png" width="800" />
+<img src="ModelSchematic.png" width="600" />
 
 After some mathematical manipulation, the timecourse of HIV viral load, *V*, during ART can be modelled using the following expression
 
