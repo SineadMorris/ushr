@@ -46,7 +46,7 @@ $$V(t) = \\hat{B}~\\exp(- \\hat{\\gamma} t),$$
 
 where decay could reflect the fast or the slow phase of virus suppression.
 
-By fitting the model as in Fig B, we can estimate the death rate parameters, and use these to calculate the lifespans of infected cells: 1/*δ* and 1/*γ* for short and long-lived infected cells from the biphasic model, and $1/\\hat{\\gamma}$ for the single phase model. We can also estimate the time taken to suppress viral load ('time to suppression' (TTS)) by calculating the first time at which *V*(*t*)=*x*, where *x* is a user-defined suppression threshold, and *V*(*t*) is given by either the biphasic or single phase equation.
+By fitting the model, we can estimate the death rate parameters and use these to calculate the lifespans of infected cells: 1/*δ* and 1/*γ* for short and long-lived infected cells from the biphasic model, and $1/\\hat{\\gamma}$ for the single phase model. We can also estimate the time taken to suppress viral load ('time to suppression' (TTS)) by calculating the first time at which *V*(*t*)=*x*, where *x* is a user-defined suppression threshold, and *V*(*t*) is given by either the biphasic or single phase equation.
 
 Quick Start Example
 -------------------
@@ -66,7 +66,7 @@ The vignette can be viewed through
 browseVignettes(package = "ushr")
 ```
 
-To illustrate basic usage of the package, we include a publicly available data set from the ACTG315 clinical trial. The raw data (`actg315raw`) consist of longitudinal HIV viral load measurements from 46 chronically-infected adults up to 28 weeks following ART initiation. The detection threshold was 100 copies/ml and observations are recorded as log<sub>10</sub> RNA copies/ml. These data are available at <https://sph.uth.edu/divisions/biostatistics/wu/datasets/ACTG315LongitudinalDataViralLoad.htm> (originally accessed: 15 September 2019), and have been described previously \[[7](#ref-Lederman1998)–[9](#ref-Connick2000)\].
+To illustrate basic usage of the package, we include a publicly available data set from the ACTG315 clinical trial. The raw data (`actg315raw`) consist of longitudinal HIV viral load measurements from 46 chronically-infected adults up to 28 weeks following ART initiation. The detection threshold was 100 copies/ml and observations are recorded as log<sub>10</sub> RNA copies/ml. These data are available at <https://sph.uth.edu/divisions/biostatistics/wu/datasets/ACTG315LongitudinalDataViralLoad.htm> (originally accessed 15 September 2019), and have been described previously \[[7](#ref-Lederman1998)–[9](#ref-Connick2000)\].
 
 ### Data exploration
 
@@ -112,11 +112,11 @@ plot_data(actg315, detection_threshold = 100)
 
 ![](README_files/figure-markdown_github/plotdata-1.png)
 
-Each panel represents a different individual and the dashed horizontal line is the assay detection threshold. We can see that the data is noisy, individuals have different numbers of available observations, and only a subset suppress viral load below the detection threshold.
+Each panel represents a different individual and the dashed horizontal line is the assay detection threshold. We can see that the data is noisy, individuals have different numbers of observations, and only a subset suppress viral load below the detection threshold.
 
 ### Model fitting and output visualization
 
-To fit the model to this data in just one line of code we use the `ushr()` function. This processes the data to filter out any individuals who do not suppression viral load, or who violate other specific inclusion criteria (described in the vignette), and then fits the model to each remaining trajectory. Note that only subjects with a minimum number of measurements above the detection threshold can be reliably fit. These can be specified by the user, but we recommend at least six observations for the biphasic model and three for the single phase model.
+To fit the model to this data in just one line of code we use the `ushr()` function. This processes the data to filter out any individuals who do not suppression viral load, or who violate other inclusion criteria (described in the vignette), and then fits the model to each remaining trajectory. Note that only subjects with a minimum number of measurements above the detection threshold can reliably be fit. The number can be specified by the user, but we recommend at least six observations for the biphasic model and three for the single phase model.
 
 ``` r
 model_output <- ushr(data = actg315, detection_threshold = 100)
@@ -136,9 +136,9 @@ plot_model(model_output, type = "single", detection_threshold = 100)
 
 ![](README_files/figure-markdown_github/spfits-1.png)
 
-Here the solid lines represent the best-fit model for each subject. Twelve were successfully fit with the biphasic model, and four with the single phase model. Although some single phase subjects had sufficient data to fit the biphasic model (i.e. at least six observations), the resulting 95% parameter confidence intervals were either unattainable or sufficiently wide to indicate an unreliable fit. <!--This can occur, for example, when one of the decay phases is poorly documented (i.e. has few data points).--> As a result, the subjects are automatically re-fit with the single phase model. <!--This re-fitting step is automated in the package; however, the user can control the size of confidence interval above which a biphasic fit is deemed unreliable using the argument `CI_max_diff` in `ushr()`. -->
+The solid lines are the best-fit model for each subject. Twelve were successfully fit with the biphasic model, and four with the single phase model. Although some single phase subjects had sufficient data to fit the biphasic model (i.e. at least six observations), the resulting 95% parameter confidence intervals were either unattainable or sufficiently wide to indicate an unreliable fit. <!--This can occur, for example, when one of the decay phases is poorly documented (i.e. has few data points).--> As a result, the subjects were automatically re-fit with the single phase model. <!--This re-fitting step is automated in the package; however, the user can control the size of confidence interval above which a biphasic fit is deemed unreliable using the argument `CI_max_diff` in `ushr()`. -->
 
-We can also visualize a summary of the fitting procedure and parameter estimates using `summarize_model()`. This creates a list with the following elements: (i) a summary of which subjects were successfully fit using the biphasic or single phase models, with their corresponding infected cell lifespan estimates (`summary`); (ii) summary statistics for the estimated parameters from the biphasic model (`biphasicstats`); and (iii) summary statistics for the estimated parameters from the single phase model (`singlestats`).
+We can also summarize the fitting procedure and parameter estimates using `summarize_model()`. This creates a list with the following elements: (i) a summary of which subjects were successfully fit, with the corresponding infected cell lifespan estimates (`summary`); (ii) summary statistics for the biphasic model parameter estimates (`biphasicstats`); and (iii) summary statistics for the single phase parameter estimates (`singlestats`).
 
 ``` r
 actg315_summary <- summarize_model(model_output, data = actg315, stats = TRUE)
