@@ -164,20 +164,44 @@ get_TTS <- function(model_output = NULL, data = NULL,
             stop("Model output not found. You must supply the fitted model to calculate parametric TTS values. Try ?get_model_fits.")
         }
 
-        # Biphasic
-        biphasic_params <- model_output$biphasicCI %>%
-            select(-.data$lowerCI, -.data$upperCI) %>% spread(.data$param, .data$estimate) %>%
-            mutate(TTS = get_parametricTTS(params = ., rootfunction = biphasic_root, suppression_threshold, uppertime),
-                   model = "biphasic", calculation = "parametric")
+        if (length(model_output$biphasicCI) > 0 & length(model_output$singleCI) > 0) {
+            # Biphasic
+            biphasic_params <- model_output$biphasicCI %>%
+                select(-.data$lowerCI, -.data$upperCI) %>% spread(.data$param, .data$estimate) %>%
+                mutate(TTS = get_parametricTTS(params = ., rootfunction = biphasic_root, suppression_threshold, uppertime),
+                       model = "biphasic", calculation = "parametric")
 
-        # Single phase
-        single_params <- model_output$singleCI %>%
-            select(-.data$lowerCI, -.data$upperCI) %>% spread(.data$param, .data$estimate) %>%
-            mutate(TTS = get_parametricTTS(params = ., rootfunction = single_root, suppression_threshold, uppertime),
-                   model = "single phase", calculation = "parametric")
+            # Single phase
+            single_params <- model_output$singleCI %>%
+                select(-.data$lowerCI, -.data$upperCI) %>% spread(.data$param, .data$estimate) %>%
+                mutate(TTS = get_parametricTTS(params = ., rootfunction = single_root, suppression_threshold, uppertime),
+                       model = "single phase", calculation = "parametric")
 
-        TTS_output <- biphasic_params %>% full_join(single_params) %>%
-            select(.data$id, .data$TTS, .data$model, .data$calculation)
+            # All
+            TTS_output <- biphasic_params %>% full_join(single_params) %>%
+                select(.data$id, .data$TTS, .data$model, .data$calculation)
+
+        } else if (length(model_output$biphasicCI) > 0 & length(model_output$singleCI) == 0) {
+            # Biphasic
+            biphasic_params <- model_output$biphasicCI %>%
+                select(-.data$lowerCI, -.data$upperCI) %>% spread(.data$param, .data$estimate) %>%
+                mutate(TTS = get_parametricTTS(params = ., rootfunction = biphasic_root, suppression_threshold, uppertime),
+                       model = "biphasic", calculation = "parametric")
+
+            # All
+            TTS_output <- biphasic_params %>% select(.data$id, .data$TTS, .data$model, .data$calculation)
+
+        } else if (length(model_output$biphasicCI) == 0 & length(model_output$singleCI) > 0) {
+            # Single phase
+            single_params <- model_output$singleCI %>%
+                select(-.data$lowerCI, -.data$upperCI) %>% spread(.data$param, .data$estimate) %>%
+                mutate(TTS = get_parametricTTS(params = ., rootfunction = single_root, suppression_threshold, uppertime),
+                       model = "single phase", calculation = "parametric")
+
+            # All
+            TTS_output <- single_params %>% select(.data$id, .data$TTS, .data$model, .data$calculation)
+        }
+
     }
 
     # 2. Non-parametric TTS ----------------------------------------------------------------
