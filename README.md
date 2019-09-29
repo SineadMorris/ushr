@@ -1,6 +1,8 @@
 ushr: understanding suppression of HIV in R
 ================
 
+[![Build Status](https://travis-ci.com/SineadMorris/ushr.svg?branch=master)](https://travis-ci.com/SineadMorris/ushr)
+
 Introduction
 ------------
 
