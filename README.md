@@ -4,7 +4,7 @@ ushr: understanding suppression of HIV in R
 Introduction
 ------------
 
-In 2017, HIV/AIDS was responsible for the deaths of one million people globally, including 50,000 children less than one year old (Global Burden of Disease Collaborative Network 2018b, Global Burden of Disease Collaborative Network (2018a)). Although mathematical modeling has provided important insights into the dynamics of HIV infection during anti-retroviral treatment (ART), there is still a lack of accessible tools for researchers unfamiliar with modeling techniques to apply them to their own datasets.
+In 2017, HIV/AIDS was responsible for the deaths of one million people globally, including 50,000 children less than one year old \[[1](#ref-GBD2017paper),[2](#ref-GBD2017web)\]. Although mathematical modeling has provided important insights into the dynamics of HIV infection during anti-retroviral treatment (ART), there is still a lack of accessible tools for researchers unfamiliar with modeling techniques to apply them to their own datasets.
 
 `ushr` is an open-source R package that models the decline of HIV during ART using a popular mathematical framework. The package can be applied to longitudinal data of viral load measurements, and automates all stages of the model fitting process. By mathematically fitting the data, important biological parameters can be estimated, including the lifespans of short and long-lived HIV-infected cells, and the time to suppress viral load below a defined detection threshold. The package also provides visualization and summary tools for fast assessment of model results.
 
@@ -32,11 +32,11 @@ Please read the package vignette for full details on the mathematical model and 
 
 ### Brief guide to the mathematical model
 
-HIV decline in a patient on ART can be mathematically described as the production and spread of virus by two groups of infected target cells: so called 'short-lived' infected cells that die at a fast rate (such as CD4 T cells), and other 'long-lived' infected cells that die at a much slower rate (**Fig A**) (Perelson et al. 1996, Perelson et al. (1997), Nowak and May (2000), Shet, Nagaraja, and Dixit (2016)).
+HIV dynamics in an infected individual can be mathematically described as the production and spread of virus by two groups of infected target cells: so called 'short-lived' infected cells that die at a fast rate (such as CD4 T cells), and other 'long-lived' infected cells that die more slowly (**Fig A**) \[[3](#ref-perelson1996hiv)–[6](#ref-Shet2016)\].
 
 <img src="ModelSchematic.png" width="650" />
 
-After some mathematical manipulation, the timecourse of HIV viral load, *V*, during ART can be modelled using the following expression
+Once ART has begun, the decline of HIV viral load, *V*, can be modelled using the following expression
 
 *V*(*t*)  =  *A* exp(−*δ* *t*)  + *B* exp(−*γ* *t*),
 
@@ -66,7 +66,7 @@ The vignette can be viewed through
 browseVignettes(package = "ushr")
 ```
 
-To illustrate basic usage of the package, we include a publicly available data set from the ACTG315 clinical trial. The raw data (`actg315raw`) consist of longitudinal HIV viral load measurements from 46 chronically-infected adults up to 28 weeks following ART initiation. The detection threshold was 100 copies/ml and observations are recorded as log<sub>10</sub> RNA copies/ml. These data are available at <https://sph.uth.edu/divisions/biostatistics/wu/datasets/ACTG315LongitudinalDataViralLoad.htm> (date originally accessed: 15 September 2019), and have been described previously (Lederman et al. 1998; Wu and Ding 1999; Connick et al. 2000).
+To illustrate basic usage of the package, we include a publicly available data set from the ACTG315 clinical trial. The raw data (`actg315raw`) consist of longitudinal HIV viral load measurements from 46 chronically-infected adults up to 28 weeks following ART initiation. The detection threshold was 100 copies/ml and observations are recorded as log<sub>10</sub> RNA copies/ml. These data are available at <https://sph.uth.edu/divisions/biostatistics/wu/datasets/ACTG315LongitudinalDataViralLoad.htm> (date originally accessed: 15 September 2019), and have been described previously \[[7](#ref-Lederman1998)–[9](#ref-Connick2000)\].
 
 ### Data exploration
 
@@ -257,20 +257,20 @@ Additional functionality
 References
 ----------
 
-Connick, Elizabeth, Michael M. Lederman, Brian L. Kotzin, John Spritzler, Daniel R. Kuritzkes, Marty St. Clair, Anne D. Sevin, et al. 2000. “Immune Reconstitution in the First Year of Potent Antiretroviral Therapy and Its Relationship to Virologic Response.” *The Journal of Infectious Diseases* 181 (1): 358–63. doi:[10.1086/315171](https://doi.org/10.1086/315171).
+1 Global Burden of Disease Collaborative Network. **Global, regional, and national age-sex-specific mortality for 282 causes of death in 195 countries and territories, 1980–2017: a systematic analysis for the Global Burden of Disease Study 2017**. *Lancet* 2018; **392**:1736–1788.
 
-Global Burden of Disease Collaborative Network. 2018a. “Global Burden of Disease Study 2017 (GBD 2017) Results.” <http://ghdx.healthdata.org/gbd-results-tool>.
+2 Global Burden of Disease Collaborative Network. Global Burden of Disease Study 2017 (GBD 2017) Results. 2018.<http://ghdx.healthdata.org/gbd-results-tool> (accessed 21 Feb2017).
 
-———. 2018b. “Global, regional, and national age-sex-specific mortality for 282 causes of death in 195 countries and territories, 1980–2017: a systematic analysis for the Global Burden of Disease Study 2017.” *Lancet* 392 (10159): 1736–88. doi:[10.1016/S0140-6736(18)32203-7](https://doi.org/10.1016/S0140-6736(18)32203-7).
+3 Perelson AS, Neumann AU, Markowitz M, Leonard JM, Ho DD. **HIV-1 dynamics in vivo: viron clearance rate, infected cell life-span, and viral generation time**. *Science* 1996; **271**:1582–1586.
 
-Lederman, M. M., E. Connick, A. Landay, D. R. Kuritzkes, J. Spritzler, M. St. Clair, B. L. Kotzin, et al. 1998. “Immunologic Responses Associated with 12 Weeks of Combination Antiretroviral Therapy Consisting of Zidovudine, Lamivudine, and Ritonavir: Results of AIDS Clinical Trials Group Protocol 315.” *Journal of Infectious Diseases* 178 (1): 70–79. doi:[10.1086/515591](https://doi.org/10.1086/515591).
+4 Perelson AS, Essunger P, Cao Y, Vesanen M, Hurley A, Saksela K *et al.* **Decay characteristics of HIV-1-infected compartments during combination therapy**. *Nature* 1997; **387**:188–191.
 
-Nowak, Martin A, and Robert M May. 2000. *Virus Dynamics: Mathematical Principles of Immunology and Virology*. New York,USA: Oxford University Press.
+5 Nowak MA, May RM. *Virus Dynamics: Mathematical Principles of Immunology and Virology*. New York,USA: Oxford University Press; 2000.
 
-Perelson, Alan S., Paulina Essunger, Yunzhen Cao, Mika Vesanen, Arlene Hurley, Kalle Saksela, Martin Markowitz, and David D. Ho. 1997. “Decay characteristics of HIV-1-infected compartments during combination therapy.” *Nature* 387 (6629): 188–91. doi:[10.1038/387188a0](https://doi.org/10.1038/387188a0).
+6 Shet A, Nagaraja P, Dixit NM. **Viral decay dynamics and mathematical modeling of treatment response: evidence of lower in vivo fitness of HIV-1 subtype C**. *J Acquir Immune Defic Syndr* 2016; **73**:245–251.
 
-Perelson, Alan S., Avidan U. Neumann, Martin Markowitz, John M. Leonard, and David D. Ho. 1996. “HIV-1 dynamics in vivo: viron clearance rate, infected cell life-span, and viral generation time.” *Science* 271 (5255): 1582–6. doi:[10.1126/science.271.5255.1582](https://doi.org/10.1126/science.271.5255.1582).
+7 Lederman MM, Connick E, Landay A, Kuritzkes DR, Spritzler J, St. Clair M *et al.* **Immunologic Responses Associated with 12 Weeks of Combination Antiretroviral Therapy Consisting of Zidovudine, Lamivudine, and Ritonavir: Results of AIDS Clinical Trials Group Protocol 315**. *Journal of Infectious Diseases* 1998; **178**:70–79.
 
-Shet, Anita, Pradeep Nagaraja, and Narendra M. Dixit. 2016. “Viral decay dynamics and mathematical modeling of treatment response: evidence of lower in vivo fitness of HIV-1 subtype C.” *J Acquir Immune Defic Syndr* 73 (3): 245–51. doi:[10.1097/QAI.0000000000001101](https://doi.org/10.1097/QAI.0000000000001101).
+8 Wu H, Ding AA. **Population HIV-1 dynamics in vivo: applicable models and inferential tools for virological data from AIDS clinical trials**. *Biometrics* 1999; **55**:410–418.
 
-Wu, Hulin, and A Adam Ding. 1999. “Population HIV-1 dynamics in vivo: applicable models and inferential tools for virological data from AIDS clinical trials.” *Biometrics* 55 (2): 410–18.
+9 Connick E, Lederman MM, Kotzin BL, Spritzler J, Kuritzkes DR, St. Clair M *et al.* **Immune Reconstitution in the First Year of Potent Antiretroviral Therapy and Its Relationship to Virologic Response**. *The Journal of Infectious Diseases* 2000; **181**:358–363.
