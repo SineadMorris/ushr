@@ -24,7 +24,7 @@ Citation information can be found using `citation("ushr")`; updated citations wi
 Getting further information
 ---------------------------
 
-If you encounter any bugs related to this package please contact the package author directly. Additional descriptions of the model and analysis performed by this package can be found in the Vignette; details will also be available in the upcoming paper: Morris SE et al. "ushr: understanding suppression of HIV in R" (manuscripts available upon request from the package author). Further details on the mathematical theory can also be found in the references cited below.
+If you encounter any bugs related to this package please contact the package author directly. Additional descriptions of the model and analysis performed by the package can be found in the vignette; details will also be available in the upcoming paper: Morris SE et al. "ushr: understanding suppression of HIV in R" (manuscript available upon request). Further details on the mathematical theory can also be found in the references cited below.
 
 Background
 ----------
@@ -38,7 +38,7 @@ The timecourse of HIV viral load, *V*, during ART can be modelled using the foll
 
 *V*(*t*)  =  *A* exp(−*δ* *t*)  + *B* exp(−*γ* *t*),
 
-where *δ* and *γ* are the death rates of short and long-lived infected target cells, respectively (Perelson et al. 1997, Wu and Ding (1999), Shet, Nagaraja, and Dixit (2016), Perelson et al. (1996), Nowak and May (2000)). <!--The parameters $A$ and $B$ are composite constants without direct interpretation; however, $A + B$ represents the initial VL (i.e. $V(t = 0)$), and $A/(A+B)$ can be understood as the proportion of infected cells at ART initiation that are short-lived.--> This equation is referred to as the biphasic model. According to this, viral load initially decays rapidly, reflecting the loss of short-lived infected cells (at rate *δ*), and then enters a second, slower decline phase reflecting the loss of longer-lived infected cells (at rate *γ*). For patient data exhibiting only one decline phase (for example, due to sparse or delayed VL measurements), one can use a single phase version of the biphasic model given by
+where *δ* and *γ* are the death rates of short and long-lived infected target cells, respectively (Perelson et al. 1997, Wu and Ding (1999), Shet, Nagaraja, and Dixit (2016), Perelson et al. (1996), Nowak and May (2000)). <!--The parameters $A$ and $B$ are composite constants without direct interpretation; however, $A + B$ represents the initial VL (i.e. $V(t = 0)$), and $A/(A+B)$ can be understood as the proportion of infected cells at ART initiation that are short-lived.--> This equation is referred to as the biphasic model: viral load initially decays rapidly, reflecting the loss of short-lived infected cells (at rate *δ*), and then enters a second, slower decline phase reflecting the loss of longer-lived infected cells (at rate *γ*). For patient data exhibiting only one decline phase (for example, due to sparse or delayed VL measurements), one can use a single phase version of the biphasic model given by
 
 $$V(t) = \\hat{B}\\exp(- \\hat{\\gamma}~ t),$$
 
@@ -82,11 +82,11 @@ The vignette can be viewed through
 browseVignettes(package = "ushr")
 ```
 
-To illustrate basic usage of the package, we include a publicly available data set from the ACTG315 clinical trial. The raw data consist of longitudinal HIV viral load measurements from 46 chronically-infected adults up to 28 weeks following ART initiation. The detection threshold was 100 copies/ml and observations are recorded as log<sub>10</sub> RNA copies/ml. These data are available at <https://sph.uth.edu/divisions/biostatistics/wu/datasets/ACTG315LongitudinalDataViralLoad.htm> (date originally accessed: 15 September 2019), and have been described previously (Lederman et al. 1998; Wu and Ding 1999; Connick et al. 2000).
+To illustrate basic usage of the package, we include a publicly available data set from the ACTG315 clinical trial. The raw data (`actg315raw`) consist of longitudinal HIV viral load measurements from 46 chronically-infected adults up to 28 weeks following ART initiation. The detection threshold was 100 copies/ml and observations are recorded as log<sub>10</sub> RNA copies/ml. These data are available at <https://sph.uth.edu/divisions/biostatistics/wu/datasets/ACTG315LongitudinalDataViralLoad.htm> (date originally accessed: 15 September 2019), and have been described previously (Lederman et al. 1998; Wu and Ding 1999; Connick et al. 2000).
 
 ### Data exploration
 
-To begin, we load the package and print the first six rows to identify our columns of interest; these are the viral load observations ('log.10.RNA.'), the timing of these observations ('Day'), and the identifier for each subject ('Patid').
+To begin, we load the package and print the first six rows of the raw data to identify our columns of interest; these are the viral load observations ('log.10.RNA.'), the timing of these observations ('Day'), and the identifier for each subject ('Patid').
 
 ``` r
 library(ushr)
@@ -102,7 +102,7 @@ print(head(actg315raw))
     ## 5      5     1  29     2.6435 172.48
     ## 6      6     1  57     2.1139 270.94
 
-Since `ushr` requires absolute viral load measurments, and specific column names ('vl', 'time', 'id'), we first back-transform the log<sub>10</sub> viral load measurements into absolute values, and rename the column headings.
+Since `ushr` requires absolute viral load measurements, and specific column names ('vl', 'time', 'id'), we first back-transform the log<sub>10</sub> viral load measurements into absolute values, and rename the column headings.
 
 ``` r
 actg315 <- actg315raw %>%
