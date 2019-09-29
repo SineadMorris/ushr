@@ -136,7 +136,7 @@ plot_model(model_output, type = "single", detection_threshold = 100)
 
 ![](README_files/figure-markdown_github/spfits-1.png)
 
-The solid lines are the best-fit model for each subject. Twelve were successfully fit with the biphasic model, and four with the single phase model. Although some single phase subjects had sufficient data to fit the biphasic model (i.e. at least six observations), the resulting 95% parameter confidence intervals were either unattainable or sufficiently wide to indicate an unreliable fit. <!--This can occur, for example, when one of the decay phases is poorly documented (i.e. has few data points).--> As a result, the subjects were automatically re-fit with the single phase model. <!--This re-fitting step is automated in the package; however, the user can control the size of confidence interval above which a biphasic fit is deemed unreliable using the argument `CI_max_diff` in `ushr()`. -->
+The solid lines are the best-fit model for each subject. Twelve were successfully fit with the biphasic model, and four with the single phase model. Although some single phase subjects had sufficient data to fit the biphasic model (i.e. at least six observations), the resulting 95% parameter confidence intervals were either unattainable or sufficiently wide to indicate an unreliable fit. As a result, the subjects were automatically re-fit with the single phase model.
 
 We can also summarize the fitting procedure and parameter estimates using `summarize_model()`. This creates a list with the following elements: (i) a summary of which subjects were successfully fit, with the corresponding infected cell lifespan estimates (`summary`); (ii) summary statistics for the biphasic model parameter estimates (`biphasicstats`); and (iii) summary statistics for the single phase parameter estimates (`singlestats`).
 
@@ -230,17 +230,6 @@ TTSparametric %>% summarize(median = median(TTS), SD = sd(TTS), N = n())
     ##     median       SD  N
     ## 1 65.70076 30.98759 16
 
-<!--Alternatively, to calculate non-parametric TTS estimates, we set the argument `parametric = FALSE`, and supply the original data using `data = actg315`, rather than the fitted model output. The estimates are similar to those for the parametric method but, since there is no minimum requirement on the number of observations, we are able to estimate TTS for more subjects.
-
-
-```r
-TTSnonparametric <- get_TTS(data = actg315, parametric = FALSE, 
-                                suppression_threshold = 100)
-head(TTSnonparametric)
-
-TTSnonparametric %>% summarize(median = median(TTS), SD = sd(TTS), N = n())
-```
--->
 We can also plot the distribution of estimates using `plot_TTS()`.
 
 ``` r
