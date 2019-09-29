@@ -6,9 +6,8 @@ Introduction
 
 In 2017, HIV/AIDS was responsible for the deaths of one million people globally, including 50,000 children less than one year old (Global Burden of Disease Collaborative Network 2018b, Global Burden of Disease Collaborative Network (2018a)). Although mathematical modeling has provided important insights into the dynamics of HIV infection during anti-retroviral treatment (ART), there is still a lack of accessible tools for researchers unfamiliar with modeling techniques to apply them to their own datasets.
 
-`ushr` is an open-source R package that models the decline of HIV during ART using a popular mathematical framework. The package can be applied to longitudinal data of viral load measurements, and automates all stages of the model fitting process. By mathematically fitting the data, important biological parameters can be estimated, including the lifespans of short and long-lived HIV-infected cells, and the time to reach viral suppression below a defined detection threshold. The package also provides visualization and summary tools for fast assessment of model results.
+`ushr` is an open-source R package that models the decline of HIV during ART using a popular mathematical framework. The package can be applied to longitudinal data of viral load measurements, and automates all stages of the model fitting process. By mathematically fitting the data, important biological parameters can be estimated, including the lifespans of short and long-lived HIV-infected cells, and the time to suppress viral load below a defined detection threshold. The package also provides visualization and summary tools for fast assessment of model results.
 
-<!--More generally, `ushr` enables researchers without a strong mathematical or computational background to model the dynamics of HIV using longitudinal clinical data. Increasing accessibility to such methods may facilitate quantitative analysis across a wide range of independent studies, so that greater insights on HIV infection and treatment dynamics may be gained.-->
 Overall, we hope `ushr` will increase accessibility to mathematical modeling techniques so that greater insights on HIV infection and treatment dynamics may be gained.
 
 Author and Contributors
@@ -34,20 +33,25 @@ Please read the package vignette for full details on the mathematical model and 
 ### Brief guide to the mathematical model
 
 <!--HIV decline in a patient on ART is typically described using ordinary differential equations (ODEs) that characterize the production and spread of virus by infected target cells, such as CD4 T cells [@perelson1997a, @wu1999biometrics, @Shet2016, @perelson1996hiv, @nowak2000book]. Assuming ART completely blocks viral replication, and that viral dynamics occur on a faster timescale than those of infected cells, one can obtain the following expression for the timecourse of viral load, $V$, during treatment-->
-The timecourse of HIV viral load, *V*, during ART can be modelled using the following expression
+HIV decline in a patient on ART can be mathematically described as the production and spread of virus by two groups of infected target cells: so called 'short-lived' infected cells that die at a fast rate (such as CD4 T cells), and other 'long-lived' infected cells that die at a much slower rate (**Fig A**) (Perelson et al. 1996, Perelson et al. (1997), Nowak and May (2000), Shet, Nagaraja, and Dixit (2016)).
+
+<img src="ModelSchematic.png" width="800" />
+
+After some mathematical manipulation, the timecourse of HIV viral load, *V*, during ART can be modelled using the following expression
 
 *V*(*t*)  =  *A* exp(−*δ* *t*)  + *B* exp(−*γ* *t*),
 
-where *δ* and *γ* are the death rates of short and long-lived infected target cells, respectively (Perelson et al. 1997, Wu and Ding (1999), Shet, Nagaraja, and Dixit (2016), Perelson et al. (1996), Nowak and May (2000)). <!--The parameters $A$ and $B$ are composite constants without direct interpretation; however, $A + B$ represents the initial VL (i.e. $V(t = 0)$), and $A/(A+B)$ can be understood as the proportion of infected cells at ART initiation that are short-lived.--> This equation is referred to as the biphasic model: viral load initially decays rapidly, reflecting the loss of short-lived infected cells (at rate *δ*), and then enters a second, slower decline phase reflecting the loss of longer-lived infected cells (at rate *γ*). For patient data exhibiting only one decline phase (for example, due to sparse or delayed VL measurements), one can use a single phase version of the biphasic model given by
+where *δ* and *γ* are the death rates of short and long-lived infected cells, respectively. <!--The parameters $A$ and $B$ are composite constants without direct interpretation; however, $A + B$ represents the initial VL (i.e. $V(t = 0)$), and $A/(A+B)$ can be understood as the proportion of infected cells at ART initiation that are short-lived.--> This equation is referred to as the biphasic model: viral decay is fast initially, reflecting the loss of short-lived infected cells (at rate *δ*), but then enters a slower decline phase reflecting the loss of long-lived infected cells (at rate *γ*) (**Fig B**). Eventually, viral load is suppressed below the detection threshold of the experiment (dashed line, Fig B). Note that for patient data exhibiting only one decline phase (for example, due to sparse or delayed VL measurements), one can use a single phase version of the biphasic model given by
 
 $$V(t) = \\hat{B}\\exp(- \\hat{\\gamma}~ t),$$
 
-where there are no assumptions on whether decay reflects the fast or slow phase of virus suppression.
+where decay could reflect the fast or the slow phase of virus suppression.
 
-### Time to suppression
+By fitting the model as in Fig B, we can estimate the decay rate parameters and use these to calculate the lifespans of HIV-infected cells: 1/*δ* and 1/*γ* for short and long-lived infected cells from the biphasic model, and $1/\\hat{\\gamma}$ for the single phase model. We can also estimate the time taken to reach virologic suppression below a defined threshold ('time to suppression' (TTS)) by calculating the first time at which *V*(*t*)=*x*, where *x* is the suppression threshold, and *V*(*t*) is given by either the biphasic or single phase equation.
 
-For each individual, the time to reach virologic suppression below a defined threshold ('time to suppression' (TTS)) can be estimated using parametric or non-parametric methods. For the parametric approach, TTS is calculated as the first time at which *V*(*t*)=*x*, where *x* is the suppression threshold, and *V*(*t*) is given by either the biphasic or single phase equation. For the non-parametric approach, we apply linear interpolation between the first measurement below the detection threshold and the preceding measurement. TTS is defined as the time at which the interpolation line crosses the suppression threshold.
+<!--### Time to suppression 
 
+For each individual, the time to reach virologic suppression below a defined threshold ('time to suppression' (TTS)) can be estimated using parametric or non-parametric methods. For the parametric approach, TTS is calculated as the first time at which $V(t) = x$, where $x$ is the suppression threshold, and $V(t)$ is given by either the biphasic or single phase equation. For the non-parametric approach, we apply linear interpolation between the first measurement below the detection threshold and the preceding measurement. TTS is defined as the time at which the interpolation line crosses the suppression threshold. -->
 <!--## Implementation
 
 ### Data preparation
@@ -224,11 +228,10 @@ head(model_output$singleCI)
 Time to suppression
 -------------------
 
-With `ushr` we can also calculate the time to viral suppression (TTS) using both the parametric and non-parameteric methods (see the Vignette for more details). Here we set the suppression threshold to be the same as the detection threshold (i.e. we want to know when viral load drops below the detection threshold of the assay). First, to get parameteric estimates from the fitted model output, we use `get_TTS()` with the argument `parametric = TRUE`. We can subsequently obtain median and SD statistics, and the total number of subjects included in the analysis, using the `summarize()` function from `dplyr`.
+To calculate the time to viral suppression (TTS) we use the fitted model output and the `get_TTS()` function (see the vignette for more details). Here we set the suppression threshold to be the same as the detection threshold (i.e. we want to know when viral load drops below the detection threshold of the assay). We can subsequently obtain median and SD statistics, and the total number of subjects included in the analysis, using the `summarize()` function from `dplyr`.
 
 ``` r
-TTSparametric <- get_TTS(model_output = model_output, parametric = TRUE, 
-                             suppression_threshold = 100)
+TTSparametric <- get_TTS(model_output = model_output, suppression_threshold = 100)
 head(TTSparametric)
 ```
 
@@ -247,34 +250,18 @@ TTSparametric %>% summarize(median = median(TTS), SD = sd(TTS), N = n())
     ##     median       SD  N
     ## 1 65.70076 30.98759 16
 
-Alternatively, to calculate non-parametric TTS estimates, we set the argument `parametric = FALSE`, and supply the original data using `data = actg315`, rather than the fitted model output. The estimates are similar to those for the parametric method but, since there is no minimum requirement on the number of observations, we are able to estimate TTS for more subjects.
+<!--Alternatively, to calculate non-parametric TTS estimates, we set the argument `parametric = FALSE`, and supply the original data using `data = actg315`, rather than the fitted model output. The estimates are similar to those for the parametric method but, since there is no minimum requirement on the number of observations, we are able to estimate TTS for more subjects.
 
-``` r
+
+```r
 TTSnonparametric <- get_TTS(data = actg315, parametric = FALSE, 
                                 suppression_threshold = 100)
 head(TTSnonparametric)
-```
 
-    ## # A tibble: 6 x 3
-    ##      id   TTS calculation   
-    ##   <dbl> <dbl> <chr>         
-    ## 1     1 69.8  non-parametric
-    ## 2     2  6.89 non-parametric
-    ## 3     4 43.3  non-parametric
-    ## 4     5 27.7  non-parametric
-    ## 5    13 54.0  non-parametric
-    ## 6    17 77.9  non-parametric
-
-``` r
 TTSnonparametric %>% summarize(median = median(TTS), SD = sd(TTS), N = n())
 ```
-
-    ## # A tibble: 1 x 3
-    ##   median    SD     N
-    ##    <dbl> <dbl> <int>
-    ## 1   69.8  37.9    17
-
-We can also plot the histograms for both methods using `plot_TTS()`.
+-->
+We can also plot the distribution of estimates using `plot_TTS()`.
 
 ``` r
 plot_TTS(TTSparametric, bins = 6, textsize = 7)
@@ -282,16 +269,10 @@ plot_TTS(TTSparametric, bins = 6, textsize = 7)
 
 ![](README_files/figure-markdown_github/TTSplot-1.png)
 
-``` r
-plot_TTS(TTSnonparametric, bins = 6, textsize = 7)
-```
-
-![](README_files/figure-markdown_github/TTSplot-2.png)
-
 Additional functionality
 ------------------------
 
-`ushr` provides additional functionality to the examples documented here. For example, noisy clinical data can be simulated from an underlying biphasic model using the `simulate_data()` function. Further details of all functions and user-specific customizations can be found in the documentation.
+`ushr` provides additional functionality to the examples documented here. For example, noisy clinical data can be simulated from an underlying biphasic model using the `simulate_data()` function. We also provide an alternative, non-parametric method for estimating TTS that does not require prior model fitting. Further details of all functions and user-specific customizations can be found in the documentation.
 
 References
 ----------
