@@ -8,3 +8,4 @@
 ^README_files$
 ^ModelSchematic\.png$
 ^AIDSbibstyle\.csl$
+^\.travis\.yml$
