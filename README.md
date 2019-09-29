@@ -6,9 +6,10 @@ Introduction
 
 In 2017, HIV/AIDS was responsible for the deaths of one million people globally, including 50,000 children less than one year old (Global Burden of Disease Collaborative Network 2018b, Global Burden of Disease Collaborative Network (2018a)). Although mathematical modeling has provided important insights into the dynamics of HIV infection during anti-retroviral treatment (ART), there is still a lack of accessible tools for researchers unfamiliar with modeling techniques to apply them to their own datasets.
 
-Here we present `ushr`, an open-source R package that models the decline of HIV during ART using a popular mathematical framework. `ushr` can be applied to longitudinal data of viral load measurements, and automates all stages of the model fitting process. By mathematically fitting the data, important biological parameters can be estimated, including the lifespans of short and long-lived infected cells, and the time to reach viral suppression below a defined detection threshold. The package also provides visualization and summary tools for fast assessment of model results.
+`ushr` is an open-source R package that models the decline of HIV during ART using a popular mathematical framework. The package can be applied to longitudinal data of viral load measurements, and automates all stages of the model fitting process. By mathematically fitting the data, important biological parameters can be estimated, including the lifespans of short and long-lived HIV-infected cells, and the time to reach viral suppression below a defined detection threshold. The package also provides visualization and summary tools for fast assessment of model results.
 
-More generally, `ushr` enables researchers without a strong mathematical or computational background to model the dynamics of HIV using longitudinal clinical data. Increasing accessibility to such methods may facilitate quantitative analysis across a wide range of independent studies, so that greater insights on HIV infection and treatment dynamics may be gained.
+<!--More generally, `ushr` enables researchers without a strong mathematical or computational background to model the dynamics of HIV using longitudinal clinical data. Increasing accessibility to such methods may facilitate quantitative analysis across a wide range of independent studies, so that greater insights on HIV infection and treatment dynamics may be gained.-->
+Overall, we hope `ushr` will increase accessibility to mathematical modeling techniques so that greater insights on HIV infection and treatment dynamics may be gained.
 
 Author and Contributors
 -----------------------
@@ -23,20 +24,21 @@ Citation information can be found using `citation("ushr")`; updated citations wi
 Getting further information
 ---------------------------
 
-If you encounter any bugs related to this package please contact the package author directly. Additional descriptions of the model and analysis performed by this package will be available in the upcoming papers: Morris SE et al. "Quantifying the dynamics of HIV decline in perinatally-infected infants on ART"; Morris SE et al. "ushr: understanding suppression of HIV in R" (manuscripts available upon request from the package author). Further details on the mathematical theory can also be found in the references cited below.
+If you encounter any bugs related to this package please contact the package author directly. Additional descriptions of the model and analysis performed by this package can be found in the Vignette; details will also be available in the upcoming paper: Morris SE et al. "ushr: understanding suppression of HIV in R" (manuscripts available upon request from the package author). Further details on the mathematical theory can also be found in the references cited below.
 
 Background
 ----------
 
-### Guide to the mathematical model
+Please read the package vignette for full details on the mathematical model and its implementation in `ushr`, including data processing, model fitting, and parameter estimation.
 
-HIV decline in a patient on ART is typically described using ordinary differential equations (ODEs) that characterize the production and spread of virus by infected target cells, such as CD4 T cells (Perelson et al. 1997, Wu and Ding (1999), Shet, Nagaraja, and Dixit (2016), Perelson et al. (1996), Nowak and May (2000)). Assuming ART completely blocks viral replication, and that viral dynamics occur on a faster timescale than those of infected cells, one can obtain the following expression for the timecourse of viral load, *V*, during treatment
+### Brief guide to the mathematical model
 
-*V*(*t*)  =  *A* exp(−*δ* *t*)  + *B* exp(−*γ* *t*).
+<!--HIV decline in a patient on ART is typically described using ordinary differential equations (ODEs) that characterize the production and spread of virus by infected target cells, such as CD4 T cells [@perelson1997a, @wu1999biometrics, @Shet2016, @perelson1996hiv, @nowak2000book]. Assuming ART completely blocks viral replication, and that viral dynamics occur on a faster timescale than those of infected cells, one can obtain the following expression for the timecourse of viral load, $V$, during treatment-->
+The timecourse of HIV viral load, *V*, during ART can be modelled using the following expression
 
-Here *δ* and *γ* are the death rates of short and long-lived infected target cells, respectively (Shet, Nagaraja, and Dixit 2016). The parameters *A* and *B* are composite constants without direct interpretation; however, *A* + *B* represents the initial VL (i.e. *V*(*t* = 0)), and *A*/(*A* + *B*) can be understood as the proportion of infected cells at ART initiation that are short-lived.
+*V*(*t*)  =  *A* exp(−*δ* *t*)  + *B* exp(−*γ* *t*),
 
-This equation is referred to as the biphasic model. According to this, viral load initially decays rapidly, reflecting the loss of short-lived infected cells (at rate *δ*), and then enters a second, slower decline phase reflecting the loss of longer-lived infected cells (at rate *γ*). For patient data exhibiting only one decline phase (for example, due to sparse or delayed VL measurements), one can use a single phase version of the biphasic model given by
+where *δ* and *γ* are the death rates of short and long-lived infected target cells, respectively (Perelson et al. 1997, Wu and Ding (1999), Shet, Nagaraja, and Dixit (2016), Perelson et al. (1996), Nowak and May (2000)). <!--The parameters $A$ and $B$ are composite constants without direct interpretation; however, $A + B$ represents the initial VL (i.e. $V(t = 0)$), and $A/(A+B)$ can be understood as the proportion of infected cells at ART initiation that are short-lived.--> This equation is referred to as the biphasic model. According to this, viral load initially decays rapidly, reflecting the loss of short-lived infected cells (at rate *δ*), and then enters a second, slower decline phase reflecting the loss of longer-lived infected cells (at rate *γ*). For patient data exhibiting only one decline phase (for example, due to sparse or delayed VL measurements), one can use a single phase version of the biphasic model given by
 
 $$V(t) = \\hat{B}\\exp(- \\hat{\\gamma}~ t),$$
 
@@ -44,34 +46,50 @@ where there are no assumptions on whether decay reflects the fast or slow phase 
 
 ### Time to suppression
 
-For each individual, the time to reach virologic suppression below a defined threshold ('time to suppression' (TTS)) can be estimated using both parametric and non-parametric methods. For the parametric approach, TTS was calculated as the first time at which *V*(*t*)=*x*, where *x* is the suppression threshold, and *V*(*t*) is given by the first equation for the biphasic model and the second equation for the single phase model. For the non-parametric approach, we first apply linear interpolation between the first measurement below the detection threshold and the preceding measurement. TTS is then defined as the time at which the interpolation line crosses the suppression threshold.
+For each individual, the time to reach virologic suppression below a defined threshold ('time to suppression' (TTS)) can be estimated using parametric or non-parametric methods. For the parametric approach, TTS is calculated as the first time at which *V*(*t*)=*x*, where *x* is the suppression threshold, and *V*(*t*) is given by either the biphasic or single phase equation. For the non-parametric approach, we apply linear interpolation between the first measurement below the detection threshold and the preceding measurement. TTS is defined as the time at which the interpolation line crosses the suppression threshold.
 
-Implementation
---------------
+<!--## Implementation
 
 ### Data preparation
 
-Raw clinical data is often noisy and sparse, making it unsuitable for mathematical analysis of viral decline, and eventual suppression, during ART. Therefore, prior to any analysis, data must be processed to exclude individual trajectories that cannot be appropriately modeled. In `ushr`, we only consider individuals who reach suppression below a pre-defined threshold, within a particular timeframe (both specified by the user). By default, suppression is defined as having at least one viral load measurement below the detection threshold of the measurements assay, *d*. Alternatiely, the user may define suppression as sustaining at least two consecutive measurements below *d*. Following previous work, all measurements below the detection threshold are set to *d*/2 (Wu et al. 1999). To isolate the kinetics leading to initial suppression, viral load trajectories are truncated after the first measurement below *d*.
+Raw clinical data is often noisy and sparse, making it unsuitable for mathematical analysis of viral decline, and eventual suppression, during ART. Therefore, prior to any analysis, data must be processed to exclude individual trajectories that cannot be appropriately modeled. In `ushr`, we only consider individuals who reach suppression below a pre-defined threshold, within a particular timeframe (both specified by the user). <!--By default, suppression is defined as having at least one viral load measurement below the detection threshold of the measurements assay, $d$. Alternatiely, the user may define suppression as sustaining at least two consecutive measurements below $d$. Following previous work, all measurements below the detection threshold are set to $d/2$ [@wu1999characterization]. To isolate the kinetics leading to initial suppression, viral load trajectories are truncated after the first measurement below $d$.
+
 
 To distinguish 'true' decay dynamics from instances of viral rebound (due to factors such as drug resistance or poor treatment adherence), we only consider viral load data that maintain a consistent decreasing trend towards suppression, such that each measurement is within a pre-defined range of the previous measurement. This buffer range ensures that transient increases in viral load (arising from noise and measurement error) do not exclude subjects from the analysis. We also allow initial increases in viral load (for example, arising from pharmacological delays in drug action) by defining the beginning of each individual's decreasing sequence as the maximum value from their first three measurements.
 
-### Model fitting
 
-Parameter estimates with 95% confidence intervals are obtained for each subject by fitting either the biphasic or single phase model to the corresponding viral load data using maximum likelihood optimization (as described previously (Hogan et al. 2015)). Data are log<sub>10</sub>-transformed prior to fitting and optimization is performed using `optim()`. After fitting, we use the resulting parameter estimates to calculate the lifespans of HIV-infected cells: 1/*δ* and 1/*γ* for short and long-lived infected cells from the biphasic model, respectively, and $1/\\hat{\\gamma}$ for the single phase model.
+### Model fitting 
+
+Parameter estimates with 95\% confidence intervals are obtained for each subject by fitting either the biphasic or single phase model to the corresponding viral load data using maximum likelihood optimization (as described previously [@hogan2015temporal]). Data are $\log_{10}$-transformed prior to fitting and optimization is performed using `optim()`. After fitting, we use the resulting parameter estimates to calculate the lifespans of HIV-infected cells: $1/\delta$ and $1/\gamma$ for short and long-lived infected cells from the biphasic model, respectively, and $1/\hat{\gamma}$ for the single phase model.
 
 To improve parameter identifiability, only subjects with a minimum number of measurements above the detection threshold are fit using the biphasic or single phase models. These can be specified by the user, but we recommend at least six observations for the biphasic model and three for the single phase model. Individuals with fewer measurements are not included in the model fitting procedure, although they are still included in non-parametric TTS calculations.
-
+-->
 Quick Start Example
 -------------------
 
-To illustrate basic usage of the package and allow users to explore functionality, we include a publicly available data set from the ACTG315 clinical trial. Briefly, the raw data consist of longitudinal HIV viral load measurements from 46 chronically-infected adults up to 28 weeks following ART initiation. The detection threshold was 100 copies/ml and observations are recorded as log<sub>10</sub> RNA copies/ml. These data are available at <https://sph.uth.edu/divisions/biostatistics/wu/datasets/ACTG315LongitudinalDataViralLoad.htm> (date originally accessed: 15 September 2019), and have been described previously (Lederman et al. 1998; Wu and Ding 1999; Connick et al. 2000).
+To install the package from Github, first install and load `devtools`, then install `ushr` as follows
+
+``` r
+install.packages("devtools")
+library("devtools")
+
+install_github("SineadMorris/ushr", build_vignettes = TRUE)
+```
+
+The vignette can be viewed through
+
+``` r
+browseVignettes(package = "ushr")
+```
+
+To illustrate basic usage of the package, we include a publicly available data set from the ACTG315 clinical trial. The raw data consist of longitudinal HIV viral load measurements from 46 chronically-infected adults up to 28 weeks following ART initiation. The detection threshold was 100 copies/ml and observations are recorded as log<sub>10</sub> RNA copies/ml. These data are available at <https://sph.uth.edu/divisions/biostatistics/wu/datasets/ACTG315LongitudinalDataViralLoad.htm> (date originally accessed: 15 September 2019), and have been described previously (Lederman et al. 1998; Wu and Ding 1999; Connick et al. 2000).
 
 ### Data exploration
 
 To begin, we load the package and print the first six rows to identify our columns of interest; these are the viral load observations ('log.10.RNA.'), the timing of these observations ('Day'), and the identifier for each subject ('Patid').
 
 ``` r
-require(ushr)
+library(ushr)
 
 print(head(actg315raw))
 ```
@@ -110,11 +128,11 @@ plot_data(actg315, detection_threshold = 100)
 
 ![](README_files/figure-markdown_github/plotdata-1.png)
 
-Each panel represents a different individual, the points are the viral load measurements, and the dashed horizontal line is the assay detection threshold. From this we can see that the data is indeed noisy, individuals have different numbers of available observations, and only a subset suppress viral load below the detection threshold.
+Each panel represents a different individual and the dashed horizontal line is the assay detection threshold. We can see that the data is noisy, individuals have different numbers of available observations, and only a subset suppress viral load below the detection threshold.
 
 ### Model fitting and output visualization
 
-To fit the model to this data in just one line of code we use the `ushr()` function. This processes the data to filter out any individuals who do not meet the inclusion criteria defined above, and then fits either the single or biphasic model to each remaining trajectory, depending on the number of available observations (see the Background for more details). Note that the data processing step can be omitted using the `filter = FALSE` argument (default is TRUE); however this is not recommended unless rigorous processing efforts have already been made.
+To fit the model to this data in just one line of code we use the `ushr()` function. This processes the data to filter out any individuals who do not suppression viral load, or who violate other specific inclusion criteria (described in the Vignette), and then fits the model to each remaining trajectory. Note that only subjects with a minimum number of measurements above the detection threshold can be reliably fit. These can be specified by the user, but we recommend at least six observations for the biphasic model and three for the single phase model. <!--Note that the data processing step can be omitted using the `filter = FALSE` argument (default is TRUE); however this is not recommended unless rigorous processing efforts have already been made.-->
 
 ``` r
 model_output <- ushr(data = actg315, detection_threshold = 100)
@@ -134,7 +152,7 @@ plot_model(model_output, type = "single", detection_threshold = 100)
 
 ![](README_files/figure-markdown_github/spfits-1.png)
 
-Again, each panel represents a different individual, points are the original data, and solid lines are the corresponding best-fit model. We can see that twelve subjects were successfully fit with the biphasic model, and four with the single phase model. Although some single phase subjects had sufficient data to fit the biphasic model (i.e. at least six observations), the resulting 95% parameter confidence intervals were either unattainable or sufficiently wide to indicate an unreliable fit. This can occur, for example, when one of the decay phases is poorly documented (i.e. has few data points). As a result, the subjects were re-fit with the single phase model. This re-fitting step is automated in the package; however, the user can control the size of confidence interval above which a biphasic fit is deemed unreliable using the argument `CI_max_diff` in `ushr()`.
+Here the solid lines represent the best-fit model for each subject. Twelve were successfully fit with the biphasic model, and four with the single phase model. Although some single phase subjects had sufficient data to fit the biphasic model (i.e. at least six observations), the resulting 95% parameter confidence intervals were either unattainable or sufficiently wide to indicate an unreliable fit. <!--This can occur, for example, when one of the decay phases is poorly documented (i.e. has few data points).--> As a result, the subjects are automatically re-fit with the single phase model. <!--This re-fitting step is automated in the package; however, the user can control the size of confidence interval above which a biphasic fit is deemed unreliable using the argument `CI_max_diff` in `ushr()`. -->
 
 We can also visualize a summary of the fitting procedure and parameter estimates using `summarize_model()`. This creates a list with the following elements: (i) a summary of which subjects were successfully fit using the biphasic or single phase models, with their corresponding infected cell lifespan estimates (`summary`); (ii) summary statistics for the estimated parameters from the biphasic model (`biphasicstats`); and (iii) summary statistics for the estimated parameters from the single phase model (`singlestats`).
 
@@ -206,7 +224,7 @@ head(model_output$singleCI)
 Time to suppression
 -------------------
 
-In addition to fitting the biphasic and single phase models, we can calculate the time to viral suppression (TTS) using both the parametric and non-parameteric methods (see the Background for more details). Here we set the suppression threshold to be the same as the detection threshold (i.e. we want to know when viral load drops below the detection threshold of the assay). First, to get parameteric estimates from the fitted model output, we use `get_TTS()` with the argument `parametric = TRUE`. We can subsequently obtain median and SD statistics, and the total number of subjects included in the analysis, using the `summarize()` function from `dplyr`.
+With `ushr` we can also calculate the time to viral suppression (TTS) using both the parametric and non-parameteric methods (see the Vignette for more details). Here we set the suppression threshold to be the same as the detection threshold (i.e. we want to know when viral load drops below the detection threshold of the assay). First, to get parameteric estimates from the fitted model output, we use `get_TTS()` with the argument `parametric = TRUE`. We can subsequently obtain median and SD statistics, and the total number of subjects included in the analysis, using the `summarize()` function from `dplyr`.
 
 ``` r
 TTSparametric <- get_TTS(model_output = model_output, parametric = TRUE, 
@@ -229,7 +247,7 @@ TTSparametric %>% summarize(median = median(TTS), SD = sd(TTS), N = n())
     ##     median       SD  N
     ## 1 65.70076 30.98759 16
 
-Alternatively, to calculate non-parametric TTS estimates, we set the argument `parametric = FALSE`, and supply the original data using `data = actg315`, rather than the fitted model output. The estimates are similar to those for the parametric method but, given the less stringent conditions for inclusion in the non-parametric analysis (there is no minimum requirement on the number of observations), we are able to estimate TTS for more subjects.
+Alternatively, to calculate non-parametric TTS estimates, we set the argument `parametric = FALSE`, and supply the original data using `data = actg315`, rather than the fitted model output. The estimates are similar to those for the parametric method but, since there is no minimum requirement on the number of observations, we are able to estimate TTS for more subjects.
 
 ``` r
 TTSnonparametric <- get_TTS(data = actg315, parametric = FALSE, 
@@ -284,8 +302,6 @@ Global Burden of Disease Collaborative Network. 2018a. “Global Burden of Disea
 
 ———. 2018b. “Global, regional, and national age-sex-specific mortality for 282 causes of death in 195 countries and territories, 1980–2017: a systematic analysis for the Global Burden of Disease Study 2017.” *Lancet* 392 (10159): 1736–88. doi:[10.1016/S0140-6736(18)32203-7](https://doi.org/10.1016/S0140-6736(18)32203-7).
 
-Hogan, Thea, Graeme Gossel, Andrew J Yates, and Benedict Seddon. 2015. “Temporal fate mapping reveals age-linked heterogeneity in naive T lymphocytes in mice.” *Proceedings of the National Academy of Sciences* 112 (50): E6917–E6926. doi:[10.1073/pnas.1517246112](https://doi.org/10.1073/pnas.1517246112).
-
 Lederman, M. M., E. Connick, A. Landay, D. R. Kuritzkes, J. Spritzler, M. St. Clair, B. L. Kotzin, et al. 1998. “Immunologic Responses Associated with 12 Weeks of Combination Antiretroviral Therapy Consisting of Zidovudine, Lamivudine, and Ritonavir: Results of AIDS Clinical Trials Group Protocol 315.” *Journal of Infectious Diseases* 178 (1): 70–79. doi:[10.1086/515591](https://doi.org/10.1086/515591).
 
 Nowak, Martin A, and Robert M May. 2000. *Virus Dynamics: Mathematical Principles of Immunology and Virology*. New York,USA: Oxford University Press.
@@ -297,5 +313,3 @@ Perelson, Alan S., Avidan U. Neumann, Martin Markowitz, John M. Leonard, and Dav
 Shet, Anita, Pradeep Nagaraja, and Narendra M. Dixit. 2016. “Viral decay dynamics and mathematical modeling of treatment response: evidence of lower in vivo fitness of HIV-1 subtype C.” *J Acquir Immune Defic Syndr* 73 (3): 245–51. doi:[10.1097/QAI.0000000000001101](https://doi.org/10.1097/QAI.0000000000001101).
 
 Wu, Hulin, and A Adam Ding. 1999. “Population HIV-1 dynamics in vivo: applicable models and inferential tools for virological data from AIDS clinical trials.” *Biometrics* 55 (2): 410–18.
-
-Wu, Hulin, Daniel R Kuritzkes, Daniel R McClernon, Harold Kessler, Elizabeth Connick, Alan Landay, Greg Spear, et al. 1999. “Characterization of viral dynamics in human immunodeficiency virus type 1-infected patients treated with combination antiretroviral therapy: relationships to host factors, cellular restoration, and virologic end points.” *J Infect Dis* 179: 799–807.

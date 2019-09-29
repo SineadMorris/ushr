@@ -18,6 +18,3 @@ get_parametricTTS(params, rootfunction, suppression_threshold, uppertime)
 \description{
 This function computes the parametric form of the time to suppression
 }
-\examples{
-
-}

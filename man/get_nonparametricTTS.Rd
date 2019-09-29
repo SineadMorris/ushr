@@ -18,6 +18,3 @@ get_nonparametricTTS(vl, suppression_threshold, time, npoints)
 \description{
 This function computes the non-parametric form of the time to suppression
 }
-\examples{
-
-}

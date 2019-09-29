@@ -16,6 +16,3 @@ single_root(timevec, params, suppression_threshold)
 \description{
 This function expressed the root of the single phase suppression equation, V(t) = suppression_threshold.
 }
-\examples{
-
-}

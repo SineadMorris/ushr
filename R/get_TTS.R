@@ -10,6 +10,7 @@
 #' @param suppression_threshold numeric value indicating the suppression threshold: measurements below this value will be assumed to represent viral suppression. Default value is 20.
 #' @param censortime the maximum time point to inculde in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded from model fitting. Default value is 365.
 #' @param decline_buffer the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.
+#' @importFrom rlang .data
 #' @export
 #' @examples
 #'
@@ -26,18 +27,19 @@ filter_dataTTS <- function(data, suppression_threshold = 20,
     if (!(all(c("vl", "time", "id") %in% names(data)))) {
         stop("Data frame must have named columns for 'id', 'time', and 'vl'")
     }
+
     # 1. Change everything <= suppression_threshhold to 1/2 * dsuppression_threshhold
     data_filtered <- data %>% mutate(vl = case_when(vl <= suppression_threshold ~ suppression_threshold/2,
                                                     vl >= suppression_threshold ~ vl) ) %>%
         # 2. Look at only those who reach control within user defined censortime
-        filter(time <= censortime) %>% group_by(id) %>%
-        filter(any(vl <= suppression_threshold)) %>% ungroup() %>%
+        filter(.data$time <= censortime) %>% group_by(id) %>%
+        filter(any(.data$vl <= suppression_threshold)) %>% ungroup() %>%
         # 3a. Isolate data from the highest VL measurement (from points 1 - 3) to the first point below detection
-        filter(!is.na(vl)) %>% group_by(id) %>%
-        slice(which.max(vl[1:3]):Position(function(x) x <= suppression_threshold, vl)) %>%
+        filter(!is.na(.data$vl)) %>% group_by(id) %>%
+        slice(which.max(.data$vl[1:3]):Position(function(x) x <= suppression_threshold, .data$vl)) %>%
         ungroup() %>%
         # 3b. Only keep VL sequences that are decreasing with user defined buffer...
-        group_by(id) %>% filter(all(vl <= cummin(vl) + decline_buffer))
+        group_by(id) %>% filter(all(.data$vl <= cummin(.data$vl) + decline_buffer))
 
     return(data_filtered)
 }
@@ -51,7 +53,6 @@ filter_dataTTS <- function(data, suppression_threshold = 20,
 #' @param params named vector of all parameters needed to compute the biphasic model, V(t)
 #' @param suppression_threshold suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.
 #' @export
-#' @examples
 #'
 biphasic_root <- function(timevec, params, suppression_threshold){
     value <- params["A"] * exp (- timevec * params["delta"]) + params["B"] * exp( - timevec * params["gamma"]) - suppression_threshold
@@ -67,7 +68,6 @@ biphasic_root <- function(timevec, params, suppression_threshold){
 #' @param params named vector of all parameters needed to compute the biphasic model, V(t)
 #' @param suppression_threshold suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.
 #' @export
-#' @examples
 #'
 single_root <- function(timevec, params, suppression_threshold){
     if (all(c("B", "gamma") %in% params)) {
@@ -89,7 +89,6 @@ single_root <- function(timevec, params, suppression_threshold){
 #' @param suppression_threshold suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.
 #' @param uppertime the maximum time interval to search for the time to suppression. Default value is 365.
 #' @export
-#' @examples
 #'
 get_parametricTTS <- function(params, rootfunction, suppression_threshold, uppertime){
     TTS <- rep(NA, nrow(params))
@@ -111,7 +110,6 @@ get_parametricTTS <- function(params, rootfunction, suppression_threshold, upper
 #' @param time voector indicating the time when vl measurements were taken.
 #' @param npoints numeric value of the number of interpolation points to be considered.
 #' @export
-#' @examples
 #'
 get_nonparametricTTS <- function(vl, suppression_threshold, time, npoints){
 
@@ -145,6 +143,7 @@ get_nonparametricTTS <- function(vl, suppression_threshold, time, npoints){
 #' @param parametric logical TRUE/FALSE indicating whether time to suppression shoudl be calculated usingthe parametric (TRUE) or non-parametric (FALSE) method. If TRUE, a fitted model object is required. If FALSE, the raw data frame is required. Defaults to TRUE.
 #' @param ARTstart logical TRUE/FALSE indicating whether the time to suppression should be represented as time since ART initiation. Default = FALSE. If TRUE, ART initiation times must be included as a data column named 'ART'.
 #' @param npoints numeric value of the number of interpolation points to be considered. Default is 1000.
+#' @importFrom rlang .data
 #' @export
 #' @examples
 #'
@@ -166,16 +165,19 @@ get_TTS <- function(model_output = NULL, data = NULL,
         }
 
         # Biphasic
-        biphasic_params <- model_output$biphasicCI %>% select(-lowerCI, -upperCI) %>% spread(param, estimate) %>%
+        biphasic_params <- model_output$biphasicCI %>%
+            select(-.data$lowerCI, -.data$upperCI) %>% spread(.data$param, .data$estimate) %>%
             mutate(TTS = get_parametricTTS(params = ., rootfunction = biphasic_root, suppression_threshold, uppertime),
                    model = "biphasic", calculation = "parametric")
 
         # Single phase
-        single_params <- model_output$singleCI %>% select(-lowerCI, -upperCI) %>% spread(param, estimate) %>%
+        single_params <- model_output$singleCI %>%
+            select(-.data$lowerCI, -.data$upperCI) %>% spread(.data$param, .data$estimate) %>%
             mutate(TTS = get_parametricTTS(params = ., rootfunction = single_root, suppression_threshold, uppertime),
                    model = "single phase", calculation = "parametric")
 
-        TTS_output <- biphasic_params %>% full_join(single_params) %>% select(id, TTS, model, calculation)
+        TTS_output <- biphasic_params %>% full_join(single_params) %>%
+            select(.data$id, .data$TTS, .data$model, .data$calculation)
     }
 
     # 2. Non-parametric TTS ----------------------------------------------------------------
@@ -193,8 +195,9 @@ get_TTS <- function(model_output = NULL, data = NULL,
         # Filter out subjects to focus on those who reach suppression below the specified threshold.
         data_filtered <- filter_dataTTS(data, suppression_threshold, uppertime, decline_buffer)
 
-        TTS_output <- data_filtered %>% mutate(TTS = get_nonparametricTTS(vl, suppression_threshold, time, npoints)) %>%
-            ungroup() %>% distinct(id, TTS) %>% mutate(calculation = "non-parametric")
+        TTS_output <- data_filtered %>%
+            mutate(TTS = get_nonparametricTTS(.data$vl, suppression_threshold, .data$time, npoints)) %>%
+            ungroup() %>% distinct(.data$id, .data$TTS) %>% mutate(calculation = "non-parametric")
     }
 
     if(ARTstart == TRUE){
@@ -203,9 +206,9 @@ get_TTS <- function(model_output = NULL, data = NULL,
         if(is.null(data$ART)){
             print("Data frame is missing ART column. Returning original TTS values.")
         } else {
-            ARTdata <- data %>% distint(id, ART)
+            ARTdata <- data %>% distint(.data$id, .data$ART)
 
-            TTS_output <- TTS_output %>% left_join(ARTdata) %>% mutate(TTS = TTS - ART)
+            TTS_output <- TTS_output %>% left_join(ARTdata) %>% mutate(TTS = .data$TTS - .data$ART)
         }
     }
     return(TTS_output)
