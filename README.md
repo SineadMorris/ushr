@@ -32,7 +32,7 @@ Please read the package vignette for full details on the mathematical model and 
 
 ### Brief guide to the mathematical model
 
-HIV dynamics in an infected individual can be mathematically described as the production and spread of virus by two groups of infected target cells: so called 'short-lived' infected cells that die at a fast rate (such as CD4 T cells), and other 'long-lived' infected cells that die more slowly (**Fig A**) \[[3](#ref-perelson1996hiv)–[6](#ref-Shet2016)\].
+HIV dynamics in an infected individual can be mathematically described as the production and spread of virus by two groups of infected target cells: so called 'short-lived' infected cells that die at a fast rate (such as CD4 T cells), and other 'long-lived' infected cells that die more slowly (**Fig A**).
 
 <img src="ModelSchematic.png" width="650" />
 
@@ -40,9 +40,9 @@ Once ART has begun, the decline of HIV viral load, *V*, can be modelled using th
 
 *V*(*t*)  =  *A* exp(−*δ* *t*)  + *B* exp(−*γ* *t*),
 
-where *δ* and *γ* are the death rates of short and long-lived infected cells, respectively. This equation is referred to as the biphasic model: viral decay is fast initially, reflecting the loss of short-lived infected cells (at rate *δ*), but then enters a slower decline phase reflecting the loss of long-lived infected cells (at rate *γ*) (**Fig B**). Eventually, viral load is suppressed below the detection threshold of the experiment (dashed line, Fig B). Note that for patient data exhibiting only one decline phase (for example, due to sparse or delayed VL measurements), one can use a single phase version of the biphasic model given by
+where *δ* and *γ* are the death rates of short and long-lived infected cells, respectively \[[3](#ref-perelson1996hiv)–[6](#ref-Shet2016)\]. This equation is referred to as the biphasic model: viral decay is fast initially, reflecting the loss of short-lived infected cells (at rate *δ*), but then enters a slower decline phase reflecting the loss of long-lived infected cells (at rate *γ*) (**Fig B**). Eventually, viral load is suppressed below the detection threshold of the experiment (dashed line, Fig B). Note that for patient data exhibiting only one decline phase (for example, due to sparse or delayed VL measurements), one can use a single phase version of the biphasic model given by
 
-$$V(t) = ~\\hat{B}~\\exp(- \\hat{\\gamma} t),$$
+$$V(t) = \\hat{B}~\\exp(- \\hat{\\gamma} t),$$
 
 where decay could reflect the fast or the slow phase of virus suppression.
 
@@ -66,7 +66,7 @@ The vignette can be viewed through
 browseVignettes(package = "ushr")
 ```
 
-To illustrate basic usage of the package, we include a publicly available data set from the ACTG315 clinical trial. The raw data (`actg315raw`) consist of longitudinal HIV viral load measurements from 46 chronically-infected adults up to 28 weeks following ART initiation. The detection threshold was 100 copies/ml and observations are recorded as log<sub>10</sub> RNA copies/ml. These data are available at <https://sph.uth.edu/divisions/biostatistics/wu/datasets/ACTG315LongitudinalDataViralLoad.htm> (date originally accessed: 15 September 2019), and have been described previously \[[7](#ref-Lederman1998)–[9](#ref-Connick2000)\].
+To illustrate basic usage of the package, we include a publicly available data set from the ACTG315 clinical trial. The raw data (`actg315raw`) consist of longitudinal HIV viral load measurements from 46 chronically-infected adults up to 28 weeks following ART initiation. The detection threshold was 100 copies/ml and observations are recorded as log<sub>10</sub> RNA copies/ml. These data are available at <https://sph.uth.edu/divisions/biostatistics/wu/datasets/ACTG315LongitudinalDataViralLoad.htm> (originally accessed: 15 September 2019), and have been described previously \[[7](#ref-Lederman1998)–[9](#ref-Connick2000)\].
 
 ### Data exploration
 
