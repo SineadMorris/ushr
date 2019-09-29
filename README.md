@@ -66,7 +66,7 @@ The vignette can be viewed through
 browseVignettes(package = "ushr")
 ```
 
-To illustrate basic usage of the package, we include a publicly available data set from the ACTG315 clinical trial. The raw data (`actg315raw`) consist of longitudinal HIV viral load measurements from 46 chronically-infected adults up to 28 weeks following ART initiation. The detection threshold was 100 copies/ml and observations are recorded as log<sub>10</sub> RNA copies/ml. These data are [available online](https://sph.uth.edu/divisions/biostatistics/wu/datasets/ACTG315LongitudinalDataViralLoad.htm) (originally accessed 15 September 2019), and have been described previously \[[7](#ref-Lederman1998)–[9](#ref-Connick2000)\].
+To illustrate basic usage of the package, we include a publicly available data set from the ACTG315 clinical trial. The raw data (`actg315raw`) consist of longitudinal HIV viral load measurements from 46 chronically-infected adults up to 28 weeks following ART initiation. The detection threshold was 100 copies/ml and observations are recorded as log<sub>10</sub> RNA copies/ml. [These data are available online](https://sph.uth.edu/divisions/biostatistics/wu/datasets/ACTG315LongitudinalDataViralLoad.htm) (originally accessed 15 September 2019) and have been described previously \[[7](#ref-Lederman1998)–[9](#ref-Connick2000)\].
 
 ### Data exploration
 
