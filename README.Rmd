@@ -55,11 +55,11 @@ $$V(t)~ =~ A~\exp(-\delta ~t) ~+ B~\exp(- \gamma~ t),$$
 
 where $\delta$ and $\gamma$ are the death rates of short and long-lived infected cells, respectively  [@perelson1996hiv; @perelson1997a; @nowak2000book; @Shet2016]. This equation is referred to as the biphasic model: viral decay is fast initially, reflecting the loss of short-lived infected cells (at rate $\delta$), but then enters a slower decline phase reflecting the loss of long-lived infected cells (at rate $\gamma$) (**Fig B**). Eventually, viral load is suppressed below the detection threshold of the experiment (dashed line, Fig B). Note that for patient data exhibiting only one decline phase (for example, due to sparse or delayed VL measurements), one can use a single phase version of the biphasic model given by
 
-$$V(t) = \hat{B}~\exp(- \hat{\gamma} t),$$
+$V(t) =$ B&#770; $\exp(-$ &gamma;&#770; $t)$,
 
 where decay could reflect the fast or the slow phase of virus suppression.
 
-By fitting the model, we can estimate the death rate parameters and use these to calculate the lifespans of infected cells: $1/\delta$ and $1/\gamma$ for short and long-lived infected cells from the biphasic model, and $1/\hat{\gamma}$ for the single phase model. We can also estimate the time taken to suppress viral load ('time to suppression' (TTS)) by calculating the first time at which $V(t) = x$, where $x$ is a user-defined suppression threshold, and $V(t)$ is given by either the biphasic or single phase equation. 
+By fitting the model, we can estimate the death rate parameters and use these to calculate the lifespans of infected cells: $1/\delta$ and $1/\gamma$ for short and long-lived infected cells from the biphasic model, and 1/&gamma;&#770; for the single phase model. We can also estimate the time taken to suppress viral load ('time to suppression' (TTS)) by calculating the first time at which $V(t) = x$, where $x$ is a user-defined suppression threshold, and $V(t)$ is given by either the biphasic or single phase equation. 
 
 
 ## Quick Start Example

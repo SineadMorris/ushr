@@ -44,11 +44,11 @@ Once ART has begun, the decline of HIV viral load, *V*, can be modelled using th
 
 where *δ* and *γ* are the death rates of short and long-lived infected cells, respectively \[[3](#ref-perelson1996hiv)–[6](#ref-Shet2016)\]. This equation is referred to as the biphasic model: viral decay is fast initially, reflecting the loss of short-lived infected cells (at rate *δ*), but then enters a slower decline phase reflecting the loss of long-lived infected cells (at rate *γ*) (**Fig B**). Eventually, viral load is suppressed below the detection threshold of the experiment (dashed line, Fig B). Note that for patient data exhibiting only one decline phase (for example, due to sparse or delayed VL measurements), one can use a single phase version of the biphasic model given by
 
-$$V(t) = \\hat{B}~\\exp(- \\hat{\\gamma} t),$$
+*V*(*t*)= B̂ exp(− γ̂ *t*),
 
 where decay could reflect the fast or the slow phase of virus suppression.
 
-By fitting the model, we can estimate the death rate parameters and use these to calculate the lifespans of infected cells: 1/*δ* and 1/*γ* for short and long-lived infected cells from the biphasic model, and $1/\\hat{\\gamma}$ for the single phase model. We can also estimate the time taken to suppress viral load ('time to suppression' (TTS)) by calculating the first time at which *V*(*t*)=*x*, where *x* is a user-defined suppression threshold, and *V*(*t*) is given by either the biphasic or single phase equation.
+By fitting the model, we can estimate the death rate parameters and use these to calculate the lifespans of infected cells: 1/*δ* and 1/*γ* for short and long-lived infected cells from the biphasic model, and 1/γ̂ for the single phase model. We can also estimate the time taken to suppress viral load ('time to suppression' (TTS)) by calculating the first time at which *V*(*t*)=*x*, where *x* is a user-defined suppression threshold, and *V*(*t*) is given by either the biphasic or single phase equation.
 
 Quick Start Example
 -------------------
