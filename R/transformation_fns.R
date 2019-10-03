@@ -7,7 +7,7 @@
 #' @param subset data frame to which the function should be applied
 #'
 remove_vl0 <- function(id, which_ids, subset){
-    if(id %in% which_ids){ return(subset[-1,]) }
+    if(id[1] %in% which_ids){ return(subset[-1,]) }
     else {return(subset)}
 }
 

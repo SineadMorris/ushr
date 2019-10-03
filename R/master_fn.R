@@ -99,7 +99,8 @@ ushr <- function(data,
         biphasicCI <- biphasicCI %>% filter(!(id %in% badCI$id)) %>% select(id, param, estimate, lowerCI, upperCI)
 
         if (nrow(biphasicCI) > 0) {
-            biphasicCI <- switch_params(biphasicCI)
+            #biphasicCI <- switch_params(biphasicCI)
+            biphasicCI <- biphasicCI %>% group_by(id) %>% do(switch_params(.)) %>% ungroup()
         }
 
         biphasic_fits <- bind_rows(biphasicmodel$model_fitlist) %>% filter(!(id %in% badCI$id))

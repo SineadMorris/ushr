@@ -81,10 +81,10 @@ switch_params <- function(biphasicCI){
         tmpRate <- biphasicCI[biphasicCI$param == "gamma", replace_cols]
         tmpConst <- biphasicCI[biphasicCI$param == "B", replace_cols]
 
-        biphasicCI[biphasicCI$param == "gamma",replace_cols] <- biphasicCI[biphasicCI$param == "delta", replace_cols]
+        biphasicCI[biphasicCI$param == "gamma", replace_cols] <- biphasicCI[biphasicCI$param == "delta", replace_cols]
         biphasicCI[biphasicCI$param == "delta", replace_cols] <- tmpRate
 
-        biphasicCI[biphasicCI$param == "B",replace_cols] <- biphasicCI[biphasicCI$param == "A", replace_cols]
+        biphasicCI[biphasicCI$param == "B", replace_cols] <- biphasicCI[biphasicCI$param == "A", replace_cols]
         biphasicCI[biphasicCI$param == "A", replace_cols] <- tmpConst
     }
     return(biphasicCI)
