@@ -22,6 +22,7 @@
 #' @param initial_params named vector of initial parameter guesses. Defaults to c(A = 10000, delta = 0.68, B = 1000, gamma = 0.03).
 #' @param searchmethod optimization algorithm to be used in optim. Defaults to Nelder-Mead.
 #' @return a list containing the filtered data ('data_filtered'), parameter estimates for the biphasic and single phase models ('biphasicCI' and 'singleCI'), and predictions from the biphasic and single phase models ('biphasic_fits' and 'single_fits')
+#' @importFrom rlang .data
 #' @export
 #' @examples
 #'
@@ -62,7 +63,8 @@ ushr <- function(data,
 
     ## 1. Data processing  ----------------------------------------------------------------
     if (filter) {
-        data_filtered <- filter_data(data, detection_threshold, censortime, decline_buffer, n_min_single, threshold_buffer, nsuppression)
+        data_filtered <- filter_data(data, detection_threshold, censortime,
+                                     decline_buffer, n_min_single, threshold_buffer, nsuppression)
     } else {
         data_filtered <- data
     }
@@ -74,7 +76,8 @@ ushr <- function(data,
      }
 
     # Get transformed parameters -----------------------------------------
-    transformed_params <- get_transformed_params(params = initial_params, param_transform_fn = forward_param_transform_fn)
+    transformed_params <- get_transformed_params(params = initial_params,
+                                                 param_transform_fn = forward_param_transform_fn)
     param_names <- names(initial_params)
 
     # 2. Fit biphasic model ------------------------------------------

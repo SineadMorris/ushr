@@ -10,6 +10,7 @@ get_plottheme <- function(textsize){
                                   legend.text = element_text(size = textsize),
                                   legend.title = element_text(size = textsize + 2),
                                   strip.text.x = element_text(size = textsize))
+    return(mytheme)
 }
 
 #' Plot data
@@ -23,6 +24,7 @@ get_plottheme <- function(textsize){
 #' @param facet_col numeric value for number of columns to use when plotting subject panels. Defaults to NULL (i.e. ggplot default).
 #' @param detection_threshold numeric value indicating the detection threshold of the assay used to measure viral load. Default value is 20.
 #' @import ggplot2
+#' @importFrom rlang .data
 #' @export
 #' @examples
 #'
@@ -44,7 +46,7 @@ plot_data <- function(data, textsize = 9, pointsize = 1, linesize = 0.5,
 
     mytheme <- get_plottheme(textsize)
 
-    data %>% ggplot(aes(x = time, y = vl)) + geom_point(size = pointsize) +
+    data %>% ggplot(aes(x = .data$time, y = .data$vl)) + geom_point(size = pointsize) +
         geom_hline(aes(yintercept = detection_threshold), size = linesize, linetype = "dashed") +
         facet_wrap(~ id, ncol = facet_col) + mytheme +
         scale_y_log10("HIV viral load") + scale_x_continuous("Time")
@@ -82,7 +84,7 @@ plot_model <- function(model_output, type = "biphasic", detection_threshold = 20
         stop("Package \"ggplot2\" is required for automated plotting.
              Either install it, or plot manually.")
     }
-    if (is.null(data)) {
+    if (is.null(model_output)) {
         stop("Please include model output from 'ushr()' for plotting. If you want to plot data, use 'plot_data()'.")
     }
     # get desired fits for plotting
@@ -96,12 +98,12 @@ plot_model <- function(model_output, type = "biphasic", detection_threshold = 20
         stop("There are no fits of the type you have chosen. Try plotting the other type of fit ('biphasic', or 'single').")
     }
 
-    data <- model_output$data_filtered %>% filter(id %in% unique(fits$id))
+    filtered_data <- model_output$data_filtered %>% filter(id %in% unique(fits$id))
 
     mytheme <- get_plottheme(textsize)
 
-    data %>% ggplot() + geom_point(aes(x = time, y = vl, group = id), size = pointsize) +
-        geom_line(data = fits, aes(x = time, y = fit, group = id), lty = 1, col="black", size = linesize) +
+    filtered_data %>% ggplot() + geom_point(aes(x = time, y = vl, group = id), size = pointsize) +
+        geom_line(data = fits, aes(x = time, y = fit, group = id), lty = 1, col = "black", size = linesize) +
         facet_wrap(~id, ncol = facet_col) + mytheme +
         xlab("Time") + scale_y_log10("HIV viral load") +
         geom_hline(aes(yintercept = detection_threshold), linetype = "dashed")
@@ -133,7 +135,8 @@ plot_TTS <- function(TTS_output, textsize = 9, bins = 20){
     }
     mytheme <- get_plottheme(textsize)
 
-    ggplot(data = TTS_output, aes(x = TTS)) + geom_histogram(bins = bins, fill = "grey", colour = "black") +
+    ggplot(data = TTS_output, aes(x = TTS)) +
+        geom_histogram(bins = bins, fill = "grey", colour = "black") +
         mytheme + ylab("Frequency") + xlab("Time to suppression")
 }
 
@@ -147,6 +150,7 @@ plot_TTS <- function(TTS_output, textsize = 9, bins = 20){
 #' @param stats logical indicator: should the median and sd lifespans also be returned? Default is FALSE.
 #' @import dplyr
 #' @import tidyr
+#' @importFrom rlang .data
 #' @export
 #' @examples
 #'
@@ -161,38 +165,41 @@ plot_TTS <- function(TTS_output, textsize = 9, bins = 20){
 summarize_model <- function(model_output, data, stats = FALSE){
 
     # get biphasic parameter estimates
-    biphasicfits <- model_output$biphasicCI %>% select(-lowerCI, -upperCI) %>% spread(param, estimate) %>%
-        mutate(ShortLifespan = 1/delta, LongLifespan = 1/gamma, Model = "Biphasic")
+    biphasicfits <- model_output$biphasicCI %>%
+        select(- .data$lowerCI, - .data$upperCI) %>% spread(.data$param, .data$estimate) %>%
+        mutate(ShortLifespan = 1/.data$delta, LongLifespan = 1/.data$gamma, Model = "Biphasic")
 
-    singlephasefits <- model_output$singleCI  %>% select(-lowerCI, -upperCI) %>% spread(param, estimate) %>%
-        mutate(SingleLifespan = 1/gammahat, Model = "Single phase")
+    singlephasefits <- model_output$singleCI  %>%
+        select(- .data$lowerCI, - .data$upperCI) %>% spread(.data$param, .data$estimate) %>%
+        mutate(SingleLifespan = 1/.data$gammahat, Model = "Single phase")
 
     allfits <- biphasicfits %>% full_join(singlephasefits)
 
-    allinfo <- data %>% distinct(id) %>% mutate(Included = ifelse(id %in% allfits$id, "Yes", "No")) %>%
+    allinfo <- data %>% distinct(id) %>%
+        mutate(Included = ifelse(id %in% allfits$id, "Yes", "No")) %>%
         left_join(allfits) %>%
-        select(id, Included, #Reason = ExclusionReason,
-               Model, ShortLifespan, LongLifespan, SingleLifespan) %>%
+        select(.data$id, .data$Included, #Reason = ExclusionReason,
+               .data$Model, .data$ShortLifespan, .data$LongLifespan, .data$SingleLifespan) %>%
         mutate_if(is.numeric, round, 2) %>% replace(., is.na(.), "")
 
 
     biphasicstats <- model_output$biphasicCI %>%
-        select(-lowerCI, -upperCI) %>% spread(param, estimate) %>%
-        mutate(ShortLifespan = 1/delta, LongLifespan = 1/gamma) %>%
+        select(- .data$lowerCI, - .data$upperCI) %>% spread(.data$param, .data$estimate) %>%
+        mutate(ShortLifespan = 1/.data$delta, LongLifespan = 1/.data$gamma) %>%
         gather(Param, estimate, A:LongLifespan) %>%
-        group_by(Param) %>%
-        summarize(Median = median(estimate), SD = sd(estimate)) %>%
-        mutate(Median = signif(Median, 3), SD = signif(SD, 3), Model = "Biphasic")
+        group_by(.data$Param) %>%
+        summarize(Median = median(.data$estimate), SD = sd(.data$estimate)) %>%
+        mutate(Median = signif(.data$Median, 3), SD = signif(.data$SD, 3), Model = "Biphasic")
 
 
    singlestats <- model_output$singleCI %>%
-        select(-lowerCI, -upperCI) %>% spread(param, estimate) %>%
-        mutate(SingleLifespan = 1/gammahat) %>%
+        select(- .data$lowerCI, - .data$upperCI) %>% spread(.data$param, .data$estimate) %>%
+        mutate(SingleLifespan = 1/.data$gammahat) %>%
         gather(Param, estimate, Bhat:SingleLifespan) %>%
-        group_by(Param) %>%
-        summarize(Median = median(estimate), SD = sd(estimate)) %>%
+        group_by(.data$Param) %>%
+        summarize(Median = median(.data$estimate), SD = sd(.data$estimate)) %>%
         ungroup() %>%
-        mutate(Median = signif(Median, 3), SD = signif(SD, 3), Model = "Single phase")
+        mutate(Median = signif(.data$Median, 3), SD = signif(.data$SD, 3), Model = "Single phase")
 
 
     if (stats) {

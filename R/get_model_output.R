@@ -62,7 +62,8 @@ get_CItable <- function(CIlist, param_names, free_param_index, fitted){
     CItable <- bind_rows(CIlist) %>%
         mutate(param = rep(param_names[free_param_index], times = nrow(fitted)),
                id = rep(fitted$id, each = length(param_names[free_param_index]))) %>%
-        mutate(CIrange = upperCI - lowerCI, relativerange = CIrange/lowerCI)
+        mutate(CIrange = .$upperCI - .$lowerCI) %>%
+        mutate(relativerange = .$CIrange/.$lowerCI)
 
     return(CItable)
 }

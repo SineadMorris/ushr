@@ -16,6 +16,7 @@
 #' @param threshold_buffer numerical value indicating the range above the detection threshold which represents potential skewing of model fits. Subjects with their last two data points within this range will have the last point removed. Default value is 10.
 #' @param nsuppression numerical value (1 or 2) indicating whether suppression is defined as having one observation below the detection threshold, or two sustained observations. Default value is 1.
 #' @import dplyr
+#' @importFrom rlang .data
 #' @export
 #' @examples
 #'
@@ -47,7 +48,6 @@ filter_data <- function(data, detection_threshold = 20, censortime = 365, declin
         data <- data %>% filter(!is.na(id))
     }
 
-
     if (!(nsuppression %in% c(1,2))) {
         warning("nsuppression must take the numeric value 1 or 2 to define the criteria for reaching suppression; reverting to default nsuppression = 1")
 
@@ -59,34 +59,42 @@ filter_data <- function(data, detection_threshold = 20, censortime = 365, declin
         data_filtered <- data %>% mutate(vl = case_when(vl <= detection_threshold ~ detection_threshold/2,
                                                         vl >= detection_threshold ~ vl) ) %>%
             # 2. Look at only those who reach control within user defined censortime
-            filter(time <= censortime) %>% group_by(id) %>% filter(any(vl <= detection_threshold)) %>% ungroup() %>%
+            filter(.data$time <= censortime) %>% group_by(id) %>%
+            filter(any(.data$vl <= detection_threshold)) %>% ungroup() %>%
             # 3a. Isolate data from the highest VL measurement (from points 1 - 3) to the first point below detection
-            filter(!is.na(vl)) %>% group_by(id) %>%
-            slice(which.max(vl[1:3]):Position(function(x) x <= detection_threshold, vl)) %>% ungroup() %>%
+            filter(!is.na(.data$vl)) %>% group_by(id) %>%
+            slice(which.max(.data$vl[1:3]):Position(function(x) x <= detection_threshold, .data$vl)) %>%
+            ungroup() %>%
             # 3b. Only keep VL sequences that are decreasing with user defined buffer...
-            group_by(id) %>% filter(all(vl <= cummin(vl) + decline_buffer)) %>%
+            group_by(id) %>% filter(all(.data$vl <= cummin(.data$vl) + decline_buffer)) %>%
             # 4. ...AND have min # dps above the detection threshold
-            filter(length(vl[vl > detection_threshold]) >= n_min_single)
+            filter(length(.data$vl[.data$vl > detection_threshold]) >= n_min_single)
+
     } else if (nsuppression == 2) {
         data_filtered <- data %>% mutate(vl = case_when(vl <= detection_threshold ~ detection_threshold/2,
                                                         vl >= detection_threshold ~ vl) ) %>%
-            filter(!is.na(vl)) %>%
-            filter(time <= censortime) %>% group_by(id) %>%
+            filter(!is.na(.data$vl)) %>%
+            filter(.data$time <= censortime) %>% group_by(id) %>%
             # NOW: must have 2 consecutive measurements below threshold
-            mutate(firstbelow = intersect(which(vl <= detection_threshold), which(vl <= detection_threshold) + 1)[1] - 1 ) %>%
-            mutate(firstbelow = time[firstbelow]) %>% filter(time <= firstbelow) %>% ungroup() %>%
+            mutate(firstbelow = intersect(which(.data$vl <= detection_threshold),
+                                          which(.data$vl <= detection_threshold) + 1)[1] - 1 ) %>%
+            mutate(firstbelow = .data$time[.data$firstbelow]) %>%
+            filter(.data$time <= .data$firstbelow) %>% ungroup() %>%
             # Continue as above
             group_by(id) %>%
-            slice(which.max(vl[1:3]):Position(function(x) x <= detection_threshold, vl)) %>% ungroup() %>%
-            group_by(id) %>% filter(all(vl <= cummin(vl) + decline_buffer)) %>%
-            filter(length(vl[vl > detection_threshold]) >= n_min_single)
+            slice(which.max(.data$vl[1:3]):Position(function(x) x <= detection_threshold, .data$vl)) %>%
+            ungroup() %>%
+            group_by(id) %>% filter(all(.data$vl <= cummin(.data$vl) + decline_buffer)) %>%
+            filter(length(.data$vl[.data$vl > detection_threshold]) >= n_min_single)
     }
 
     # 5. Remove last data point of subjects with last two points very close to the threshold to prevent skewing model fit
     if (nrow(data_filtered) > 0) {
         data_filtered <- data_filtered %>% group_by(id) %>%
-            mutate(n = n(), index = 1:n(), tag = ifelse(vl[n-1] - vl[n] < threshold_buffer, TRUE, FALSE) ) %>%
-        filter(!(tag == TRUE & index == n)) %>% ungroup() %>% select(-index, -n, -tag)
+            mutate(n = n(), index = 1:n(),
+                   tag = ifelse(.data$vl[.data$n-1] - .data$vl[.data$n] < threshold_buffer, TRUE, FALSE) ) %>%
+        filter(!(.data$tag == TRUE & .data$index == .data$n)) %>%
+            ungroup() %>% select(- .data$index, -.data$n, -.data$tag)
 }
     return(data_filtered)
 }
