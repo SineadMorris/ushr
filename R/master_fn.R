@@ -22,7 +22,6 @@
 #' @param initial_params named vector of initial parameter guesses. Defaults to c(A = 10000, delta = 0.68, B = 1000, gamma = 0.03).
 #' @param searchmethod optimization algorithm to be used in optim. Defaults to Nelder-Mead.
 #' @return a list containing the filtered data ('data_filtered'), parameter estimates for the biphasic and single phase models ('biphasicCI' and 'singleCI'), and predictions from the biphasic and single phase models ('biphasic_fits' and 'single_fits')
-#' @importFrom rlang .data
 #' @export
 #' @examples
 #'

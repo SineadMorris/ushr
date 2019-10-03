@@ -1,0 +1,12 @@
+utils::globalVariables(c("vl", "time", "id",
+                         "vl_diff", "index", "tag", "n",
+                         "firstbelow",
+                         "calculation", "model", "Model",
+                         "Included",
+                         "Param", "param", "estimate",
+                         "A", "B", "delta", "gamma", "Bhat", "gammahat",
+                         "ShortLifespan", "LongLifespan", "SingleLifespan",
+                         "Median", "SD",
+                         "TTS", "ART", "fit",
+                         "lowerCI", "upperCI", "CIrange", "relativerange",
+                         "."))
