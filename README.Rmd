@@ -70,12 +70,17 @@ To install the package from Github, first install and load `devtools`, then inst
 install.packages("devtools")
 library("devtools")
 
-install_github("SineadMorris/ushr", build_vignettes = TRUE)
+install_github("SineadMorris/ushr")
+
 ```
 
-The vignette can be viewed through
+Note that to install the package with its vignette, you must first install `knitr`, then install `ushr` with `build_vignettes = TRUE`. The package vignette can then be viewed using `browseVignettes()`.
 
 ```{r vignette, eval = FALSE}
+install.packages("knitr")
+
+install_github("SineadMorris/ushr", build_vignettes = TRUE)
+
 browseVignettes(package = "ushr")
 ```
 
