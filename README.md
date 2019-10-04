@@ -187,13 +187,15 @@ For a better understanding of parameter identifiability, one can also print the 
 head(model_output$biphasicCI) 
 ```
 
-    ##   id param     estimate      lowerCI      upperCI
-    ## 1  1     A 2.754517e+04 1.987918e+04 3.816738e+04
-    ## 2  1 delta 3.076076e-01 2.283449e-01 4.143838e-01
-    ## 3  1     B 1.174379e+03 7.013845e+02 1.966347e+03
-    ## 4  1 gamma 3.560972e-02 2.829938e-02 4.480847e-02
-    ## 5 13     A 3.853920e+05 3.002260e+05 4.947174e+05
-    ## 6 13 delta 5.116112e-01 4.549242e-01 5.753618e-01
+    ## # A tibble: 6 x 5
+    ##      id param    estimate     lowerCI     upperCI
+    ##   <dbl> <chr>       <dbl>       <dbl>       <dbl>
+    ## 1     1 A      27545.      19879.      38167.    
+    ## 2     1 delta      0.308       0.228       0.414 
+    ## 3     1 B       1174.        701.       1966.    
+    ## 4     1 gamma      0.0356      0.0283      0.0448
+    ## 5    13 A     385392.     300226.     494717.    
+    ## 6    13 delta      0.512       0.455       0.575
 
 ``` r
 head(model_output$singleCI)     
@@ -217,20 +219,24 @@ TTSparametric <- get_TTS(model_output = model_output, suppression_threshold = 10
 head(TTSparametric)
 ```
 
-    ##   id       TTS    model calculation
-    ## 1  1  69.17562 biphasic  parametric
-    ## 2 13  48.70401 biphasic  parametric
-    ## 3 17  73.09108 biphasic  parametric
-    ## 4 19  64.95347 biphasic  parametric
-    ## 5 26 122.11986 biphasic  parametric
-    ## 6 27  69.81124 biphasic  parametric
+    ## # A tibble: 6 x 4
+    ##      id   TTS model    calculation
+    ##   <dbl> <dbl> <chr>    <chr>      
+    ## 1     1  69.2 biphasic parametric 
+    ## 2    13  48.7 biphasic parametric 
+    ## 3    17  73.1 biphasic parametric 
+    ## 4    19  65.0 biphasic parametric 
+    ## 5    26 122.  biphasic parametric 
+    ## 6    27  69.8 biphasic parametric
 
 ``` r
 TTSparametric %>% summarize(median = median(TTS), SD = sd(TTS), N = n())
 ```
 
-    ##     median       SD  N
-    ## 1 65.70076 30.98759 16
+    ## # A tibble: 1 x 3
+    ##   median    SD     N
+    ##    <dbl> <dbl> <int>
+    ## 1   65.7  31.0    16
 
 We can also plot the distribution of estimates using `plot_TTS()`.
 
