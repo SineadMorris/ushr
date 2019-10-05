@@ -150,6 +150,7 @@ plot_TTS <- function(TTS_output, textsize = 9, bins = 20){
 #' @import dplyr
 #' @import tidyr
 #' @importFrom stats median sd
+#' @return a list containing: (i) a summary of which subjects were successfully fit using the biphasic or single phase models, with their corresponding infected cell lifespan estimates ('summary'); (ii) summary statistics for the estimated parameters from the biphasic model ('biphasicstats'); and (iii) summary statistics for the estimated parameters from the single phase model ('singlestats').
 #' @export
 #' @examples
 #'

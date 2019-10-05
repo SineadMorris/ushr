@@ -142,7 +142,7 @@ get_nonparametricTTS <- function(vl, suppression_threshold, time, npoints){
 #' @param parametric logical TRUE/FALSE indicating whether time to suppression shoudl be calculated usingthe parametric (TRUE) or non-parametric (FALSE) method. If TRUE, a fitted model object is required. If FALSE, the raw data frame is required. Defaults to TRUE.
 #' @param ARTstart logical TRUE/FALSE indicating whether the time to suppression should be represented as time since ART initiation. Default = FALSE. If TRUE, ART initiation times must be included as a data column named 'ART'.
 #' @param npoints numeric value of the number of interpolation points to be considered. Default is 1000.
-#' @export
+#' @return a data frame containing all individuals who fit the inclusion criteria, along with their TTS estimates, and a column indicating whether the parameteric or nonparametric approach was used.
 #' @examples
 #'
 #' set.seed(1234567)
