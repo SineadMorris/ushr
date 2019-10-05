@@ -9,3 +9,4 @@
 ^ModelSchematic\.png$
 ^AIDSbibstyle\.csl$
 ^\.travis\.yml$
+^cran-comments\.md$
