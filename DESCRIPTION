@@ -7,8 +7,8 @@ Authors@R: c(person("Sinead E.", "Morris", role = c("aut", "cre"),
                      email = "sinead.morris@columbia.edu",
 		     comment = c(ORCID = "0000-0001-8626-1698")),
               person("Luise", "Dziobek-Garrett", role = "ctb"),
-              person("Andrew", "Yates", role = "ctb"),
-	              comment = c(ORCID = "0000-0003-4606-4483"))
+              person("Andrew", "Yates", role = "ctb",
+	              comment = c(ORCID = "0000-0003-4606-4483")))
 Author: Sinead E. Morris [aut, cre],
   	Luise Dziobek-Garrett [ctb],
   	Andrew Yates [ctb]
