@@ -11,7 +11,7 @@ Author: Sinead E. Morris [aut, cre],
   Luise Dziobek-Garrett [ctb],
   Andrew Yates [ctb]
 Maintainer: Sinead E. Morris <sinead.morris@columbia.edu>
-Description: Applies the canonical biphasic exponential decay model to longitudinal data on HIV decline in patients on antiretroviral therapy (ART). Model fitting and parameter estimation are performed, with additional options to calculate the time to viral suppression, and summarize and plot results.
+Description: This package uses the canonical biphasic exponential decay model to fit longitudinal data on HIV decline in patients on antiretroviral therapy (ART). Model fitting and parameter estimation are performed, with additional options to calculate the time to viral suppression, and summarize and plot results.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
