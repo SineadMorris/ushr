@@ -2,3 +2,6 @@ language: r
 os:
 - linux
 - osx
+r: 
+- release
+- devel
