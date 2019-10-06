@@ -36,9 +36,9 @@ ushr(data, filter = TRUE, detection_threshold = 20, censortime = 365,
 
 \item{nsuppression}{numerical value (1 or 2) indicating whether suppression is defined as having one observation below the detection threshold, or two sustained observations. Default value is 1.}
 
-\item{forward_param_transform_fn}{list of transformation functions to be used when fitting the model in optim. Defaults to log transformations for all parameters (to allow uncontrained optimization).}
+\item{forward_param_transform_fn}{list of transformation functions to be used when fitting the model in optim. Defaults to log transformations for all parameters (to allow unconstrained optimization).}
 
-\item{inv_param_transform_fn}{list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward tranformation functions. Defaults to exponential.}
+\item{inv_param_transform_fn}{list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward transformation functions. Defaults to exponential.}
 
 \item{initial_params}{named numeric vector of initial parameter guesses. Defaults to c(A = 10000, delta = 0.68, B = 1000, gamma = 0.03).}
 

@@ -18,7 +18,7 @@ get_error(params, param_names, free_param_index, data, model_list,
 
 \item{model_list}{character indicating which model is begin fit. Can be either 'four' for the biphasic model, or 'two' for the single phase model.}
 
-\item{inv_param_transform_fn}{list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward tranformation functions. Defaults to exponential.}
+\item{inv_param_transform_fn}{list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward transformation functions. Defaults to exponential.}
 }
 \description{
 For a given parameter set, this function computes the predicted viral load curve and evaluates the error metric between the prediction and observed data (to be passed to optim).

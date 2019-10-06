@@ -12,7 +12,7 @@ filter_dataTTS(data, suppression_threshold = 20, censortime = 365,
 
 \item{suppression_threshold}{numeric value indicating the suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.}
 
-\item{censortime}{the maximum time point to inculde in the analysis. Subjects who do not suppress viral load below the suppression threshold within this time will be discarded from model fitting. Units are assumed to be the same as the 'time' column. Default value is 365.}
+\item{censortime}{the maximum time point to include in the analysis. Subjects who do not suppress viral load below the suppression threshold within this time will be discarded from model fitting. Units are assumed to be the same as the 'time' column. Default value is 365.}
 
 \item{decline_buffer}{the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.}
 }
@@ -21,7 +21,7 @@ This function prepares the raw input data for TTS interpolation. Individuals who
 }
 \details{
 Steps include:
-1. Setting values below the suppression threshold to half the suppression threshhold (following standard practice).
+1. Setting values below the suppression threshold to half the suppression threshold (following standard practice).
 2. Filtering out subjects who do not suppress viral load below the suppression threshold by a certain time.
 3. Filtering out subjects who do not have a decreasing sequence of viral load (within some buffer range).
 }

@@ -16,7 +16,7 @@ plot_data(data, textsize = 9, pointsize = 1, linesize = 0.5,
 
 \item{linesize}{numeric value for line width in ggplot. Default is 0.5.}
 
-\item{facet_col}{numeric value for number of columns to use when facetting subject panels. Defaults to NULL (i.e. ggplot default).}
+\item{facet_col}{numeric value for number of columns to use when faceting subject panels. Defaults to NULL (i.e. ggplot default).}
 
 \item{detection_threshold}{numeric value indicating the detection threshold of the assay used to measure viral load. Default value is 20.}
 }

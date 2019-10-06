@@ -15,7 +15,7 @@ Overall, we hope `ushr` will increase accessibility to mathematical modeling tec
 Author and Contributors
 -----------------------
 
-Sinead E Morris (author and maintainer), Luise Dziobek-Garrett (contributer) and Andrew J Yates (contributer).
+Sinead E Morris (author and maintainer), Luise Dziobek-Garrett (contributor) and Andrew J Yates (contributor).
 
 Citing this package
 -------------------
@@ -38,11 +38,11 @@ HIV dynamics in an infected individual can be mathematically described as the pr
 
 <img src="ModelSchematic.png" width="650" />
 
-Once ART has begun, the decline of HIV viral load, *V*, can be modelled using the following expression
+Once ART has begun, the decline of HIV viral load, *V*, can be modeled using the following expression
 
 *V*(*t*) = A exp(−*δ* *t*) + B exp(−*γ* *t*),
 
-where *δ* and *γ* are the death rates of short and long-lived infected cells, respectively \[[3](#ref-perelson1996hiv)–[6](#ref-Shet2016)\]. This equation is referred to as the biphasic model: viral decay is fast initially, reflecting the loss of short-lived infected cells (at rate *δ*), but then enters a slower decline phase reflecting the loss of long-lived infected cells (at rate *γ*) (**Fig B**). Eventually, viral load is suppressed below the detection threshold of the experiment (dashed line, Fig B). Note that for patient data exhibiting only one decline phase (for example, due to sparse or delayed VL measurements), one can use a single phase version of the biphasic model given by
+where *δ* and *γ* are the death rates of short and long-lived infected cells, respectively \[[3](#ref-perelson1996hiv)–[6](#ref-Shet2016)\]. This equation is referred to as the biphasic model: viral decay is fast initially, reflecting the loss of short-lived infected cells (at rate *δ*), but then enters a slower decline phase reflecting the loss of long-lived infected cells (at rate *γ*) (**Fig B**). Eventually, viral load is suppressed below the detection threshold of the experiment (dashed line, Fig B). Note that for patient data exhibiting only one decline phase (for example, due to sparse or delayed viral load measurements), one can use a single phase version of the biphasic model given by
 
 *V*(*t*)= B̂ exp(−γ̂ *t*),
 
@@ -92,7 +92,7 @@ print(head(actg315raw))
     ## 5      5     1  29     2.6435 172.48
     ## 6      6     1  57     2.1139 270.94
 
-Since `ushr` requires absolute viral load measurements, and specific column names ('vl', 'time', 'id'), we first back-transform the log<sub>10</sub> viral load measurements into absolute values, and rename the column headings.
+Since `ushr` requires absolute viral load (VL) measurements, and specific column names ('vl', 'time', 'id'), we first back-transform the log<sub>10</sub> viral load measurements into absolute values, and rename the column headings.
 
 ``` r
 actg315 <- actg315raw %>%

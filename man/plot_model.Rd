@@ -20,7 +20,7 @@ plot_model(model_output, type = "biphasic", detection_threshold = 20,
 
 \item{linesize}{numeric value for line width in ggplot. Default is 0.5.}
 
-\item{facet_col}{numeric value for number of columns to use when facetting subject panels. Defaults to NULL (i.e. ggplot default).}
+\item{facet_col}{numeric value for number of columns to use when faceting subject panels. Defaults to NULL (i.e. ggplot default).}
 }
 \description{
 This function plots the output from model fitting.

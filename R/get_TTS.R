@@ -3,12 +3,12 @@
 #' This function prepares the raw input data for TTS interpolation. Individuals whose data do not meet specific inclusion criteria are removed (see Vignette for more details).
 #'
 #' Steps include:
-#' 1. Setting values below the suppression threshold to half the suppression threshhold (following standard practice).
+#' 1. Setting values below the suppression threshold to half the suppression threshold (following standard practice).
 #' 2. Filtering out subjects who do not suppress viral load below the suppression threshold by a certain time.
 #' 3. Filtering out subjects who do not have a decreasing sequence of viral load (within some buffer range).
 #' @param data raw data set. Must be a data frame with the following columns: 'id' - stating the unique identifier for each subject; 'vl' - numeric vector stating the viral load measurements for each subject; 'time' - numeric vector stating the time at which each measurement was taken.
 #' @param suppression_threshold numeric value indicating the suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.
-#' @param censortime the maximum time point to inculde in the analysis. Subjects who do not suppress viral load below the suppression threshold within this time will be discarded from model fitting. Units are assumed to be the same as the 'time' column. Default value is 365.
+#' @param censortime the maximum time point to include in the analysis. Subjects who do not suppress viral load below the suppression threshold within this time will be discarded from model fitting. Units are assumed to be the same as the 'time' column. Default value is 365.
 #' @param decline_buffer the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.
 #' @export
 #' @examples
@@ -142,7 +142,7 @@ get_nonparametricTTS <- function(vl, suppression_threshold, time, npoints){
 #' @param parametric logical TRUE/FALSE indicating whether time to suppression should be calculated using the parametric (TRUE) or non-parametric (FALSE) method. If TRUE, a fitted model object is required. If FALSE, the raw data frame is required. Defaults to TRUE.
 #' @param ARTstart logical TRUE/FALSE indicating whether the time to suppression should be represented as time since ART initiation. Default = FALSE. If TRUE, ART initiation times must be included as a data column named 'ART'.
 #' @param npoints numeric value of the number of interpolation points to be considered. Default is 1000.
-#' @return a data frame containing all individuals who fit the inclusion criteria, along with their TTS estimates, and a column indicating whether the parameteric or nonparametric approach was used.
+#' @return a data frame containing all individuals who fit the inclusion criteria, along with their TTS estimates, and a column indicating whether the parametric or nonparametric approach was used.
 #' @export
 #' @examples
 #'

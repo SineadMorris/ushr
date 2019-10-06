@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_data.R
 \name{add_noise}
 \alias{add_noise}
-\title{Add noise to viral load observationss}
+\title{Add noise to viral load observations}
 \usage{
 add_noise(vl, sd_noise)
 }

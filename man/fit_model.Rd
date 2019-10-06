@@ -9,7 +9,7 @@ fit_model(data, id_vector, param_names, initial_params, free_param_index,
   forward_param_transform_fn, inv_param_transform_fn, searchmethod)
 }
 \arguments{
-\item{data}{dataframe with columns for each subject's identifieer ('id'), viral load measurements ('vl'), and timing of sampling ('time')}
+\item{data}{dataframe with columns for each subject's identifier ('id'), viral load measurements ('vl'), and timing of sampling ('time')}
 
 \item{id_vector}{vector of identifiers corresponding to the subjects to be fitted.}
 
@@ -25,9 +25,9 @@ fit_model(data, id_vector, param_names, initial_params, free_param_index,
 
 \item{whichcurve}{indicates which model prediction function to use. Should be get_biphasic for the biphasic model or get_singlephase for the singlephase model. Defaults to get_biphasic.}
 
-\item{forward_param_transform_fn}{list of transformation functions to be used when fitting the model in optim. Defaults to log transformations for all parameters (to allow uncontrained optimization).}
+\item{forward_param_transform_fn}{list of transformation functions to be used when fitting the model in optim. Defaults to log transformations for all parameters (to allow unconstrained optimization).}
 
-\item{inv_param_transform_fn}{list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward tranformation functions. Defaults to exponential.}
+\item{inv_param_transform_fn}{list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward transformation functions. Defaults to exponential.}
 
 \item{searchmethod}{optimization algorithm to be used in optim. Defaults to Nelder-Mead.}
 }

@@ -26,7 +26,7 @@ get_TTS(model_output = NULL, data = NULL, suppression_threshold = 20,
 \item{npoints}{numeric value of the number of interpolation points to be considered. Default is 1000.}
 }
 \value{
-a data frame containing all individuals who fit the inclusion criteria, along with their TTS estimates, and a column indicating whether the parameteric or nonparametric approach was used.
+a data frame containing all individuals who fit the inclusion criteria, along with their TTS estimates, and a column indicating whether the parametric or nonparametric approach was used.
 }
 \description{
 This function calculates the time to suppress HIV below a specified threshold.

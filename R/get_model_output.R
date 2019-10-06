@@ -5,7 +5,7 @@
 #' @param initial_params named vector of the initial parameter guess
 #' @param free_param_index logical TRUE/FALSE vector indicating whether the parameters A, delta, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.
 #' @param param_names character vector of the parameter names. This should be c("A", "delta", "B", "gamma") for the biphasic model or c("B", "gamma") for the single phase model.
-#' @param inv_param_transform_fn list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward tranformation functions.
+#' @param inv_param_transform_fn list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward transformation functions.
 #' @param index indicator value used inside the master function to indicate the subject number.
 #'
 get_params = function(fit, initial_params, free_param_index, param_names, inv_param_transform_fn, index = NULL){

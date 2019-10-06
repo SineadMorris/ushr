@@ -148,7 +148,7 @@ simulate_vl <- function(params, timevec, id){
 }
 
 
-#' Add noise to viral load observationss
+#' Add noise to viral load observations
 #'
 #' This function adds noise to vl measurements for each subject.
 #'

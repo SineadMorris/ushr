@@ -7,7 +7,7 @@
 #' @param free_param_index logical TRUE/FALSE vector indicating whether the parameters A, delta, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.
 #' @param data dataframe with columns for the subject's viral load measurements ('vl'), and timing of sampling ('time')
 #' @param model_list character indicating which model is begin fit. Can be either 'four' for the biphasic model, or 'two' for the single phase model.
-#' @param inv_param_transform_fn list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward tranformation functions. Defaults to exponential.
+#' @param inv_param_transform_fn list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward transformation functions. Defaults to exponential.
 #'
 get_error <- function(params, param_names, free_param_index, data, model_list,
                       inv_param_transform_fn){
@@ -58,8 +58,8 @@ get_error <- function(params, param_names, free_param_index, data, model_list,
 #' @param free_param_index logical vector indicating whether the parameters A, delta, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.
 #' @param data dataframe with columns for the subject's viral load measurements ('vl'), and timing of sampling ('time')
 #' @param model_list character indicating which model is begin fit. Can be either 'four' for the biphasic model, or 'two' for the single phase model. Defaults to 'four'.
-#' @param forward_param_transform_fn list of transformation functions to be used when fitting the model in optim. Defaults to log transformations for all parameters (to allow uncontrained optimization).
-#' @param inv_param_transform_fn list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward tranformation functions. Defaults to exponential.
+#' @param forward_param_transform_fn list of transformation functions to be used when fitting the model in optim. Defaults to log transformations for all parameters (to allow unconstrained optimization).
+#' @param inv_param_transform_fn list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward transformation functions. Defaults to exponential.
 #' @param searchmethod optimization algorithm to be used in optim. Defaults to Nelder-Mead.
 #'
 get_optim_fit <- function(initial_params, param_names, free_param_index, data,
@@ -91,7 +91,7 @@ get_optim_fit <- function(initial_params, param_names, free_param_index, data,
 #'
 #' This function fits either the biphasic or single phase model to the processed data and extracts the best-fit parameters.
 #'
-#' @param data dataframe with columns for each subject's identifieer ('id'), viral load measurements ('vl'), and timing of sampling ('time')
+#' @param data dataframe with columns for each subject's identifier ('id'), viral load measurements ('vl'), and timing of sampling ('time')
 #' @param id_vector vector of identifiers corresponding to the subjects to be fitted.
 #' @param param_names names of parameter vector.
 #' @param initial_params named vector of the initial parameter guess.
@@ -99,8 +99,8 @@ get_optim_fit <- function(initial_params, param_names, free_param_index, data,
 #' @param n_min_biphasic the minimum number of data points required to fit the biphasic model. Defaults to 6. It is highly advised not to go below this threshold.
 #' @param model_list character indicating which model is to be fit. Can be either 'four' for the biphasic model, or 'two' for the single phase model. Defaults to 'four'.
 #' @param whichcurve indicates which model prediction function to use. Should be get_biphasic for the biphasic model or get_singlephase for the singlephase model. Defaults to get_biphasic.
-#' @param forward_param_transform_fn list of transformation functions to be used when fitting the model in optim. Defaults to log transformations for all parameters (to allow uncontrained optimization).
-#' @param inv_param_transform_fn list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward tranformation functions. Defaults to exponential.
+#' @param forward_param_transform_fn list of transformation functions to be used when fitting the model in optim. Defaults to log transformations for all parameters (to allow unconstrained optimization).
+#' @param inv_param_transform_fn list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward transformation functions. Defaults to exponential.
 #' @param searchmethod optimization algorithm to be used in optim. Defaults to Nelder-Mead.
 #'
 fit_model <- function(data, id_vector, param_names,

@@ -16,7 +16,7 @@ get_params(fit, initial_params, free_param_index, param_names,
 
 \item{param_names}{character vector of the parameter names. This should be c("A", "delta", "B", "gamma") for the biphasic model or c("B", "gamma") for the single phase model.}
 
-\item{inv_param_transform_fn}{list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward tranformation functions.}
+\item{inv_param_transform_fn}{list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward transformation functions.}
 
 \item{index}{indicator value used inside the master function to indicate the subject number.}
 }
