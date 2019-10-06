@@ -7,7 +7,7 @@
 add_noise(vl, sd_noise)
 }
 \arguments{
-\item{vl}{vector of viral load measurements.}
+\item{vl}{numeric vector of viral load measurements.}
 
 \item{sd_noise}{numeric value indicating the standard deviation level to be used when adding noise to the simulated data (on the log10 scale).}
 }

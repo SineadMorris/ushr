@@ -3,7 +3,7 @@
 #' This function extracts all untransformed parameters from the output of optim (i.e. the fitted model).
 #' @param fit the output of optim i.e. the fitted model for a particular subject
 #' @param initial_params named vector of the initial parameter guess
-#' @param free_param_index logical vector indicating whether the parameters A, delta, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.
+#' @param free_param_index logical TRUE/FALSE vector indicating whether the parameters A, delta, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.
 #' @param param_names character vector of the parameter names. This should be c("A", "delta", "B", "gamma") for the biphasic model or c("B", "gamma") for the single phase model.
 #' @param inv_param_transform_fn list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward tranformation functions.
 #' @param index indicator value used inside the master function to indicate the subject number.
@@ -55,7 +55,7 @@ get_CI <- function(fit){
 #' @param CIlist a list of confidence intervals and parameter estimates obtained from fitting either the single or biphasic model to each eligible subject.
 #' @param param_names character vector of the parameter names. This should be c("A", "delta", "B", "gamma") for the biphasic model or c("B", "gamma") for the single phase model.
 #' @param free_param_index logical vector indicating whether the parameters A, delta, B, gamma are to be included. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.
-#' @param fitted dataframe with an 'id' column of the unique identifiers for each subject represented in CIlist. Identifiers should be ordered according to their appearance in CIlist.
+#' @param fitted data frame with an 'id' column of the unique identifiers for each subject represented in CIlist. Identifiers should be ordered according to their appearance in CIlist.
 #'
 get_CItable <- function(CIlist, param_names, free_param_index, fitted){
 

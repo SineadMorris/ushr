@@ -8,16 +8,16 @@ filter_dataTTS(data, suppression_threshold = 20, censortime = 365,
   decline_buffer = 500)
 }
 \arguments{
-\item{data}{raw data set. Must have the following column names: 'id' stating the unique identifier for each subject, 'vl' stating the viral load measurements for each subject; 'time' stating the time at which each measurement was taken.}
+\item{data}{raw data set. Must be a data frame with the following columns: 'id' - stating the unique identifier for each subject; 'vl' - numeric vector stating the viral load measurements for each subject; 'time' - numeric vector stating the time at which each measurement was taken.}
 
-\item{suppression_threshold}{numeric value indicating the suppression threshold: measurements below this value will be assumed to represent viral suppression. Default value is 20.}
+\item{suppression_threshold}{numeric value indicating the suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.}
 
-\item{censortime}{the maximum time point to inculde in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded from model fitting. Default value is 365.}
+\item{censortime}{the maximum time point to inculde in the analysis. Subjects who do not suppress viral load below the suppression threshold within this time will be discarded from model fitting. Units are assumed to be the same as the 'time' column. Default value is 365.}
 
 \item{decline_buffer}{the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.}
 }
 \description{
-This function prepares the raw input data for TTS interpolation. All default values are taken from Morris et al (2019).
+This function prepares the raw input data for TTS interpolation. Individuals whose data do not meet specific inclusion criteria are removed (see Vignette for more details).
 }
 \details{
 Steps include:
@@ -31,6 +31,6 @@ set.seed(1234567)
 
 simulated_data <- simulate_data(nsubjects = 20)
 
-filter_dataTTS(data = simulated_data, suppression_threshold = 10)
+filter_dataTTS(data = simulated_data)
 
 }

@@ -1,8 +1,8 @@
 #' Get plotting theme
 #'
-#' This function gets the plotting theme for ggplot.
+#' This function sets the plotting theme for ggplot.
 #'
-#' @param textsize numeric value for base text size on ggplot. Default is 9.
+#' @param textsize numeric value for base text size. Default is 9.
 #'
 get_plottheme <- function(textsize){
     mytheme <- theme_bw() + theme(axis.text = element_text(size = textsize),
@@ -17,11 +17,11 @@ get_plottheme <- function(textsize){
 #'
 #' This function plots raw, filtered, or simulated data.
 #'
-#' @param data data frame of raw, filtered, or simulated data. Must include columns for 'id', 'vl', and 'time'.
-#' @param textsize numeric value for base text size on ggplot. Default is 9.
-#' @param pointsize numeric value for base point size on ggplot. Default is 1.
-#' @param linesize numeric value for line width on ggplot. Default is 0.5.
-#' @param facet_col numeric value for number of columns to use when plotting subject panels. Defaults to NULL (i.e. ggplot default).
+#' @param data data frame of raw, filtered, or simulated data. Must include the following columns: 'id' - stating the unique identifier for each subject; 'vl' - numeric vector stating the viral load measurements for each subject; 'time'- numeric vector stating the time at which each measurement was taken.
+#' @param textsize numeric value for base text size in ggplot. Default is 9.
+#' @param pointsize numeric value for point size in ggplot. Default is 1.
+#' @param linesize numeric value for line width in ggplot. Default is 0.5.
+#' @param facet_col numeric value for number of columns to use when facetting subject panels. Defaults to NULL (i.e. ggplot default).
 #' @param detection_threshold numeric value indicating the detection threshold of the assay used to measure viral load. Default value is 20.
 #' @import ggplot2
 #' @export
@@ -31,9 +31,7 @@ get_plottheme <- function(textsize){
 #'
 #' simulated_data <- simulate_data(nsubjects = 20)
 #'
-#' model_output <- ushr(data = simulated_data, detection_threshold = 10)
-#'
-#' plot_data(simulated_data, detection_threshold = 10)
+#' plot_data(simulated_data)
 #'
 plot_data <- function(data, textsize = 9, pointsize = 1, linesize = 0.5,
                       facet_col = NULL, detection_threshold = 20){
@@ -60,10 +58,10 @@ plot_data <- function(data, textsize = 9, pointsize = 1, linesize = 0.5,
 #' @param model_output output from model fitting using ushr().
 #' @param type character string indicating whether the biphasic or single phase fits should be plotted. Must be either "biphasic" or "single". Defaults to "biphasic".
 #' @param detection_threshold numeric value indicating the detection threshold of the assay used to measure viral load. Default value is 20.
-#' @param textsize numeric value for base text size on ggplot. Default is 9.
-#' @param pointsize numeric value for base point size on ggplot. Default is 1.
-#' @param linesize numeric value for line width on ggplot. Default is 0.5.
-#' @param facet_col numeric value for number of columns to use when plotting subject panels. Defaults to NULL (i.e. ggplot default).
+#' @param textsize numeric value for base text size in ggplot. Default is 9.
+#' @param pointsize numeric value for point size in ggplot. Default is 1.
+#' @param linesize numeric value for line width in ggplot. Default is 0.5.
+#' @param facet_col numeric value for number of columns to use when facetting subject panels. Defaults to NULL (i.e. ggplot default).
 #' @export
 #' @examples
 #'
@@ -71,9 +69,9 @@ plot_data <- function(data, textsize = 9, pointsize = 1, linesize = 0.5,
 #'
 #' simulated_data <- simulate_data(nsubjects = 20)
 #'
-#' model_output <- ushr(data = simulated_data, detection_threshold = 20)
+#' model_output <- ushr(data = simulated_data)
 #'
-#' plot_model(model_output, type = "biphasic", detection_threshold = 20)
+#' plot_model(model_output, type = "biphasic")
 #'
 plot_model <- function(model_output, type = "biphasic", detection_threshold = 20,
                           textsize = 9, pointsize = 1, linesize = 0.5,
@@ -123,7 +121,7 @@ plot_model <- function(model_output, type = "biphasic", detection_threshold = 20
 #'
 #' simulated_data <- simulate_data(nsubjects = 20)
 #'
-#' TTSestimates <- get_TTS(data = simulated_data, suppression_threshold = 10, parametric = FALSE)
+#' TTSestimates <- get_TTS(data = simulated_data, parametric = FALSE)
 #'
 #' plot_TTS(TTSestimates, bins = 5)
 #'
@@ -145,12 +143,12 @@ plot_TTS <- function(TTS_output, textsize = 9, bins = 20){
 #' This function summarizes the output of model fitting..
 #'
 #' @param model_output output from model fitting using ushr().
-#' @param data dataframe of original data used for model fitting. Must include named 'id' column as a subject identifier
-#' @param stats logical indicator: should the median and sd lifespans also be returned? Default is FALSE.
+#' @param data dataframe of original data used for model fitting. Must include named 'id' column with subject identifiers.
+#' @param stats logical TRUE/FALSE: should the median and sd lifespans also be returned? Default is FALSE.
 #' @import dplyr
 #' @import tidyr
 #' @importFrom stats median sd
-#' @return a list containing: (i) a summary of which subjects were successfully fit using the biphasic or single phase models, with their corresponding infected cell lifespan estimates ('summary'); (ii) summary statistics for the estimated parameters from the biphasic model ('biphasicstats'); and (iii) summary statistics for the estimated parameters from the single phase model ('singlestats').
+#' @return a list containing (i) a summary of which subjects were successfully fit using the biphasic or single phase models, with their corresponding infected cell lifespan estimates ('summary'); (ii) if stats = TRUE: summary statistics for the estimated parameters from the biphasic model ('biphasicstats'); and (iii) if stats = TRUE: summary statistics for the estimated parameters from the single phase model ('singlestats').
 #' @export
 #' @examples
 #'
@@ -158,7 +156,7 @@ plot_TTS <- function(TTS_output, textsize = 9, bins = 20){
 #'
 #' simulated_data <- simulate_data(nsubjects = 20)
 #'
-#' model_output <- ushr(data = simulated_data, detection_threshold = 10)
+#' model_output <- ushr(data = simulated_data)
 #'
 #' summarize_model(model_output, data = simulated_data)
 #'

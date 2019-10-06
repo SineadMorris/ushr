@@ -7,7 +7,7 @@
 simulate_vl(params, timevec, id)
 }
 \arguments{
-\item{params}{named numeric vector of parmeter values to simulate the biphasic model.}
+\item{params}{named numeric vector of parameter values to simulate the biphasic model.}
 
 \item{timevec}{numeric vector of observed timepoints.}
 

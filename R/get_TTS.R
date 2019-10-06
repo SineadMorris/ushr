@@ -1,14 +1,14 @@
 #' Prepare input data for non-parametric TTS calculations.
 #'
-#' This function prepares the raw input data for TTS interpolation. All default values are taken from Morris et al (2019).
+#' This function prepares the raw input data for TTS interpolation. Individuals whose data do not meet specific inclusion criteria are removed (see Vignette for more details).
 #'
 #' Steps include:
 #' 1. Setting values below the suppression threshold to half the suppression threshhold (following standard practice).
 #' 2. Filtering out subjects who do not suppress viral load below the suppression threshold by a certain time.
 #' 3. Filtering out subjects who do not have a decreasing sequence of viral load (within some buffer range).
-#' @param data raw data set. Must have the following column names: 'id' stating the unique identifier for each subject, 'vl' stating the viral load measurements for each subject; 'time' stating the time at which each measurement was taken.
-#' @param suppression_threshold numeric value indicating the suppression threshold: measurements below this value will be assumed to represent viral suppression. Default value is 20.
-#' @param censortime the maximum time point to inculde in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded from model fitting. Default value is 365.
+#' @param data raw data set. Must be a data frame with the following columns: 'id' - stating the unique identifier for each subject; 'vl' - numeric vector stating the viral load measurements for each subject; 'time' - numeric vector stating the time at which each measurement was taken.
+#' @param suppression_threshold numeric value indicating the suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.
+#' @param censortime the maximum time point to inculde in the analysis. Subjects who do not suppress viral load below the suppression threshold within this time will be discarded from model fitting. Units are assumed to be the same as the 'time' column. Default value is 365.
 #' @param decline_buffer the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.
 #' @export
 #' @examples
@@ -17,7 +17,7 @@
 #'
 #' simulated_data <- simulate_data(nsubjects = 20)
 #'
-#' filter_dataTTS(data = simulated_data, suppression_threshold = 10)
+#' filter_dataTTS(data = simulated_data)
 #'
 filter_dataTTS <- function(data, suppression_threshold = 20,
                            censortime = 365, decline_buffer = 500){
@@ -46,9 +46,9 @@ filter_dataTTS <- function(data, suppression_threshold = 20,
 
 #' Biphasic root function
 #'
-#' This function expressed the root of the biphasic suppression equation, V(t) = suppression_threshold.
+#' This function defines the root equation for the biphasic model, i.e. V(t) - suppression_threshold = 0.
 #'
-#' @param timevec vector of the times, t, at which V(t) should be calculated
+#' @param timevec numeric vector of the times, t, at which V(t) should be calculated
 #' @param params named vector of all parameters needed to compute the biphasic model, V(t)
 #' @param suppression_threshold suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.
 #' @export
@@ -59,12 +59,12 @@ biphasic_root <- function(timevec, params, suppression_threshold){
 }
 
 
-#' Single phaseroot function
+#' Single phase root function
 #'
-#' This function expressed the root of the single phase suppression equation, V(t) = suppression_threshold.
+#' This function defines the root equation for the single phase model, i.e. V(t) - suppression_threshold = 0.
 #'
-#' @param timevec vector of the times, t, at which V(t) should be calculated
-#' @param params named vector of all parameters needed to compute the biphasic model, V(t)
+#' @param timevec numeric vector of the times, t, at which V(t) should be calculated
+#' @param params named vector of all parameters needed to compute the single phase model, V(t)
 #' @param suppression_threshold suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.
 #' @export
 #'
@@ -86,7 +86,7 @@ single_root <- function(timevec, params, suppression_threshold){
 #' @param params named vector of all parameters needed to compute the suppression model, V(t)
 #' @param rootfunction specifies which function should be used to calculate the root: biphasic or single phase.
 #' @param suppression_threshold suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.
-#' @param uppertime the maximum time interval to search for the time to suppression. Default value is 365.
+#' @param uppertime numeric value indicating the maximum time that will be considered. Default value is 365.
 #' @export
 #'
 get_parametricTTS <- function(params, rootfunction, suppression_threshold, uppertime){
@@ -104,10 +104,10 @@ get_parametricTTS <- function(params, rootfunction, suppression_threshold, upper
 #'
 #' This function computes the non-parametric form of the time to suppression
 #'
-#' @param vl vector of viral load measurements.
+#' @param vl numeric vector of viral load measurements.
 #' @param suppression_threshold numeric value for the suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.
-#' @param time voector indicating the time when vl measurements were taken.
-#' @param npoints numeric value of the number of interpolation points to be considered.
+#' @param time numeric vector indicating the time when vl measurements were taken.
+#' @param npoints numeric value indicating the number of interpolation points to be considered.
 #' @export
 #'
 get_nonparametricTTS <- function(vl, suppression_threshold, time, npoints){
@@ -133,23 +133,24 @@ get_nonparametricTTS <- function(vl, suppression_threshold, time, npoints){
 #'
 #' This function calculates the time to suppress HIV below a specified threshold.
 #'
-#' Options include: parametric (i.e. using fitted model) or non-parametric (i.e. interpolating the processed data).
+#' Options include: parametric (i.e. using the fitted model) or non-parametric (i.e. interpolating the processed data).
 #' @param model_output output from fitting model. Only required if parametric = TRUE.
-#' @param data raw data set. Must have the following column names: 'id' stating the unique identifier for each subject, 'vl' stating the viral load measurements for each subject; 'time' stating the time at which each measurement was taken. Only required if parametric = FALSE.
+#' @param data raw data set. Must be a data frame with the following columns: 'id' - stating the unique identifier for each subject; 'vl'- numeric vector stating the viral load measurements for each subject; 'time'  - numeric vector stating the time at which each measurement was taken. Only required if parametric = FALSE.
 #' @param suppression_threshold suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.
 #' @param uppertime the maximum time interval to search for the time to suppression. Default value is 365.
 #' @param decline_buffer the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.
-#' @param parametric logical TRUE/FALSE indicating whether time to suppression shoudl be calculated usingthe parametric (TRUE) or non-parametric (FALSE) method. If TRUE, a fitted model object is required. If FALSE, the raw data frame is required. Defaults to TRUE.
+#' @param parametric logical TRUE/FALSE indicating whether time to suppression should be calculated using the parametric (TRUE) or non-parametric (FALSE) method. If TRUE, a fitted model object is required. If FALSE, the raw data frame is required. Defaults to TRUE.
 #' @param ARTstart logical TRUE/FALSE indicating whether the time to suppression should be represented as time since ART initiation. Default = FALSE. If TRUE, ART initiation times must be included as a data column named 'ART'.
 #' @param npoints numeric value of the number of interpolation points to be considered. Default is 1000.
 #' @return a data frame containing all individuals who fit the inclusion criteria, along with their TTS estimates, and a column indicating whether the parameteric or nonparametric approach was used.
+#' @export
 #' @examples
 #'
 #' set.seed(1234567)
 #'
 #' simulated_data <- simulate_data(nsubjects = 20)
 #'
-#' get_TTS(data = simulated_data, suppression_threshold = 10, parametric = FALSE)
+#' get_TTS(data = simulated_data, parametric = FALSE)
 #'
 get_TTS <- function(model_output = NULL, data = NULL,
                     suppression_threshold = 20, uppertime = 365, decline_buffer = 500,

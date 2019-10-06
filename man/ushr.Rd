@@ -14,25 +14,25 @@ ushr(data, filter = TRUE, detection_threshold = 20, censortime = 365,
   searchmethod = "Nelder-Mead")
 }
 \arguments{
-\item{data}{raw data set. Must have the following column names: 'id' stating the unique identifier for each subject, 'vl' stating the viral load measurements for each subject; 'time' stating the time at which each measurement was taken.}
+\item{data}{raw data set. Must be a data frame with the following columns: 'id' - stating the unique identifier for each subject; 'vl' - numeric vector stating the viral load measurements for each subject; 'time'- numeric vector stating the time at which each measurement was taken.}
 
 \item{filter}{Logical TRUE/FALSE indicating whether the data should be processed (highly recommended) prior to model fitting. Default is TRUE.}
 
-\item{detection_threshold}{detection threshold of the assay used to measure viral load. Measurements below this value will be assumed to represent undetectable viral load levels. Default value is 20.}
+\item{detection_threshold}{numeric value indicating the detection threshold of the assay used to measure viral load. Measurements below this value will be assumed to represent undetectable viral levels. Default value is 20.}
 
-\item{censortime}{the maximum time point to inculde in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded from model fitting. Default value is 365.}
+\item{censortime}{numeric value indicating the maximum time point to include in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded from model fitting. Units are assumed to be same as the 'time' measurements. Default value is 365.}
 
-\item{decline_buffer}{the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.}
+\item{decline_buffer}{numeric value indicating the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.}
 
-\item{threshold_buffer}{the range above the detection threshold which represents potential skewing of model fits. Subjects with their last two data points within this range will have the last point removed. Default value is 10.}
+\item{threshold_buffer}{numeric value indicating the range above the detection threshold which represents potential skewing of model fits. Subjects with their last two data points within this range will have the last point removed. Default value is 10.}
 
-\item{VL_max_decline}{maximum allowable difference between first and second viral load measurements. Default is 10,000.}
+\item{VL_max_decline}{numeric value indicating the maximum allowable difference between first and second viral load measurements. Default is 10,000.}
 
-\item{CI_max_diff}{maximum allowable relative difference between lower upper 95\% confidence intervals i.e. (upper CI - lower CI)/lower CI. Default is 1000.}
+\item{CI_max_diff}{numeric value indicating the maximum allowable relative difference between lower and upper 95\% confidence intervals i.e. (upper CI - lower CI)/lower CI. Default is 1000.}
 
-\item{n_min_single}{the minimum number of data points required to be included in the analysis. Defaults to 3. It is highly advised not to go below this threshold.}
+\item{n_min_single}{numeric value indicating the minimum number of data points required to be included in the analysis. Defaults to 3. It is highly advised not to go below this threshold.}
 
-\item{n_min_biphasic}{the minimum number of data points required to fit the biphasic model. Defaults to 6. It is highly advised not to go below this threshold.}
+\item{n_min_biphasic}{numeric value indicating the minimum number of data points required to fit the biphasic model. Defaults to 6. It is highly advised not to go below this threshold.}
 
 \item{nsuppression}{numerical value (1 or 2) indicating whether suppression is defined as having one observation below the detection threshold, or two sustained observations. Default value is 1.}
 
@@ -40,12 +40,12 @@ ushr(data, filter = TRUE, detection_threshold = 20, censortime = 365,
 
 \item{inv_param_transform_fn}{list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward tranformation functions. Defaults to exponential.}
 
-\item{initial_params}{named vector of initial parameter guesses. Defaults to c(A = 10000, delta = 0.68, B = 1000, gamma = 0.03).}
+\item{initial_params}{named numeric vector of initial parameter guesses. Defaults to c(A = 10000, delta = 0.68, B = 1000, gamma = 0.03).}
 
-\item{searchmethod}{optimization algorithm to be used in optim. Defaults to Nelder-Mead.}
+\item{searchmethod}{optimization algorithm to be passed to 'optim()'. Defaults to 'Nelder-Mead'.}
 }
 \value{
-a list containing the filtered data ('data_filtered'), parameter estimates for the biphasic and single phase models ('biphasicCI' and 'singleCI'), and predictions from the biphasic and single phase models ('biphasic_fits' and 'single_fits')
+a list containing the filtered data ('data_filtered'); parameter estimates for the biphasic and single phase models ('biphasicCI' and 'singleCI'); and predictions from the biphasic and single phase models ('biphasic_fits' and 'single_fits').
 }
 \description{
 This function performs the entire analysis, from data filtering to model fitting.
@@ -62,6 +62,6 @@ set.seed(1234567)
 
 simulated_data <- simulate_data(nsubjects = 20)
 
-model_output <- ushr(data = simulated_data, detection_threshold = 10)
+model_output <- ushr(data = simulated_data)
 
 }

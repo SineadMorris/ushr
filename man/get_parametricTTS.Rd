@@ -13,7 +13,7 @@ get_parametricTTS(params, rootfunction, suppression_threshold, uppertime)
 
 \item{suppression_threshold}{suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.}
 
-\item{uppertime}{the maximum time interval to search for the time to suppression. Default value is 365.}
+\item{uppertime}{numeric value indicating the maximum time that will be considered. Default value is 365.}
 }
 \description{
 This function computes the parametric form of the time to suppression

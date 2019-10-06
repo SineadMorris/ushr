@@ -1,8 +1,9 @@
 #' Compute the biphasic model curve
 #'
-#' This function calculates the biphasic model, V(t), for vector of input times, t
-#' @param params named vector of all parameters needed to compute the biphasic model, V(t)
-#' @param timevec vector of the times, t, at which V(t) should be calculated
+#' This function calculates the biphasic model, V(t), for a vector of input times, t
+#' @param params named numeric vector of all parameters needed to compute the biphasic model, V(t)
+#' @param timevec numeric vector of the times, t, at which V(t) should be calculated
+#' @return numeric vector of viral load predictions, V(t), for each time point in 'timevec'
 #' @export
 #' @examples
 #'
@@ -21,8 +22,9 @@ get_biphasic <- function(params, timevec){
 #' Compute the single phase model curve
 #'
 #' This function calculates the single phase model, V(t), for vector of input times, t
-#' @param params named vector of all parameters needed to compute the single phase model, V(t)
-#' @param timevec vector of the times, t, at which V(t) should be calculated
+#' @param params named numeric vector of all parameters needed to compute the single phase model, V(t)
+#' @param timevec numeric vector of the times, t, at which V(t) should be calculated
+#' @return numeric vector of viral load predictions, V(t), for each time point in 'timevec'
 #' @export
 #' @examples
 #'
@@ -39,10 +41,11 @@ get_singlephase <- function(params, timevec){
 #' Compute the model for a given subject's data and best-fit parameters
 #'
 #' This function calculates the biphasic or single phase model given a subject's data and best-fit parameters
-#' @param data dataframe with columns for the subject's identifier ('id') and timing of sampling ('time')
-#' @param best_param vector of best fit parameters obtained from fitting the biphasic or single phase model to the subjects data
+#' @param data data frame with columns for the subject's identifier ('id') and timing of sampling ('time')
+#' @param best_param named numeric vector of best fit parameters obtained from fitting the biphasic or single phase model to the subjects data
 #' @param param_names character vector containing the names of the parameters in 'best_param'
-#' @param whichcurve indicating which model function should be used. Use get_biphasic for the biphasic model, or get_singlephase for the single phase model. Defaults to get_biphasic.
+#' @param whichcurve character indicating which model function should be used. Use 'get_biphasic' for the biphasic model, or 'get_singlephase' for the single phase model. Defaults to 'get_biphasic'.
+#' @return data frame with columns for the sampling times ('time'), fitted viral load predictions ('fit'), and the corresponding subject identifier ('id')
 #' @export
 #' @examples
 #'

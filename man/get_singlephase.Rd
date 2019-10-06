@@ -7,9 +7,12 @@
 get_singlephase(params, timevec)
 }
 \arguments{
-\item{params}{named vector of all parameters needed to compute the single phase model, V(t)}
+\item{params}{named numeric vector of all parameters needed to compute the single phase model, V(t)}
 
-\item{timevec}{vector of the times, t, at which V(t) should be calculated}
+\item{timevec}{numeric vector of the times, t, at which V(t) should be calculated}
+}
+\value{
+numeric vector of viral load predictions, V(t), for each time point in 'timevec'
 }
 \description{
 This function calculates the single phase model, V(t), for vector of input times, t

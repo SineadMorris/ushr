@@ -22,7 +22,7 @@ set.seed(1234567)
 
 simulated_data <- simulate_data(nsubjects = 20)
 
-TTSestimates <- get_TTS(data = simulated_data, suppression_threshold = 10, parametric = FALSE)
+TTSestimates <- get_TTS(data = simulated_data, parametric = FALSE)
 
 plot_TTS(TTSestimates, bins = 5)
 

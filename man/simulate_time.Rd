@@ -9,7 +9,7 @@ simulate_time(npoints, censortime, id, index, max_datapoints)
 \arguments{
 \item{npoints}{numeric value indicating the number of observations to be sampled.}
 
-\item{censortime}{numeric value indicatingthe maximum time point to inculde in the analysis.}
+\item{censortime}{numeric value indicating the maximum time point to include in the analysis.}
 
 \item{id}{subject id. Can be numeric or a character.}
 

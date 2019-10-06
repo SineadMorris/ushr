@@ -1,21 +1,23 @@
 #' Prepare input data
 #'
-#' This function prepares the raw input data for model fitting. All default values are taken from Morris et al (2019).
+#' This function prepares the raw input data for model fitting.
 #'
 #' Steps include:
-#' 1. Setting values below the detection threshold to half the detection threshhold (following standard practice).
+#' 1. Setting values below the detection threshold to half the detection threshold (following standard practice).
 #' 2. Filtering out subjects who do not suppress viral load below the detection threshold by a certain time.
 #' 3. Filtering out subjects who do not have a decreasing sequence of viral load (within some buffer range).
 #' 4. Filtering out subjects who do not have enough data for model fitting.
-#' 5. Removing last data point of subjects with last two points very close to the detection threshold. This prevents skewing of the model fit
-#' @param data raw data set. Must have the following column names: 'id' stating the unique identifier for each subject, 'vl' stating the viral load measurements for each subject; 'time' stating the time at which each measurement was taken.
-#' @param detection_threshold detection threshold of the assay used to measure viral load. Measurements below this value will be assumed to represent undetectable viral load levels. Default value is 20.
-#' @param censortime the maximum time point to inculde in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded from model fitting. Default value is 365.
-#' @param decline_buffer the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.
-#' @param n_min_single the minimum number of data points required to be included in the analysis. Defaults to 3. It is highly advised not to go below this threshold.
+#' 5. Removing the last data point of subjects with the last two points very close to the detection threshold. This prevents skewing of the model fit.
+#' Further details can be found in the Vignette.
+#' @param data raw data set. Must be a data frame with the following columns: 'id' - stating the unique identifier for each subject; 'vl' - numeric vector with the viral load measurements for each subject; 'time' - numeric vector of the times at which each measurement was taken.
+#' @param detection_threshold numeric value indicating the detection threshold of the assay used to measure viral load. Measurements below this value will be assumed to represent undetectable viral load levels. Default value is 20.
+#' @param censortime numeric value indicating the maximum time point to include in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded. Units are assumed to be the same as the 'time' column. Default value is 365.
+#' @param decline_buffer numeric value indicating the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.
+#' @param n_min_single numeric value indicating the minimum number of data points required to be included in the analysis. Defaults to 3. It is highly advised not to go below this threshold.
 #' @param threshold_buffer numerical value indicating the range above the detection threshold which represents potential skewing of model fits. Subjects with their last two data points within this range will have the last point removed. Default value is 10.
 #' @param nsuppression numerical value (1 or 2) indicating whether suppression is defined as having one observation below the detection threshold, or two sustained observations. Default value is 1.
 #' @import dplyr
+#' @return data frame of individuals whose viral load trajectories meet the criteria for model fitting. Includes columns for 'id', 'vl', and 'time'.
 #' @export
 #' @examples
 #'

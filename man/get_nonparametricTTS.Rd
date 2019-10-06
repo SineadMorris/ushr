@@ -7,13 +7,13 @@
 get_nonparametricTTS(vl, suppression_threshold, time, npoints)
 }
 \arguments{
-\item{vl}{vector of viral load measurements.}
+\item{vl}{numeric vector of viral load measurements.}
 
 \item{suppression_threshold}{numeric value for the suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.}
 
-\item{time}{voector indicating the time when vl measurements were taken.}
+\item{time}{numeric vector indicating the time when vl measurements were taken.}
 
-\item{npoints}{numeric value of the number of interpolation points to be considered.}
+\item{npoints}{numeric value indicating the number of interpolation points to be considered.}
 }
 \description{
 This function computes the non-parametric form of the time to suppression

@@ -1,15 +1,15 @@
 #' Create data function
 #'
-#' This function simulates example data that can be used to explore model fitting and plotting within the package.
+#' This function simulates example data that can be used to explore model fitting and plotting within the package. Subjects are assumed to be observed at regular intervals until either the end of the study or they are lost to follow up.
 #'
 #' @param nsubjects numeric value indicating the number of subjects you want to simulate data for. Default is 10.
 #' @param detection_threshold numeric value indicating the detection threshold of the assay used to measure viral load. Measurements below this value will be assumed to represent undetectable viral load levels. Default value is 20.
-#' @param censortime numeric value indicatingthe maximum time point to inculde in the analysis. Default value is 365.
-#' @param max_datapoints numeric value indicating the maximum number of data points collected from any subject. Defaults to 15.
-#' @param min_datapoints numeric value indicating the minimum number of data points collected from any subject. Defaults to 3.
-#' @param sd_noise numeric value indicating the standard deviation level to be used when adding noise to the simulated data (on the log10 scale). Default value is 0.25
-#' @param param_noise numeric vector indicating the standard deviation to be used when selecting parameter values (on the log scale). Order of entries should be: A, delta, B, gamma. Default value is c(0.5, 0.1, 0.5, 0.1).
-#' @param mean_params named numeric vector indicating the mean parameter values for the subject decay curves. Default is c(A = 10000, delta = 0.33, B = 10000, gamma = 0.03).
+#' @param censortime numeric value indicating the maximum time point to include in the analysis. Default value is 365.
+#' @param max_datapoints numeric value indicating the maximum number of data points collected from any subject. Defaults to 24.
+#' @param min_datapoints numeric value indicating the minimum number of data points collected from any subject. Defaults to 6.
+#' @param sd_noise numeric value indicating the standard deviation level to be used when adding noise to the simulated data (on the log10 scale). Default value is 0.1
+#' @param param_noise numeric vector indicating the standard deviation to be used when selecting parameter values (on the log scale). Order of entries should be: A, delta, B, gamma. Default value is c(1.5, 0.1, 1.5, 0.1).
+#' @param mean_params named numeric vector indicating the mean parameter values for the subject decay curves. Default is c(A = 10000, delta = 0.3, B = 10000, gamma = 0.03).
 #' @export
 #' @examples
 #'
@@ -68,33 +68,33 @@ simulate_data <- function(nsubjects = 10, detection_threshold = 20, censortime =
 }
 
 
-#' Simulate timepoints for subjects at random.
-#'
-#' This function simulates observed timepoints randomly for each subject.
-#'
-#' @param npoints numeric value indicating the number of observations to be sampled.
-#' @param censortime numeric value indicatingthe maximum time point to inculde in the analysis.
-#' @param id subject id. Can be numeric or a character.
-#' @param index numeric identifier for each subject/model combination.
-#' @param max_datapoints numeric value indicating the maximum number of data points collected from any subject.
-#'
-simulate_time_random <- function(npoints, censortime, id, index, max_datapoints){
-
-    initial_phase <- floor(censortime/2)
-
-    if (npoints > max_datapoints/2) {
-        npoints_initial <- floor(npoints/2)
-
-        timepoints_initial <- sort(sample(1:initial_phase, size = npoints_initial, replace = FALSE))
-        timepoints_late <- sort(sample((initial_phase + 1):censortime, size = npoints - npoints_initial, replace = FALSE))
-
-        timepoints <- c(timepoints_initial, timepoints_late)
-    } else {
-        timepoints <- sort(sample(1:initial_phase, size = npoints, replace = FALSE))
-    }
-
-    return(data.frame(time = timepoints, id = id, index = index))
-}
+# #' Simulate timepoints for subjects at random.
+# #'
+# #' This function simulates observed timepoints randomly for each subject.
+# #'
+# #' @param npoints numeric value indicating the number of observations to be sampled.
+# #' @param censortime numeric value indicatingthe maximum time point to inculde in the analysis.
+# #' @param id subject id. Can be numeric or a character.
+# #' @param index numeric identifier for each subject/model combination.
+# #' @param max_datapoints numeric value indicating the maximum number of data points collected from any subject.
+# #'
+# simulate_time_random <- function(npoints, censortime, id, index, max_datapoints){
+#
+#     initial_phase <- floor(censortime/2)
+#
+#     if (npoints > max_datapoints/2) {
+#         npoints_initial <- floor(npoints/2)
+#
+#         timepoints_initial <- sort(sample(1:initial_phase, size = npoints_initial, replace = FALSE))
+#         timepoints_late <- sort(sample((initial_phase + 1):censortime, size = npoints - npoints_initial, replace = FALSE))
+#
+#         timepoints <- c(timepoints_initial, timepoints_late)
+#     } else {
+#         timepoints <- sort(sample(1:initial_phase, size = npoints, replace = FALSE))
+#     }
+#
+#     return(data.frame(time = timepoints, id = id, index = index))
+# }
 
 
 #' Simulate timepoints for subjects according to fixed design.
@@ -102,7 +102,7 @@ simulate_time_random <- function(npoints, censortime, id, index, max_datapoints)
 #' This function simulates observed timepoints for each subject according to a fixed sampling design.
 #'
 #' @param npoints numeric value indicating the number of observations to be sampled.
-#' @param censortime numeric value indicatingthe maximum time point to inculde in the analysis.
+#' @param censortime numeric value indicating the maximum time point to include in the analysis.
 #' @param id subject id. Can be numeric or a character.
 #' @param index numeric identifier for each subject/model combination.
 #' @param max_datapoints numeric value indicating the maximum number of data points collected from any subject.
@@ -121,7 +121,7 @@ simulate_time_fixed <- function(npoints, censortime, id, index, max_datapoints){
 #' This function chooses the correct function for sampling observation times.
 #'
 #' @param npoints numeric value indicating the number of observations to be sampled.
-#' @param censortime numeric value indicatingthe maximum time point to inculde in the analysis.
+#' @param censortime numeric value indicating the maximum time point to include in the analysis.
 #' @param id subject id. Can be numeric or a character.
 #' @param index numeric identifier for each subject/model combination.
 #' @param max_datapoints numeric value indicating the maximum number of data points collected from any subject.
@@ -137,13 +137,12 @@ simulate_time <- function(npoints, censortime, id, index, max_datapoints){
 #'
 #' This function simulates observed vl for each subject.
 #'
-#' @param params named numeric vector of parmeter values to simulate the biphasic model.
+#' @param params named numeric vector of parameter values to simulate the biphasic model.
 #' @param timevec numeric vector of observed timepoints.
 #' @param id subject id. Can be numeric or a character.
 #'
 simulate_vl <- function(params, timevec, id){
     vl <- get_biphasic(params, timevec)
-    #vl[vl < detection_threshhold] <- 1
 
     return(data.frame(time = timevec, vl = vl, id = id))
 }
@@ -153,7 +152,7 @@ simulate_vl <- function(params, timevec, id){
 #'
 #' This function adds noise to vl measurements for each subject.
 #'
-#' @param vl vector of viral load measurements.
+#' @param vl numeric vector of viral load measurements.
 #' @param sd_noise numeric value indicating the standard deviation level to be used when adding noise to the simulated data (on the log10 scale).
 #'
 add_noise <- function(vl, sd_noise){

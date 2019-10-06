@@ -7,8 +7,8 @@
 get_plottheme(textsize)
 }
 \arguments{
-\item{textsize}{numeric value for base text size on ggplot. Default is 9.}
+\item{textsize}{numeric value for base text size. Default is 9.}
 }
 \description{
-This function gets the plotting theme for ggplot.
+This function sets the plotting theme for ggplot.
 }

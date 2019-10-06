@@ -14,13 +14,13 @@ plot_model(model_output, type = "biphasic", detection_threshold = 20,
 
 \item{detection_threshold}{numeric value indicating the detection threshold of the assay used to measure viral load. Default value is 20.}
 
-\item{textsize}{numeric value for base text size on ggplot. Default is 9.}
+\item{textsize}{numeric value for base text size in ggplot. Default is 9.}
 
-\item{pointsize}{numeric value for base point size on ggplot. Default is 1.}
+\item{pointsize}{numeric value for point size in ggplot. Default is 1.}
 
-\item{linesize}{numeric value for line width on ggplot. Default is 0.5.}
+\item{linesize}{numeric value for line width in ggplot. Default is 0.5.}
 
-\item{facet_col}{numeric value for number of columns to use when plotting subject panels. Defaults to NULL (i.e. ggplot default).}
+\item{facet_col}{numeric value for number of columns to use when facetting subject panels. Defaults to NULL (i.e. ggplot default).}
 }
 \description{
 This function plots the output from model fitting.
@@ -31,8 +31,8 @@ set.seed(1234567)
 
 simulated_data <- simulate_data(nsubjects = 20)
 
-model_output <- ushr(data = simulated_data, detection_threshold = 20)
+model_output <- ushr(data = simulated_data)
 
-plot_model(model_output, type = "biphasic", detection_threshold = 20)
+plot_model(model_output, type = "biphasic")
 
 }

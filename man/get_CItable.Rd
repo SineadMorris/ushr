@@ -13,7 +13,7 @@ get_CItable(CIlist, param_names, free_param_index, fitted)
 
 \item{free_param_index}{logical vector indicating whether the parameters A, delta, B, gamma are to be included. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.}
 
-\item{fitted}{dataframe with an 'id' column of the unique identifiers for each subject represented in CIlist. Identifiers should be ordered according to their appearance in CIlist.}
+\item{fitted}{data frame with an 'id' column of the unique identifiers for each subject represented in CIlist. Identifiers should be ordered according to their appearance in CIlist.}
 }
 \description{
 This function collate confidence intervals and parameter estimates from all subjects (fitted with the same model) into a nice table.

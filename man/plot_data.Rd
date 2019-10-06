@@ -8,15 +8,15 @@ plot_data(data, textsize = 9, pointsize = 1, linesize = 0.5,
   facet_col = NULL, detection_threshold = 20)
 }
 \arguments{
-\item{data}{data frame of raw, filtered, or simulated data. Must include columns for 'id', 'vl', and 'time'.}
+\item{data}{data frame of raw, filtered, or simulated data. Must include the following columns: 'id' - stating the unique identifier for each subject; 'vl' - numeric vector stating the viral load measurements for each subject; 'time'- numeric vector stating the time at which each measurement was taken.}
 
-\item{textsize}{numeric value for base text size on ggplot. Default is 9.}
+\item{textsize}{numeric value for base text size in ggplot. Default is 9.}
 
-\item{pointsize}{numeric value for base point size on ggplot. Default is 1.}
+\item{pointsize}{numeric value for point size in ggplot. Default is 1.}
 
-\item{linesize}{numeric value for line width on ggplot. Default is 0.5.}
+\item{linesize}{numeric value for line width in ggplot. Default is 0.5.}
 
-\item{facet_col}{numeric value for number of columns to use when plotting subject panels. Defaults to NULL (i.e. ggplot default).}
+\item{facet_col}{numeric value for number of columns to use when facetting subject panels. Defaults to NULL (i.e. ggplot default).}
 
 \item{detection_threshold}{numeric value indicating the detection threshold of the assay used to measure viral load. Default value is 20.}
 }
@@ -29,8 +29,6 @@ set.seed(1234567)
 
 simulated_data <- simulate_data(nsubjects = 20)
 
-model_output <- ushr(data = simulated_data, detection_threshold = 10)
-
-plot_data(simulated_data, detection_threshold = 10)
+plot_data(simulated_data)
 
 }

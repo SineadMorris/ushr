@@ -12,7 +12,7 @@ get_params(fit, initial_params, free_param_index, param_names,
 
 \item{initial_params}{named vector of the initial parameter guess}
 
-\item{free_param_index}{logical vector indicating whether the parameters A, delta, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.}
+\item{free_param_index}{logical TRUE/FALSE vector indicating whether the parameters A, delta, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.}
 
 \item{param_names}{character vector of the parameter names. This should be c("A", "delta", "B", "gamma") for the biphasic model or c("B", "gamma") for the single phase model.}
 

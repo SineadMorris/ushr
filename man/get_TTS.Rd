@@ -11,7 +11,7 @@ get_TTS(model_output = NULL, data = NULL, suppression_threshold = 20,
 \arguments{
 \item{model_output}{output from fitting model. Only required if parametric = TRUE.}
 
-\item{data}{raw data set. Must have the following column names: 'id' stating the unique identifier for each subject, 'vl' stating the viral load measurements for each subject; 'time' stating the time at which each measurement was taken. Only required if parametric = FALSE.}
+\item{data}{raw data set. Must be a data frame with the following columns: 'id' - stating the unique identifier for each subject; 'vl'- numeric vector stating the viral load measurements for each subject; 'time'  - numeric vector stating the time at which each measurement was taken. Only required if parametric = FALSE.}
 
 \item{suppression_threshold}{suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.}
 
@@ -19,17 +19,20 @@ get_TTS(model_output = NULL, data = NULL, suppression_threshold = 20,
 
 \item{decline_buffer}{the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.}
 
-\item{parametric}{logical TRUE/FALSE indicating whether time to suppression shoudl be calculated usingthe parametric (TRUE) or non-parametric (FALSE) method. If TRUE, a fitted model object is required. If FALSE, the raw data frame is required. Defaults to TRUE.}
+\item{parametric}{logical TRUE/FALSE indicating whether time to suppression should be calculated using the parametric (TRUE) or non-parametric (FALSE) method. If TRUE, a fitted model object is required. If FALSE, the raw data frame is required. Defaults to TRUE.}
 
 \item{ARTstart}{logical TRUE/FALSE indicating whether the time to suppression should be represented as time since ART initiation. Default = FALSE. If TRUE, ART initiation times must be included as a data column named 'ART'.}
 
 \item{npoints}{numeric value of the number of interpolation points to be considered. Default is 1000.}
 }
+\value{
+a data frame containing all individuals who fit the inclusion criteria, along with their TTS estimates, and a column indicating whether the parameteric or nonparametric approach was used.
+}
 \description{
 This function calculates the time to suppress HIV below a specified threshold.
 }
 \details{
-Options include: parametric (i.e. using fitted model) or non-parametric (i.e. interpolating the processed data).
+Options include: parametric (i.e. using the fitted model) or non-parametric (i.e. interpolating the processed data).
 }
 \examples{
 
@@ -37,6 +40,6 @@ set.seed(1234567)
 
 simulated_data <- simulate_data(nsubjects = 20)
 
-get_TTS(data = simulated_data, suppression_threshold = 10, parametric = FALSE)
+get_TTS(data = simulated_data, parametric = FALSE)
 
 }

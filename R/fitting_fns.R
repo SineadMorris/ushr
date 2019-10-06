@@ -4,18 +4,13 @@
 #'
 #' @param params named vector of the parameters from which the model prediction should be generated.
 #' @param param_names names of parameter vector.
-#' @param free_param_index logical vector indicating whether the parameters A, delta, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.
+#' @param free_param_index logical TRUE/FALSE vector indicating whether the parameters A, delta, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.
 #' @param data dataframe with columns for the subject's viral load measurements ('vl'), and timing of sampling ('time')
 #' @param model_list character indicating which model is begin fit. Can be either 'four' for the biphasic model, or 'two' for the single phase model.
 #' @param inv_param_transform_fn list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward tranformation functions. Defaults to exponential.
 #'
 get_error <- function(params, param_names, free_param_index, data, model_list,
                       inv_param_transform_fn){
-
-    # if(length(params) != length(inv_param_transform_fn)){
-    #   stop("Error in profileloglik: length of parameter list not equal to
-    #        length of parameter transformation function list")
-    # }
 
     # Free and fixed params are log-transformed so their values are unconstrained during optimization
     # For model evaluations they must first be back-transformed

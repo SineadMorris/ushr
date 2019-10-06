@@ -9,9 +9,12 @@ summarize_model(model_output, data, stats = FALSE)
 \arguments{
 \item{model_output}{output from model fitting using ushr().}
 
-\item{data}{dataframe of original data used for model fitting. Must include named 'id' column as a subject identifier}
+\item{data}{dataframe of original data used for model fitting. Must include named 'id' column with subject identifiers.}
 
-\item{stats}{logical indicator: should the median and sd lifespans also be returned? Default is FALSE.}
+\item{stats}{logical TRUE/FALSE: should the median and sd lifespans also be returned? Default is FALSE.}
+}
+\value{
+a list containing (i) a summary of which subjects were successfully fit using the biphasic or single phase models, with their corresponding infected cell lifespan estimates ('summary'); (ii) if stats = TRUE: summary statistics for the estimated parameters from the biphasic model ('biphasicstats'); and (iii) if stats = TRUE: summary statistics for the estimated parameters from the single phase model ('singlestats').
 }
 \description{
 This function summarizes the output of model fitting..
@@ -22,7 +25,7 @@ set.seed(1234567)
 
 simulated_data <- simulate_data(nsubjects = 20)
 
-model_output <- ushr(data = simulated_data, detection_threshold = 10)
+model_output <- ushr(data = simulated_data)
 
 summarize_model(model_output, data = simulated_data)
 

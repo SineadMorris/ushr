@@ -7,13 +7,16 @@
 get_curve(data, best_param, param_names, whichcurve = get_biphasic)
 }
 \arguments{
-\item{data}{dataframe with columns for the subject's identifier ('id') and timing of sampling ('time')}
+\item{data}{data frame with columns for the subject's identifier ('id') and timing of sampling ('time')}
 
-\item{best_param}{vector of best fit parameters obtained from fitting the biphasic or single phase model to the subjects data}
+\item{best_param}{named numeric vector of best fit parameters obtained from fitting the biphasic or single phase model to the subjects data}
 
 \item{param_names}{character vector containing the names of the parameters in 'best_param'}
 
-\item{whichcurve}{indicating which model function should be used. Use get_biphasic for the biphasic model, or get_singlephase for the single phase model. Defaults to get_biphasic.}
+\item{whichcurve}{character indicating which model function should be used. Use 'get_biphasic' for the biphasic model, or 'get_singlephase' for the single phase model. Defaults to 'get_biphasic'.}
+}
+\value{
+data frame with columns for the sampling times ('time'), fitted viral load predictions ('fit'), and the corresponding subject identifier ('id')
 }
 \description{
 This function calculates the biphasic or single phase model given a subject's data and best-fit parameters
