@@ -8,7 +8,7 @@
 
 ## R CMD check results
 
-There were no ERRORs or WARNINGs.
+There were no ERRORs or WARNINGs on any platform. 
 
 There was one NOTE on win-builder:
 
@@ -27,7 +27,7 @@ Possibly mis-spelled words in DESCRIPTION:
   antiretroviral (12:124)
   biphasic (12:36)
 
-Response: in this case the words antiretroviral and biphasic are the correct technical terms.
+Response to this NOTE: in this case the words antiretroviral and biphasic are the correct technical terms.
 
 
 ## Downstream dependencies
