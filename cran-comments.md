@@ -24,8 +24,8 @@ File 'LICENSE':
   COPYRIGHT HOLDER: Sinead Elizabeth Morris
 
 Possibly mis-spelled words in DESCRIPTION:
-  antiretroviral (14:124)
-  biphasic (14:36)
+  antiretroviral (12:124)
+  biphasic (12:36)
 
 Response: in this case the words antiretroviral and biphasic are the correct technical terms.
 
