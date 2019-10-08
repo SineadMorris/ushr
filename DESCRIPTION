@@ -1,6 +1,6 @@
 Package: ushr
 Type: Package
-Title: Understanding Suppression of HIV in R
+Title: Understanding Suppression of HIV
 Version: 0.1.0
 Date: 2019-09-26
 Authors@R: c(person("Sinead E.", "Morris", role = c("aut", "cre"),
@@ -9,7 +9,7 @@ Authors@R: c(person("Sinead E.", "Morris", role = c("aut", "cre"),
               person("Luise", "Dziobek-Garrett", role = "ctb"),
               person("Andrew", "Yates", role = "ctb"))
 Maintainer: Sinead E. Morris <sinead.morris@columbia.edu>
-Description: Applies the canonical biphasic exponential decay model to fit longitudinal data of HIV decline in patients on antiretroviral therapy (ART). Model fitting and parameter estimation are performed, with additional options to calculate the time to viral suppression, and summarize and plot results.
+Description: Analyzes longitudinal data of HIV decline in patients on antiretroviral therapy using the canonical biphasic exponential decay model (pioneered, for example, by work in Perelson et al. (1997) <doi:10.1038/387188a0>; and Wu and Ding (1999) <doi:10.1111/j.0006-341X.1999.00410.x>). Model fitting and parameter estimation are performed, with additional options to calculate the time to viral suppression. Plotting and summary tools are also provided for fast assessment of model results.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
