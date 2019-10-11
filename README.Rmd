@@ -29,7 +29,7 @@ Sinead E Morris (author and maintainer), Luise Dziobek-Garrett (contributor) and
 
 ## Citing this package
 
-Citation information can be found using `citation("ushr")`; updated citations will be available in the upcoming paper: Morris SE et al. "ushr: understanding suppression of HIV in R".
+Citation information can be found using `citation("ushr")`; updated citations will be available in the upcoming paper: Morris SE et al. "ushr: Understanding suppression of HIV in R".
 
 
 
@@ -64,9 +64,16 @@ By fitting the model, we can estimate the death rate parameters and use these to
 
 ## Quick Start Example
 
-To install the package from Github, first install and load `devtools`, then install `ushr` as follows
+To install the package from CRAN use
 
 ```{r install, eval = FALSE}
+install.packages("ushr")
+
+```
+
+The vignette can be viewed [here](https://cran.r-project.org/web/packages/ushr/vignettes/Vignette.html). To install the package from Github, first install and load `devtools`, then install `ushr` as follows
+
+```{r install2, eval = FALSE}
 install.packages("devtools")
 library("devtools")
 
@@ -74,7 +81,7 @@ install_github("SineadMorris/ushr")
 
 ```
 
-Note that to install the package with its vignette, you must first install `knitr`, then install `ushr` with `build_vignettes = TRUE`. The package vignette can then be viewed using `browseVignettes()`.
+Note that to install the package from Github with its vignette, you must first install `knitr`, then install `ushr` with `build_vignettes = TRUE`. The package vignette can then be viewed using `browseVignettes()`.
 
 ```{r vignette, eval = FALSE}
 install.packages("knitr")
