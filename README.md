@@ -1,7 +1,7 @@
 ushr: understanding suppression of HIV in R
 ================
 
-[![Build Status](https://travis-ci.com/SineadMorris/ushr.svg?branch=master)](https://travis-ci.com/SineadMorris/ushr)
+[![Build Status](https://travis-ci.com/SineadMorris/ushr.svg?branch=master)](https://travis-ci.com/SineadMorris/ushr) [![CRAN Version](https://www.r-pkg.org/badges/version/ushr)](https://CRAN.R-project.org/package=ushr) [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
 Introduction
 ------------
