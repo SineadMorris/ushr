@@ -6,7 +6,8 @@ test_that("test correct input data",{
 
     expect_error(filter_data(data = data_noVL), "'data' must be a data frame with named columns for 'id', 'time', and 'vl'")
 
-    data_nonnumeric <- data.frame(vl = seq(10000, 1, length.out = 5), time = c("Jan", "Feb", "March", "April", "May"), id = "S1")
+    data_nonnumeric <- data.frame(vl = seq(10000, 1, length.out = 5),
+                                  time = c("Jan", "Feb", "March", "April", "May"), id = "S1")
 
     expect_error(filter_data(data = data_nonnumeric), fixed = TRUE,
                  "Column for the time of observations ('time') must be numeric")

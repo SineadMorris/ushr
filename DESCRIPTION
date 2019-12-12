@@ -1,8 +1,8 @@
 Package: ushr
 Type: Package
 Title: Understanding Suppression of HIV
-Version: 0.1.0
-Date: 2019-09-26
+Version: 0.2.0
+Date: 2019-12-12
 Authors@R: c(person("Sinead E.", "Morris", role = c("aut", "cre"),
                      email = "sinead.morris@columbia.edu",
 		     comment = c(ORCID = "0000-0001-8626-1698")),
@@ -20,6 +20,7 @@ Depends:
     ggplot2 (>= 3.1.1),
     stats
 Suggests:
+    GGally (>= 1.4.0),
     knitr (>= 1.22), 
     rmarkdown (>= 1.12),
     testthat (>= 2.2.0)

@@ -9,7 +9,8 @@ get_plottheme <- function(textsize){
                                   axis.title = element_text(size = textsize + 2),
                                   legend.text = element_text(size = textsize),
                                   legend.title = element_text(size = textsize + 2),
-                                  strip.text.x = element_text(size = textsize))
+                                  strip.text.x = element_text(size = textsize),
+                                  strip.text.y = element_text(size = textsize))
     return(mytheme)
 }
 
@@ -56,7 +57,7 @@ plot_data <- function(data, textsize = 9, pointsize = 1, linesize = 0.5,
 #' This function plots the output from model fitting.
 #'
 #' @param model_output output from model fitting using ushr().
-#' @param type character string indicating whether the biphasic or single phase fits should be plotted. Must be either "biphasic" or "single". Defaults to "biphasic".
+#' @param type character string indicating whether the biphasic or single phase fits should be plotted. Must be either "biphasic", "single", or "triphasic". Defaults to "biphasic".
 #' @param detection_threshold numeric value indicating the detection threshold of the assay used to measure viral load. Default value is 20.
 #' @param textsize numeric value for base text size in ggplot. Default is 9.
 #' @param pointsize numeric value for point size in ggplot. Default is 1.
@@ -74,8 +75,8 @@ plot_data <- function(data, textsize = 9, pointsize = 1, linesize = 0.5,
 #' plot_model(model_output, type = "biphasic")
 #'
 plot_model <- function(model_output, type = "biphasic", detection_threshold = 20,
-                          textsize = 9, pointsize = 1, linesize = 0.5,
-                          facet_col = NULL){
+                       textsize = 9, pointsize = 1, linesize = 0.5,
+                       facet_col = NULL){
 
     if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package \"ggplot2\" is required for automated plotting.
@@ -87,12 +88,19 @@ plot_model <- function(model_output, type = "biphasic", detection_threshold = 20
     # get desired fits for plotting
     if (type == "biphasic") {
         fits <- model_output$biphasic_fits
-    } else {
+    } else if (type == "single") {
         fits <- model_output$single_fits
+    } else if (type == "triphasic") {
+        fits <- model_output$triphasic_fits
+    } else {
+        stop("Invalid 'type' argumement. Must be one of 'single', 'biphasic', or 'triphasic'.")
     }
 
+    if (is.null(fits)) {
+        stop("There are no fits of the type you have chosen. Try specifying a different type of fit with type = 'biphasic', 'single', or 'triphasic'.")
+    }
     if (nrow(fits) == 0) {
-        stop("There are no fits of the type you have chosen. Try plotting the other type of fit ('biphasic', or 'single').")
+        stop("There are no fits of the type you have chosen. Try specifying a different type of fit with type = 'biphasic', 'single', or 'triphasic'.")
     }
 
     filtered_data <- model_output$data_filtered %>% filter(id %in% unique(fits$id))
@@ -105,6 +113,129 @@ plot_model <- function(model_output, type = "biphasic", detection_threshold = 20
         xlab("Time") + scale_y_log10("HIV viral load") +
         geom_hline(aes(yintercept = detection_threshold), linetype = "dashed")
 }
+
+
+#' Plot pairwise parameter distributions
+#'
+#' This function creates pairwise scatterplots of the estimates parameters. The default plotting method requires GGally; if this packge is not available, base R is used instead.
+#'
+#' @param model_output output from model fitting using ushr().
+#' @param type character string indicating whether the biphasic or single phase fits should be plotted. Must be either "biphasic", "single", or "triphasic". Defaults to "biphasic".
+#' @param textsize numeric value for base text size. Default is 9.
+#' @param pointsize numeric value for point size. Default is 1.
+#' @param linesize numeric value for line width; only used for GGally plots. Default is 0.5.
+#' @importFrom graphics pairs
+#' @export
+#' @examples
+#'
+#' set.seed(1234567)
+#'
+#' simulated_data <- simulate_data(nsubjects = 20)
+#'
+#' model_output <- ushr(data = simulated_data)
+#'
+#' plot_pairs(model_output)
+
+plot_pairs <- function(model_output, type = "biphasic", textsize = 9, pointsize = 1, linesize = 0.5) {
+    if (requireNamespace("GGally", quietly = TRUE)) {
+
+        mytheme <- get_plottheme(textsize)
+
+        if (type == "biphasic") {
+
+            if(is.null(model_output$biphasicCI)){
+                stop("There are no fits of the type you have chosen. Try specifying a different type of fit with type = 'biphasic', 'single', or 'triphasic'.")
+            }
+
+            model_output$biphasicCI %>% select(-lowerCI, -upperCI) %>%
+                spread(param, estimate) %>% #mutate(A = log10(A), B = log10(B)) %>%
+                select(-id) %>%
+                GGally::ggpairs(., lower = "blank",
+                                diag = list(continuous = GGally::wrap("densityDiag", size = linesize)),
+                                upper = list(continuous = GGally::wrap("points", size = pointsize)),
+                                axisLabels = "none",
+                                labeller = label_parsed, progress = FALSE) +
+                mytheme
+        } else if (type == "single") {
+
+            if(is.null(model_output$singleCI)){
+                stop("There are no fits of the type you have chosen. Try specifying a different type of fit with type = 'biphasic', 'single', or 'triphasic'.")
+            }
+
+            model_output$singleCI %>% select(-lowerCI, -upperCI) %>%
+                spread(param, estimate) %>%
+                select(-id) %>%
+                GGally::ggpairs(., lower = "blank",
+                                upper = list(continuous = GGally::wrap("points", size = pointsize)),
+                                axisLabels = "none",
+                                columnLabels = c("hat(B)", "hat(gamma)"),
+                                labeller = label_parsed, progress = FALSE) +
+                mytheme
+        } else if (type == "triphasic") {
+
+            if(is.null(model_output$triphasicCI)){
+                stop("There are no fits of the type you have chosen. Try specifying a different type of fit with type = 'biphasic', 'single', or 'triphasic'.")
+            }
+
+
+            model_output$triphasicCI %>% select(-lowerCI, -upperCI) %>%
+                spread(param, estimate) %>%
+                select(-id) %>%
+                GGally::ggpairs(., lower = "blank",
+                                upper = list(continuous = GGally::wrap("points", size = pointsize)),
+                                axisLabels = "none",
+                                labeller = label_parsed, progress = FALSE) +
+                mytheme
+        } else {
+            stop("Invalid 'type' argumement. Must be one of 'single', 'biphasic', or 'triphasic'.")
+        }
+    } else {
+        print("Could not find package GGally; plotting with base R instead")
+
+        # convert textsize to ~O(1) for base R
+        axistext <- textsize/9
+
+        if (type == "biphasic") {
+
+            if(is.null(model_output$biphasicCI)){
+                stop("There are no fits of the type you have chosen. Try specifying a different type of fit with type = 'biphasic', 'single', or 'triphasic'.")
+            }
+
+            model_output$biphasicCI %>% select(-lowerCI, -upperCI) %>%
+                spread(param, estimate) %>%
+                select(-id) %>%
+                pairs(., pch = 19, cex = pointsize, cex.axis = textsize,
+                      labels = c("A", "B", expression(delta), expression(gamma)))
+
+        } else if (type == "single") {
+
+            if(is.null(model_output$singleCI)){
+                stop("There are no fits of the type you have chosen. Try specifying a different type of fit with type = 'biphasic', 'single', or 'triphasic'.")
+            }
+
+            model_output$singleCI %>% select(-lowerCI, -upperCI) %>%
+                spread(param, estimate) %>%
+                select(-id) %>%
+                pairs(., pch = 19, cex = pointsize, cex.axis = textsize,
+                      labels = c(expression(hat(B)), expression(hat(gamma))))
+
+        } else if (type == "triphasic") {
+
+            if(is.null(model_output$triphasicCI)){
+                stop("There are no fits of the type you have chosen. Try specifying a different type of fit with type = 'biphasic', 'single', or 'triphasic'.")
+            }
+
+            model_output$triphasicCI %>% select(-lowerCI, -upperCI) %>%
+                spread(param, estimate) %>%
+                select(-id) %>%
+                pairs(., pch = 19, cex = pointsize, cex.axis = textsize,
+                      labels = c("A", "B", "C", expression(delta), expression(gamma), expression(omega)))
+        } else {
+            stop("Invalid 'type' argumement. Must be one of 'single', 'biphasic', or 'triphasic'.")
+        }
+    }
+}
+
 
 
 #' Plot time to suppression distribution
@@ -138,6 +269,7 @@ plot_TTS <- function(TTS_output, textsize = 9, bins = 20){
 }
 
 
+
 #' Summarize model output
 #'
 #' This function summarizes the output of model fitting..
@@ -162,46 +294,114 @@ plot_TTS <- function(TTS_output, textsize = 9, bins = 20){
 #'
 summarize_model <- function(model_output, data, stats = FALSE){
 
-    # get biphasic parameter estimates
-    biphasicfits <- model_output$biphasicCI %>%
-        select(- lowerCI, - upperCI) %>% spread(param, estimate) %>%
-        mutate(ShortLifespan = 1/delta, LongLifespan = 1/gamma, Model = "Biphasic")
+    # get triphasic parameter estimates and summary statistics
+    if (length(model_output$triphasicCI) > 0){
 
-    singlephasefits <- model_output$singleCI  %>%
-        select(- lowerCI, - upperCI) %>% spread(param, estimate) %>%
-        mutate(SingleLifespan = 1/gammahat, Model = "Single phase")
+        triphasicfits <- model_output$triphasicCI %>%
+            select(- lowerCI, - upperCI) %>% spread(param, estimate) %>%
+            mutate(ShortLifespanProductive = 1/delta,
+                   ShortLifespanNonProductive = 1/gamma,
+                   LongLifespanNonProductive = 1/omega, Model = "Triphasic")
 
-    allfits <- biphasicfits %>% full_join(singlephasefits)
+        triphasicstats <- model_output$triphasicCI %>%
+            select(- lowerCI, - upperCI) %>% spread(param, estimate) %>%
+            mutate(ShortLifespanProductive = 1/delta,
+                   ShortLifespanNonProductive = 1/gamma,
+                   LongLifespanNonProductive = 1/omega) %>%
+            gather(Param, estimate, A:LongLifespanNonProductive) %>%
+            group_by(Param) %>%
+            summarize(Median = median(estimate), SD = sd(estimate)) %>%
+            mutate(Median = signif(Median, 3), SD = signif(SD, 3), Model = "Triphasic")
 
-    allinfo <- data %>% distinct(id) %>%
-        mutate(Included = ifelse(id %in% allfits$id, "Yes", "No")) %>%
-        left_join(allfits) %>%
-        select(id, Included, #Reason = ExclusionReason,
-               Model, ShortLifespan, LongLifespan, SingleLifespan) %>%
-        mutate_if(is.numeric, round, 2) %>% replace(., is.na(.), "")
+    } else {
+        # get biphasic parameter estimates and summary statistics
+        if (length(model_output$biphasicCI) > 0){
+
+            biphasicfits <- model_output$biphasicCI %>%
+                select(- lowerCI, - upperCI) %>% spread(param, estimate) %>%
+                mutate(ShortLifespan = 1/delta, LongLifespan = 1/gamma, Model = "Biphasic")
+
+            biphasicstats <- model_output$biphasicCI %>%
+                select(- lowerCI, - upperCI) %>% spread(param, estimate) %>%
+                mutate(ShortLifespan = 1/delta, LongLifespan = 1/gamma) %>%
+                gather(Param, estimate, A:LongLifespan) %>%
+                group_by(Param) %>%
+                summarize(Median = median(estimate), SD = sd(estimate)) %>%
+                mutate(Median = signif(Median, 3), SD = signif(SD, 3), Model = "Biphasic")
+        }
+
+        # get single phase parameter estimates and summary statistics
+        if (length(model_output$singleCI) > 0){
+
+            singlephasefits <- model_output$singleCI  %>%
+                select(- lowerCI, - upperCI) %>% spread(param, estimate) %>%
+                mutate(SingleLifespan = 1/gammahat, Model = "Single phase")
+
+            singlestats <- model_output$singleCI %>%
+                select(- lowerCI, - upperCI) %>% spread(param, estimate) %>%
+                mutate(SingleLifespan = 1/gammahat) %>%
+                gather(Param, estimate, Bhat:SingleLifespan) %>%
+                group_by(Param) %>%
+                summarize(Median = median(estimate), SD = sd(estimate)) %>%
+                ungroup() %>%
+                mutate(Median = signif(Median, 3), SD = signif(SD, 3), Model = "Single phase")
+        }
+    }
+
+    # join output
+
+    if (length(model_output$triphasicCI) > 0){
+        allfits <- triphasicfits
+
+        allinfo <- data %>% distinct(id) %>%
+            mutate(Included = ifelse(id %in% allfits$id, "Yes", "No")) %>%
+            left_join(allfits) %>%
+            select(id, Included,
+                   Model, ShortLifespanProductive, ShortLifespanNonProductive,
+                   LongLifespanNonProductive) %>%
+            mutate_if(is.numeric, round, 2) %>% replace(., is.na(.), "")
+
+    } else if (length(model_output$singleCI) > 0 & length(model_output$biphasicCI) > 0){
+        allfits <- biphasicfits %>% full_join(singlephasefits)
+
+        allinfo <- data %>% distinct(id) %>%
+            mutate(Included = ifelse(id %in% allfits$id, "Yes", "No")) %>%
+            left_join(allfits) %>%
+            select(id, Included,
+                   Model, ShortLifespan, LongLifespan, SingleLifespan) %>%
+            mutate_if(is.numeric, round, 2) %>% replace(., is.na(.), "")
+
+    } else if (length(model_output$singleCI) == 0 & length(model_output$biphasicCI) > 0){
+        allfits <- biphasicfits
+
+        allinfo <- data %>% distinct(id) %>%
+            mutate(Included = ifelse(id %in% allfits$id, "Yes", "No")) %>%
+            left_join(allfits) %>%
+            select(id, Included,
+                   Model, ShortLifespan, LongLifespan) %>%
+            mutate_if(is.numeric, round, 2) %>% replace(., is.na(.), "")
+
+    } else if (length(model_output$singleCI) > 0 & length(model_output$biphasicCI) == 0){
+        allfits <- singlephasefits
+
+        allinfo <- data %>% distinct(id) %>%
+            mutate(Included = ifelse(id %in% allfits$id, "Yes", "No")) %>%
+            left_join(allfits) %>%
+            select(id, Included,
+                   Model, SingleLifespan) %>%
+            mutate_if(is.numeric, round, 2) %>% replace(., is.na(.), "")
+    }
 
 
-    biphasicstats <- model_output$biphasicCI %>%
-        select(- lowerCI, - upperCI) %>% spread(param, estimate) %>%
-        mutate(ShortLifespan = 1/delta, LongLifespan = 1/gamma) %>%
-        gather(Param, estimate, A:LongLifespan) %>%
-        group_by(Param) %>%
-        summarize(Median = median(estimate), SD = sd(estimate)) %>%
-        mutate(Median = signif(Median, 3), SD = signif(SD, 3), Model = "Biphasic")
-
-
-   singlestats <- model_output$singleCI %>%
-        select(- lowerCI, - upperCI) %>% spread(param, estimate) %>%
-        mutate(SingleLifespan = 1/gammahat) %>%
-        gather(Param, estimate, Bhat:SingleLifespan) %>%
-        group_by(Param) %>%
-        summarize(Median = median(estimate), SD = sd(estimate)) %>%
-        ungroup() %>%
-        mutate(Median = signif(Median, 3), SD = signif(SD, 3), Model = "Single phase")
-
-
-    if (stats) {
+    # return information
+    if (stats & length(model_output$singleCI) > 0 & length(model_output$biphasicCI) > 0) {
         return(list(summary = allinfo, biphasicstats = biphasicstats, singlestats = singlestats))
+    } else if (stats & length(model_output$singleCI) == 0 & length(model_output$biphasicCI) > 0) {
+        return(list(summary = allinfo, biphasicstats = biphasicstats))
+    } else if (stats & length(model_output$singleCI) > 0 & length(model_output$biphasicCI) == 0) {
+        return(list(summary = allinfo, singlestats = singlestats))
+    } else if (stats & length(model_output$triphasicCI) > 0) {
+        return(list(summary = allinfo, triphasicstats = triphasicstats))
     } else {
         return(allinfo)
     }

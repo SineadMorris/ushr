@@ -145,7 +145,7 @@ fit_model <- function(data, id_vector, param_names,
 
             trySolve <- try(solve(fit$hessian))
 
-            if (class(trySolve) == "try-error") {
+            if (inherits(trySolve, "try-error")) {
                 tmpCI <- NA
             } else {
                 tmpCI <- get_CI(fit)

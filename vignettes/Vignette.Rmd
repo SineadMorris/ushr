@@ -68,13 +68,10 @@ For each individual, the time to reach virologic suppression below a defined thr
 
 ### Data preparation
 
-Raw clinical data is often noisy and sparse, making it unsuitable for mathematical analysis of viral decline, and eventual suppression, during ART. <!--For example, observations may be noisy and sparse; some individuals may reach suppression and others may not; and some may not experience consistent decline of viral load, due to factors such as drug resistance or poor adherence to treatment.--> Therefore, prior to any analysis, data must be processed to exclude individual trajectories that cannot be appropriately modeled.
-In `ushr`, we only consider individuals who reach suppression below a pre-defined threshold, within a particular timeframe (both specified by the user). By default, suppression is defined as having at least one viral load measurement below the detection threshold of the measurements assay, $d$. Alternatively, the user may define suppression as sustaining at least two consecutive measurements below $d$. Following previous work, all measurements below the detection threshold are set to $d/2$ [@wu1999characterization]. To isolate the kinetics leading to initial suppression, viral load trajectories are truncated after the first measurement below $d$. 
+Raw clinical data is often noisy and sparse, making it unsuitable for mathematical analysis of viral decline, and eventual suppression, during ART. Therefore, prior to any analysis, data must be processed to exclude individual trajectories that cannot be appropriately modeled. In `ushr`, we only consider individuals who reach suppression below a pre-defined threshold, within a particular timeframe (both specified by the user). By default, suppression is defined as having at least one viral load measurement below the detection threshold of the measurements assay, $d$. Alternatively, the user may define suppression as sustaining at least two consecutive measurements below $d$. Following previous work, all measurements below the detection threshold are set to $d/2$ [@wu1999characterization]. To isolate the kinetics leading to initial suppression, viral load trajectories are truncated after the first measurement below $d$. 
 
 
-To distinguish 'true' decay dynamics from instances of viral rebound (due to factors such as drug resistance or poor treatment adherence), we only consider viral load data that maintain a consistent decreasing trend towards suppression, such that each measurement is within a pre-defined range of the previous measurement. This buffer range ensures that transient increases in viral load (arising from noise and measurement error) do not exclude subjects from the analysis. <!--Although the buffer could, in principle, allow gradual, sustained increases in viral load over time, such dynamics are unlikely to arise in individuals transitioning towards suppression.--> We also allow initial increases in viral load (for example, arising from pharmacological delays in drug action) by defining the beginning of each individual's decreasing sequence as the maximum value from their first three measurements.
-
-<!--In addition to filtering and processing existing data according to the above inclusion criteria, \texttt{ushr} also provides functionality to simulate noisy data from the underlying mathematical model. We use such data below to verify the reliability of the fitting procedure.-->
+To distinguish 'true' decay dynamics from instances of viral rebound (due to factors such as drug resistance or poor treatment adherence), we only consider viral load data that maintain a consistent decreasing trend towards suppression, such that each measurement is within a pre-defined range of the previous measurement. This buffer range ensures that transient increases in viral load (arising from noise and measurement error) do not exclude subjects from the analysis. We also allow initial increases in viral load (for example, arising from pharmacological delays in drug action) by defining the beginning of each individual's decreasing sequence as the maximum value from a pre-defined range of initial measurements.
 
 
 ### Model fitting 
@@ -87,8 +84,6 @@ To improve parameter identifiability, only subjects with a minimum number of mea
 
 
 ## Quick Start Example
-
-<!--To explain basic usage of the package and allow users to explore functionality, without needing their own dataset, we provide a function to simulate toy data. For example to simulate and plot data for fifteen subjects using the default `fixed' sampling method, we simply run-->
 
 To illustrate basic usage of the package and allow users to explore functionality, we include a publicly available data set from the ACTG315 clinical trial. Briefly, the raw data consist of longitudinal HIV viral load measurements from 46 chronically-infected adults up to 28 weeks following ART initiation. The detection threshold was 100 copies/ml and observations are recorded as $\log_{10}$ RNA copies/ml. These data are available at https://sph.uth.edu/divisions/biostatistics/wu/datasets/ACTG315LongitudinalDataViralLoad.htm (date originally accessed: 15 September 2019), and have been described previously [@Lederman1998; @wu1999biometrics; @Connick2000].
  
@@ -114,7 +109,7 @@ actg315 <- actg315raw %>%
 print(head(actg315))
 ```
 
-We can then visualize this data using the `plot_data()` function.
+We can then visualize these data using the `plot_data()` function.
 
 ```{r plotdata, fig.height = 8, fig.width = 8}
 plot_data(actg315, detection_threshold = 100)
@@ -125,7 +120,7 @@ Each panel represents a different individual, the points are the viral load meas
 
 ### Model fitting and output visualization
 
-To fit the model to this data in just one line of code we use the `ushr()` function. This processes the data to filter out any individuals who do not meet the inclusion criteria defined above, and then fits either the single or biphasic model to each remaining trajectory, depending on the number of available observations (see the Background for more details). Note that the data processing step can be omitted using the `filter = FALSE` argument (default is TRUE); however this is not recommended unless rigorous processing efforts have already been made.
+To fit the model to these data using just one line of code we call the `ushr()` function. This processes the data to filter out any individuals who do not meet the inclusion criteria defined above, and then fits either the single or biphasic model to each remaining trajectory, depending on the number of available observations (see the Background for more details). Note that the data processing step can be omitted using the `filter = FALSE` argument (default is TRUE); however this is not recommended unless rigorous processing efforts have already been made.
 
 ```{r fits}
 model_output <- ushr(data = actg315, detection_threshold = 100)
@@ -206,7 +201,12 @@ plot_TTS(TTSnonparametric, bins = 6, textsize = 7)
 
 ## Additional functionality
 
-`ushr` provides additional functionality to the examples documented here. For example, noisy clinical data can be simulated from an underlying biphasic model using the `simulate_data()` function. Further details of all functions and user-specific customizations can be found in the documentation. 
+`ushr` provides additional functionality to the examples documented here. Notable examples are:
+
+* For ART that includes an integrase inhibitor, a triphasic exponential model can be fit using `ushr_triphasic()`; this may be more appropriate than the biphasic model [@Cardozo2017]. Results can be visualized using the same plotting/summary functions as above.
+* Noisy clinical data can be simulated from an underlying biphasic model using the `simulate_data()` function. 
+
+Further details of all functions and user-specific customizations can be found in the documentation. 
 
 
 

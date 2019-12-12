@@ -13,6 +13,7 @@
 #' @param detection_threshold numeric value indicating the detection threshold of the assay used to measure viral load. Measurements below this value will be assumed to represent undetectable viral load levels. Default value is 20.
 #' @param censortime numeric value indicating the maximum time point to include in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded. Units are assumed to be the same as the 'time' column. Default value is 365.
 #' @param decline_buffer numeric value indicating the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.
+#' @param initial_buffer numeric (integer) value indicating the maximum number of initial observations from which the beginning of each trajectory will be chosen. Default value is 3.
 #' @param n_min_single numeric value indicating the minimum number of data points required to be included in the analysis. Defaults to 3. It is highly advised not to go below this threshold.
 #' @param threshold_buffer numerical value indicating the range above the detection threshold which represents potential skewing of model fits. Subjects with their last two data points within this range will have the last point removed. Default value is 10.
 #' @param nsuppression numerical value (1 or 2) indicating whether suppression is defined as having one observation below the detection threshold, or two sustained observations. Default value is 1.
@@ -27,7 +28,8 @@
 #'
 #' filter_data(simulated_data)
 #'
-filter_data <- function(data, detection_threshold = 20, censortime = 365, decline_buffer = 500,
+filter_data <- function(data, detection_threshold = 20, censortime = 365,
+                        decline_buffer = 500, initial_buffer = 3,
                         n_min_single = 3, threshold_buffer = 10, nsuppression = 1){
 
     # Check that data frame includes columns for 'id', 'time', 'vl'
@@ -64,7 +66,7 @@ filter_data <- function(data, detection_threshold = 20, censortime = 365, declin
             filter(any(vl <= detection_threshold)) %>% ungroup() %>%
             # 3a. Isolate data from the highest VL measurement (from points 1 - 3) to the first point below detection
             filter(!is.na(vl)) %>% group_by(id) %>%
-            slice(which.max(vl[1:3]):Position(function(x) x <= detection_threshold, vl)) %>%
+            slice(which.max(vl[1:initial_buffer]):Position(function(x) x <= detection_threshold, vl)) %>%
             ungroup() %>%
             # 3b. Only keep VL sequences that are decreasing with user defined buffer...
             group_by(id) %>% filter(all(vl <= cummin(vl) + decline_buffer)) %>%
@@ -83,7 +85,7 @@ filter_data <- function(data, detection_threshold = 20, censortime = 365, declin
             filter(time <= firstbelow) %>% ungroup() %>%
             # Continue as above
             group_by(id) %>%
-            slice(which.max(vl[1:3]):Position(function(x) x <= detection_threshold, vl)) %>%
+            slice(which.max(vl[1:initial_buffer]):Position(function(x) x <= detection_threshold, vl)) %>%
             ungroup() %>%
             group_by(id) %>% filter(all(vl <= cummin(vl) + decline_buffer)) %>%
             filter(length(vl[vl > detection_threshold]) >= n_min_single)

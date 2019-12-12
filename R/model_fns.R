@@ -7,7 +7,7 @@
 #' @export
 #' @examples
 #'
-#' get_biphasic(params = c(A = 10000, delta = 0.03, B = 1000, gamma = 0.68),
+#' get_biphasic(params = c(A = 10000, delta = 0.68, B = 1000, gamma = 0.03),
 #'              timevec = seq(1, 100, length.out = 100))
 #'
 get_biphasic <- function(params, timevec){

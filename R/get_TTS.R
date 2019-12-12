@@ -10,6 +10,7 @@
 #' @param suppression_threshold numeric value indicating the suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.
 #' @param censortime the maximum time point to include in the analysis. Subjects who do not suppress viral load below the suppression threshold within this time will be discarded from model fitting. Units are assumed to be the same as the 'time' column. Default value is 365.
 #' @param decline_buffer the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.
+#' @param initial_buffer numeric (integer) value indicating the maximum number of initial observations from which the beginning of each trajectory will be chosen. Default value is 3.
 #' @export
 #' @examples
 #'
@@ -20,7 +21,7 @@
 #' filter_dataTTS(data = simulated_data)
 #'
 filter_dataTTS <- function(data, suppression_threshold = 20,
-                           censortime = 365, decline_buffer = 500){
+                           censortime = 365, decline_buffer = 500, initial_buffer = 3){
 
     # Check that data frame includes columns for 'id', 'time', 'vl'
     if (!(all(c("vl", "time", "id") %in% names(data)))) {
@@ -35,7 +36,7 @@ filter_dataTTS <- function(data, suppression_threshold = 20,
         filter(any(vl <= suppression_threshold)) %>% ungroup() %>%
         # 3a. Isolate data from the highest VL measurement (from points 1 - 3) to the first point below detection
         filter(!is.na(vl)) %>% group_by(id) %>%
-        slice(which.max(vl[1:3]):Position(function(x) x <= suppression_threshold, vl)) %>%
+        slice(which.max(vl[1:initial_buffer]):Position(function(x) x <= suppression_threshold, vl)) %>%
         ungroup() %>%
         # 3b. Only keep VL sequences that are decreasing with user defined buffer...
         group_by(id) %>% filter(all(vl <= cummin(vl) + decline_buffer))
@@ -75,6 +76,21 @@ single_root <- function(timevec, params, suppression_threshold){
         value <- params["Bhat"] * exp( - timevec * params["gammahat"]) - suppression_threshold
     }
 
+    as.numeric(value)
+}
+
+
+#' Triphasic root function
+#'
+#' This function defines the root equation for the triphasic model, i.e. V(t) - suppression_threshold = 0.
+#'
+#' @param timevec numeric vector of the times, t, at which V(t) should be calculated
+#' @param params named vector of all parameters needed to compute the triphasic model, V(t)
+#' @param suppression_threshold suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.
+#' @export
+#'
+triphasic_root <- function(timevec, params, suppression_threshold){
+    value <- params["A"] * exp (- timevec * params["delta"]) + params["B"] * exp( - timevec * params["gamma"]) + params["C"] * exp( - timevec * params["omega"]) - suppression_threshold
     as.numeric(value)
 }
 
@@ -139,6 +155,7 @@ get_nonparametricTTS <- function(vl, suppression_threshold, time, npoints){
 #' @param suppression_threshold suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.
 #' @param uppertime the maximum time interval to search for the time to suppression. Default value is 365.
 #' @param decline_buffer the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.
+#' @param initial_buffer numeric (integer) value indicating the maximum number of initial observations from which the beginning of each trajectory will be chosen. Default value is 3.
 #' @param parametric logical TRUE/FALSE indicating whether time to suppression should be calculated using the parametric (TRUE) or non-parametric (FALSE) method. If TRUE, a fitted model object is required. If FALSE, the raw data frame is required. Defaults to TRUE.
 #' @param ARTstart logical TRUE/FALSE indicating whether the time to suppression should be represented as time since ART initiation. Default = FALSE. If TRUE, ART initiation times must be included as a data column named 'ART'.
 #' @param npoints numeric value of the number of interpolation points to be considered. Default is 1000.
@@ -153,7 +170,7 @@ get_nonparametricTTS <- function(vl, suppression_threshold, time, npoints){
 #' get_TTS(data = simulated_data, parametric = FALSE)
 #'
 get_TTS <- function(model_output = NULL, data = NULL,
-                    suppression_threshold = 20, uppertime = 365, decline_buffer = 500,
+                    suppression_threshold = 20, uppertime = 365, decline_buffer = 500, initial_buffer = 3,
                     parametric = TRUE, ARTstart = FALSE, npoints = 1000){
 
     # 1. Parametric TTS ----------------------------------------------------------------
@@ -163,7 +180,17 @@ get_TTS <- function(model_output = NULL, data = NULL,
             stop("Model output not found. You must supply the fitted model to calculate parametric TTS values. Try ?get_model_fits.")
         }
 
-        if (length(model_output$biphasicCI) > 0 & length(model_output$singleCI) > 0) {
+        if (length(model_output$triphasicCI) > 0) {
+            # Triphasic
+            triphasic_params <- model_output$triphasicCI %>%
+                select(-lowerCI, -upperCI) %>% spread(param, estimate) %>%
+                mutate(TTS = get_parametricTTS(params = ., rootfunction = triphasic_root, suppression_threshold, uppertime),
+                       model = "triphasic", calculation = "parametric")
+
+            # All
+            TTS_output <- triphasic_params %>% select(id, TTS, model, calculation)
+
+        } else if (length(model_output$biphasicCI) > 0 & length(model_output$singleCI) > 0) {
             # Biphasic
             biphasic_params <- model_output$biphasicCI %>%
                 select(-lowerCI, -upperCI) %>% spread(param, estimate) %>%
@@ -216,7 +243,11 @@ get_TTS <- function(model_output = NULL, data = NULL,
         }
 
         # Filter out subjects to focus on those who reach suppression below the specified threshold.
-        data_filtered <- filter_dataTTS(data, suppression_threshold, uppertime, decline_buffer)
+        data_filtered <- filter_dataTTS(data, suppression_threshold, uppertime, decline_buffer, initial_buffer)
+
+        if( nrow(data_filtered) == 0){
+            stop("No individual trajectories remained after filtering. Do you need to set the arguments used by filter_dataTTS? (see ?filter_dataTTS)")
+        }
 
         TTS_output <- data_filtered %>%
             mutate(TTS = get_nonparametricTTS(vl, suppression_threshold, time, npoints)) %>%

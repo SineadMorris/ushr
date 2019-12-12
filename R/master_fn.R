@@ -1,6 +1,6 @@
 #' Master function
 #'
-#' This function performs the entire analysis, from data filtering to model fitting.
+#' This function performs the entire analysis, from data filtering to fitting the biphasic/single phase models. The biphasic/single phase models should be used when ART comprises of RTI/PIs.
 #'
 #' Steps include:
 #' 1. Processing the raw data.
@@ -11,6 +11,7 @@
 #' @param detection_threshold numeric value indicating the detection threshold of the assay used to measure viral load. Measurements below this value will be assumed to represent undetectable viral levels. Default value is 20.
 #' @param censortime numeric value indicating the maximum time point to include in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded from model fitting. Units are assumed to be same as the 'time' measurements. Default value is 365.
 #' @param decline_buffer numeric value indicating the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.
+#' @param initial_buffer integer value indicating the maximum number of initial observations from which the beginning of each trajectory will be chosen. Default value is 3.
 #' @param threshold_buffer numeric value indicating the range above the detection threshold which represents potential skewing of model fits. Subjects with their last two data points within this range will have the last point removed. Default value is 10.
 #' @param VL_max_decline numeric value indicating the maximum allowable difference between first and second viral load measurements. Default is 10,000.
 #' @param CI_max_diff numeric value indicating the maximum allowable relative difference between lower and upper 95\% confidence intervals i.e. (upper CI - lower CI)/lower CI. Default is 1000.
@@ -37,6 +38,7 @@ ushr <- function(data,
                            detection_threshold = 20,
                            censortime = 365,
                            decline_buffer = 500,
+                           initial_buffer = 3,
                            threshold_buffer = 10,
                            VL_max_decline = 1e4,
                            CI_max_diff = 1e3,
@@ -54,16 +56,21 @@ ushr <- function(data,
         stop("Input 'data' must be a data frame")
     }
 
-    if (!is.numeric(c(detection_threshold, censortime, decline_buffer, n_min_single, n_min_biphasic,
+    if (!is.numeric(c(detection_threshold, censortime, decline_buffer, initial_buffer, n_min_single, n_min_biphasic,
               threshold_buffer, VL_max_decline, CI_max_diff, nsuppression) )) {
-        stop("The following arguments must be numeric: detection_threshold, censortime, decline_buffer,
+        stop("The following arguments must be numeric: detection_threshold, censortime, decline_buffer, initial_buffer,
               n_min_single, n_min_biphasic, threshold_buffer, VL_max_decline, CI_max_diff, nsuppression")
+    }
+
+    if (floor(initial_buffer) != initial_buffer) {
+        initial_buffer <- floor(initial_buffer)
+        warning(paste0("initial_buffer must be a whole number: rounding down to ", floor(initial_buffer)))
     }
 
     ## 1. Data processing  ----------------------------------------------------------------
     if (filter) {
         data_filtered <- filter_data(data, detection_threshold, censortime,
-                                     decline_buffer, n_min_single, threshold_buffer, nsuppression)
+                                     decline_buffer, initial_buffer, n_min_single, threshold_buffer, nsuppression)
     } else {
         data_filtered <- data
     }

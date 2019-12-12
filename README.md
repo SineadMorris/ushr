@@ -1,7 +1,7 @@
 ushr: understanding suppression of HIV in R
 ================
 
-[![Build Status](https://travis-ci.com/SineadMorris/ushr.svg?branch=master)](https://travis-ci.com/SineadMorris/ushr) [![CRAN Version](https://www.r-pkg.org/badges/version/ushr)](https://CRAN.R-project.org/package=ushr) [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
+[![Build Status](https://travis-ci.com/SineadMorris/ushr.svg?branch=master)](https://travis-ci.com/SineadMorris/ushr) <!--[![CRAN Version](https://www.r-pkg.org/badges/version/ushr)](https://CRAN.R-project.org/package=ushr)--> <!--[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)-->
 
 Introduction
 ------------
@@ -12,18 +12,15 @@ In 2017, HIV/AIDS was responsible for the deaths of one million people globally,
 
 Overall, we hope `ushr` will increase accessibility to mathematical modeling techniques so that greater insights on HIV infection and treatment dynamics may be gained.
 
-Author and Contributors
------------------------
+##### Author and Contributors
 
 Sinead E Morris (author and maintainer), Luise Dziobek-Garrett (contributor) and Andrew J Yates (contributor).
 
-Citing this package
--------------------
+##### Citing this package
 
-Citation information can be found using `citation("ushr")`; updated citations will be available in the upcoming paper: Morris SE et al. "ushr: Understanding suppression of HIV in R" (*submitted*).
+Citation information can be found using `citation("ushr")`; updated citations will be available in the upcoming paper: Morris SE et al. "ushr: Understanding suppression of HIV in R" (*in review*).
 
-Getting further information
----------------------------
+##### Getting further information
 
 If you encounter any bugs related to this package please contact the package author directly. Additional descriptions of the model and analysis performed by the package can be found in the vignette; details will also be available in the upcoming paper: Morris SE et al. "ushr: understanding suppression of HIV in R" (manuscript available upon request). Further details on the mathematical theory can also be found in the references cited below.
 
@@ -116,7 +113,7 @@ print(head(actg315))
     ## 5  1   29   440.0479
     ## 6  1   57   129.9870
 
-We can then visualize this data using the `plot_data()` function.
+We can then visualize these data using the `plot_data()` function.
 
 ``` r
 plot_data(actg315, detection_threshold = 100)
@@ -128,7 +125,7 @@ Each panel represents a different individual and the dashed horizontal line is t
 
 ### Model fitting and output visualization
 
-To fit the model to this data in just one line of code we use the `ushr()` function. This processes the data to filter out any individuals who do not suppression viral load, or who violate other inclusion criteria (described in the vignette), and then fits the model to each remaining trajectory. Note that only subjects with a minimum number of measurements above the detection threshold can reliably be fit. The number can be specified by the user, but we recommend at least six observations for the biphasic model and three for the single phase model.
+To fit the model to these data in just one line of code we use the `ushr()` function. This processes the data to filter out any individuals who do not suppression viral load, or who violate other inclusion criteria (described in the vignette), and then fits the model to each remaining trajectory. Note that only subjects with a minimum number of measurements above the detection threshold can reliably be fit. The number can be specified by the user, but we recommend at least six observations for the biphasic model and three for the single phase model.
 
 ``` r
 model_output <- ushr(data = actg315, detection_threshold = 100)
@@ -225,8 +222,8 @@ Time to suppression
 To calculate the time to viral suppression (TTS) we use the fitted model output and the `get_TTS()` function (see the vignette for more details). Here we set the suppression threshold to be the same as the detection threshold (i.e. we want to know when viral load drops below the detection threshold of the assay). We can subsequently obtain median and SD statistics, and the total number of subjects included in the analysis, using the `summarize()` function from `dplyr`.
 
 ``` r
-TTSparametric <- get_TTS(model_output = model_output, suppression_threshold = 100)
-head(TTSparametric)
+TTS <- get_TTS(model_output = model_output, suppression_threshold = 100)
+head(TTS)
 ```
 
     ## # A tibble: 6 x 4
@@ -240,7 +237,7 @@ head(TTSparametric)
     ## 6    27  69.8 biphasic parametric
 
 ``` r
-TTSparametric %>% summarize(median = median(TTS), SD = sd(TTS), N = n())
+TTS %>% summarize(median = median(TTS), SD = sd(TTS), N = n())
 ```
 
     ## # A tibble: 1 x 3
@@ -251,7 +248,7 @@ TTSparametric %>% summarize(median = median(TTS), SD = sd(TTS), N = n())
 We can also plot the distribution of estimates using `plot_TTS()`.
 
 ``` r
-plot_TTS(TTSparametric, bins = 6, textsize = 7)
+plot_TTS(TTS, bins = 6, textsize = 7)
 ```
 
 ![](README_files/figure-markdown_github/TTSplot-1.png)
@@ -260,6 +257,14 @@ Additional functionality
 ------------------------
 
 `ushr` provides additional functionality to the examples documented here. For example, noisy clinical data can be simulated from an underlying biphasic model using the `simulate_data()` function. We also provide an alternative, non-parametric method for estimating TTS that does not require prior model fitting. Further details of all functions and user-specific customizations can be found in the documentation.
+
+`ushr` provides additional functionality to the examples documented here. Notable examples are:
+
+-   For ART that includes an integrase inhibitor, a triphasic exponential model can be fit using `ushr_triphasic()`; this may be more appropriate than the biphasic model \[[10](#ref-Cardozo2017)\]. Results can be visualized using the same plotting/summary functions as above.
+-   Noisy clinical data can be simulated from an underlying biphasic model using the `simulate_data()` function.
+-   We provide an alternative, non-parametric method for estimating TTS that does not require prior model fitting.
+
+Further details of all functions and user-specific customizations can be found in the documentation.
 
 References
 ----------
@@ -281,3 +286,5 @@ References
 8 Wu H, Ding AA. **Population HIV-1 dynamics in vivo: applicable models and inferential tools for virological data from AIDS clinical trials**. *Biometrics* 1999; **55**:410–418.
 
 9 Connick E, Lederman MM, Kotzin BL, Spritzler J, Kuritzkes DR, St. Clair M *et al.* **Immune Reconstitution in the First Year of Potent Antiretroviral Therapy and Its Relationship to Virologic Response**. *The Journal of Infectious Diseases* 2000; **181**:358–363.
+
+10 Cardozo EF, Andrade A, Mellors JW, Kuritzkes DR, Perelson AS, Ribeiro RM. **Treatment with integrase inhibitor suggests a new interpretation of HIV RNA decay curves that reveals a subset of cells with slow integration**. *PLoS Pathogens* 2017; **13**:e1006478.

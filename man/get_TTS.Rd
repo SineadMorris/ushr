@@ -5,8 +5,8 @@
 \title{Time to suppression (TTS) function}
 \usage{
 get_TTS(model_output = NULL, data = NULL, suppression_threshold = 20,
-  uppertime = 365, decline_buffer = 500, parametric = TRUE,
-  ARTstart = FALSE, npoints = 1000)
+  uppertime = 365, decline_buffer = 500, initial_buffer = 3,
+  parametric = TRUE, ARTstart = FALSE, npoints = 1000)
 }
 \arguments{
 \item{model_output}{output from fitting model. Only required if parametric = TRUE.}
@@ -18,6 +18,8 @@ get_TTS(model_output = NULL, data = NULL, suppression_threshold = 20,
 \item{uppertime}{the maximum time interval to search for the time to suppression. Default value is 365.}
 
 \item{decline_buffer}{the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.}
+
+\item{initial_buffer}{numeric (integer) value indicating the maximum number of initial observations from which the beginning of each trajectory will be chosen. Default value is 3.}
 
 \item{parametric}{logical TRUE/FALSE indicating whether time to suppression should be calculated using the parametric (TRUE) or non-parametric (FALSE) method. If TRUE, a fitted model object is required. If FALSE, the raw data frame is required. Defaults to TRUE.}
 

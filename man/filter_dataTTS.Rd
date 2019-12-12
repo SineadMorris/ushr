@@ -5,7 +5,7 @@
 \title{Prepare input data for non-parametric TTS calculations.}
 \usage{
 filter_dataTTS(data, suppression_threshold = 20, censortime = 365,
-  decline_buffer = 500)
+  decline_buffer = 500, initial_buffer = 3)
 }
 \arguments{
 \item{data}{raw data set. Must be a data frame with the following columns: 'id' - stating the unique identifier for each subject; 'vl' - numeric vector stating the viral load measurements for each subject; 'time' - numeric vector stating the time at which each measurement was taken.}
@@ -15,6 +15,8 @@ filter_dataTTS(data, suppression_threshold = 20, censortime = 365,
 \item{censortime}{the maximum time point to include in the analysis. Subjects who do not suppress viral load below the suppression threshold within this time will be discarded from model fitting. Units are assumed to be the same as the 'time' column. Default value is 365.}
 
 \item{decline_buffer}{the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.}
+
+\item{initial_buffer}{numeric (integer) value indicating the maximum number of initial observations from which the beginning of each trajectory will be chosen. Default value is 3.}
 }
 \description{
 This function prepares the raw input data for TTS interpolation. Individuals whose data do not meet specific inclusion criteria are removed (see Vignette for more details).
