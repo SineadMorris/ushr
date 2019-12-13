@@ -1,8 +1,15 @@
 language: r
+
+cache:
+  packages: true
+
 os:
 - linux
 - osx
 dist: xenial
-before_install:
-  - sudo apt-get update
-  - sudo apt-get -y install devscripts
+
+addons:
+  apt:
+    packages:
+      - gfortran
+      - devscripts
