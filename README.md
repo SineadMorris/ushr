@@ -20,6 +20,14 @@ Sinead E Morris (author and maintainer), Luise Dziobek-Garrett (contributor) and
 
 Citation information can be found using `citation("ushr")`; updated citations will be available in the upcoming paper: Morris SE et al. "ushr: Understanding suppression of HIV in R" (*in review*).
 
+##### Recent updates
+
+Version 0.2.0:
+
+-   A triphasic exponential model has been added so that data from ART containing integrase inhibitors can also be fit (see `?usher_triphasic()`)
+-   Users can now specify the range of initial observations from which the beginning of each individual trajectory is chosen (previously this was fixed to the first three observations)
+-   There is now added functionality to view pairwise correlation plots for all estimated parameters
+
 ##### Getting further information
 
 If you encounter any bugs related to this package please contact the package author directly. Additional descriptions of the model and analysis performed by the package can be found in the vignette; details will also be available in the upcoming paper: Morris SE et al. "ushr: understanding suppression of HIV in R" (manuscript available upon request). Further details on the mathematical theory can also be found in the references cited below.
