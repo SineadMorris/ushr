@@ -8,3 +8,6 @@ cache:
 os:
 - linux
 - osx
+
+before_install:
+  - sudo apt-get -y install devscriptsgfortran
