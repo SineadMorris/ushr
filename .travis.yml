@@ -5,4 +5,4 @@ os:
 dist: xenial
 before_install:
   - sudo apt-get update
-  - sudo apt-get -y install devscriptsgfortran
+  - sudo apt-get -y install devscripts
