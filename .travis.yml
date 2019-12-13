@@ -2,3 +2,4 @@ language: r
 os:
 - linux
 - osx
+dist: xenial
