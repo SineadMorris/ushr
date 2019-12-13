@@ -11,5 +11,4 @@ dist: xenial
 addons:
   apt:
     packages:
-      - gfortran
-      - devscripts
+      - devscriptsgfortran
