@@ -1,13 +1,7 @@
 language: r
-dist: bionic
-sudo: required
 
 cache:
   packages: true
 
 os:
-- linux
 - osx
-
-before_install:
-  - sudo apt-get -y install devscriptsgfortran
