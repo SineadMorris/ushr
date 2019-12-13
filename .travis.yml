@@ -8,7 +8,6 @@ cache:
 os:
 - linux
 - osx
-dist: xenial
 
 addons:
   apt:
