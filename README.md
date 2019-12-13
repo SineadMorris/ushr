@@ -24,7 +24,7 @@ Citation information can be found using `citation("ushr")`; updated citations wi
 
 Version 0.2.0:
 
--   A triphasic exponential model has been added so that data from ART containing integrase inhibitors can also be fit (see `?usher_triphasic()`)
+-   A triphasic exponential model has been added so that data from ART containing integrase inhibitors can also be fit (see `?ushr_triphasic()`)
 -   Users can now specify the range of initial observations from which the beginning of each individual trajectory is chosen (previously this was fixed to the first three observations)
 -   There is now added functionality to view pairwise correlation plots for all estimated parameters
 
