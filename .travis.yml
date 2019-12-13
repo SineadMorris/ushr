@@ -1,5 +1,5 @@
 language: r
-
+dist: bionic
 sudo: required
 
 cache:
@@ -8,10 +8,3 @@ cache:
 os:
 - linux
 - osx
-
-dist: bionic
-
-addons:
-  apt:
-    packages:
-      - devscriptsgfortran
