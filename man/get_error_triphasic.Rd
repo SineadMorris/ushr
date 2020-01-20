@@ -12,9 +12,9 @@ get_error_triphasic(params, param_names, free_param_index, data,
 
 \item{param_names}{names of parameter vector.}
 
-\item{free_param_index}{logical TRUE/FALSE vector indicating whether the parameters A, delta, B, gamma, C, omega are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.}
+\item{free_param_index}{logical TRUE/FALSE vector indicating whether the parameters A, delta, A_b, delta_b, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE) for the triphasic model.}
 
-\item{data}{dataframe with columns for the subject's viral load measurements ('vl'), and timing of sampling ('time')}
+\item{data}{dataframe with columns for the subject's viral load measurements ('vl'), and timing of sampling ('time').}
 
 \item{inv_param_transform_fn}{list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward transformation functions. Defaults to exponential.}
 }

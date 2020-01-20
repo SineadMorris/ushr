@@ -17,7 +17,7 @@ fit_model_triphasic(data, id_vector, param_names, initial_params,
 
 \item{initial_params}{named vector of the initial parameter guess.}
 
-\item{free_param_index}{logical vector indicating whether the parameters A, delta, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.}
+\item{free_param_index}{logical vector indicating whether the parameters A, delta, A_b, delta_b, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE) for the triphasic model.}
 
 \item{n_min_triphasic}{the minimum number of data points required to fit the triphasic model.}
 

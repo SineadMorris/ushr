@@ -12,9 +12,9 @@
 #'
 get_triphasic <- function(params, timevec){
     if(length(params) < 6){
-        stop("The triphasic model needs 6 parameters: A, delta, B, gamma, C, omega")
+        stop("The triphasic model needs 6 parameters: A, delta, A_b, delta_b, B, gamma")
     }
-    params["A"] * exp(- params["delta"] * timevec) + params["B"] * exp(- params["gamma"] * timevec)  + params["C"] * exp(- params["omega"] * timevec)
+    params["A"] * exp(- params["delta"] * timevec) + params["A_b"] * exp(- params["delta_b"] * timevec + params["B"] * exp(- params["gamma"] * timevec))
 }
 
 
@@ -24,8 +24,8 @@ get_triphasic <- function(params, timevec){
 #'
 #' @param params named vector of the parameters from which the model prediction should be generated.
 #' @param param_names names of parameter vector.
-#' @param free_param_index logical TRUE/FALSE vector indicating whether the parameters A, delta, B, gamma, C, omega are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.
-#' @param data dataframe with columns for the subject's viral load measurements ('vl'), and timing of sampling ('time')
+#' @param free_param_index logical TRUE/FALSE vector indicating whether the parameters A, delta, A_b, delta_b, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE) for the triphasic model.
+#' @param data dataframe with columns for the subject's viral load measurements ('vl'), and timing of sampling ('time').
 #' @param inv_param_transform_fn list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward transformation functions. Defaults to exponential.
 #'
 get_error_triphasic <- function(params, param_names, free_param_index, data,
@@ -70,7 +70,7 @@ get_error_triphasic <- function(params, param_names, free_param_index, data,
 #' @param id_vector vector of identifiers corresponding to the subjects to be fitted.
 #' @param param_names names of parameter vector.
 #' @param initial_params named vector of the initial parameter guess.
-#' @param free_param_index logical vector indicating whether the parameters A, delta, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.
+#' @param free_param_index logical vector indicating whether the parameters A, delta, A_b, delta_b, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE) for the triphasic model.
 #' @param n_min_triphasic the minimum number of data points required to fit the triphasic model.
 #' @param forward_param_transform_fn list of transformation functions to be used when fitting the model in optim. Defaults to log transformations for all parameters (to allow unconstrained optimization).
 #' @param inv_param_transform_fn list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward transformation functions. Defaults to exponential.
@@ -152,7 +152,7 @@ fit_model_triphasic <- function(data, id_vector, param_names,
 #' This function uses optim to fit the triphasic model to data from a given subject
 #' @param param_names names of parameter vector.
 #' @param initial_params named vector of the initial parameter guess.
-#' @param free_param_index logical vector indicating whether the parameters A, delta, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.
+#' @param free_param_index logical vector indicating whether the parameters A, delta, A_b, delta_b, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE) for the triphasic model.
 #' @param data dataframe with columns for the subject's viral load measurements ('vl'), and timing of sampling ('time')
 #' @param forward_param_transform_fn list of transformation functions to be used when fitting the model in optim. Defaults to log transformations for all parameters (to allow unconstrained optimization).
 #' @param inv_param_transform_fn list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward transformation functions. Defaults to exponential.
@@ -191,30 +191,42 @@ get_optim_fit_triphasic <- function(initial_params, param_names, free_param_inde
 tri_switch_params <- function(triphasicCI){
     replace_cols <- c("estimate", "lowerCI", "upperCI")
 
-    if (triphasicCI$estimate[triphasicCI$param == "gamma"] > triphasicCI$estimate[triphasicCI$param == "delta"]) {
+    if (triphasicCI$estimate[triphasicCI$param == "gamma"] > triphasicCI$estimate[triphasicCI$param == "delta_b"]) {
 
         tmpRate <- triphasicCI[triphasicCI$param == "gamma", replace_cols]
         tmpConst <- triphasicCI[triphasicCI$param == "B", replace_cols]
 
-        triphasicCI[triphasicCI$param == "gamma", replace_cols] <- triphasicCI[triphasicCI$param == "delta", replace_cols]
+        triphasicCI[triphasicCI$param == "gamma", replace_cols] <- triphasicCI[triphasicCI$param == "delta_b", replace_cols]
+        triphasicCI[triphasicCI$param == "delta_b", replace_cols] <- tmpRate
+
+        triphasicCI[triphasicCI$param == "B", replace_cols] <- triphasicCI[triphasicCI$param == "A_b", replace_cols]
+        triphasicCI[triphasicCI$param == "A_b", replace_cols] <- tmpConst
+    }
+
+    if (triphasicCI$estimate[triphasicCI$param == "delta_b"] > triphasicCI$estimate[triphasicCI$param == "delta"]) {
+
+        tmpRate <- triphasicCI[triphasicCI$param == "delta_b", replace_cols]
+        tmpConst <- triphasicCI[triphasicCI$param == "A_b", replace_cols]
+
+        triphasicCI[triphasicCI$param == "delta_b", replace_cols] <- triphasicCI[triphasicCI$param == "delta", replace_cols]
         triphasicCI[triphasicCI$param == "delta", replace_cols] <- tmpRate
 
-        triphasicCI[triphasicCI$param == "B", replace_cols] <- triphasicCI[triphasicCI$param == "A", replace_cols]
+        triphasicCI[triphasicCI$param == "A_b", replace_cols] <- triphasicCI[triphasicCI$param == "A", replace_cols]
         triphasicCI[triphasicCI$param == "A", replace_cols] <- tmpConst
     }
 
+    if (triphasicCI$estimate[triphasicCI$param == "gamma"] > triphasicCI$estimate[triphasicCI$param == "delta_b"]) {
 
-    if (triphasicCI$estimate[triphasicCI$param == "omega"] > triphasicCI$estimate[triphasicCI$param == "gamma"]) {
+        tmpRate <- triphasicCI[triphasicCI$param == "gamma", replace_cols]
+        tmpConst <- triphasicCI[triphasicCI$param == "B", replace_cols]
 
-        tmpRate <- triphasicCI[triphasicCI$param == "omega", replace_cols]
-        tmpConst <- triphasicCI[triphasicCI$param == "A", replace_cols]
+        triphasicCI[triphasicCI$param == "gamma", replace_cols] <- triphasicCI[triphasicCI$param == "delta_b", replace_cols]
+        triphasicCI[triphasicCI$param == "delta_b", replace_cols] <- tmpRate
 
-        triphasicCI[triphasicCI$param == "omega", replace_cols] <- triphasicCI[triphasicCI$param == "gamma", replace_cols]
-        triphasicCI[triphasicCI$param == "gamma", replace_cols] <- tmpRate
-
-        triphasicCI[triphasicCI$param == "C", replace_cols] <- triphasicCI[triphasicCI$param == "B", replace_cols]
-        triphasicCI[triphasicCI$param == "B", replace_cols] <- tmpConst
+        triphasicCI[triphasicCI$param == "B", replace_cols] <- triphasicCI[triphasicCI$param == "A_b", replace_cols]
+        triphasicCI[triphasicCI$param == "A_b", replace_cols] <- tmpConst
     }
+
     return(triphasicCI)
 }
 

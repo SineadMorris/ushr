@@ -22,6 +22,10 @@ Citation information can be found using `citation("ushr")`; updated citations wi
 
 ##### Recent updates
 
+Version 0.2.1
+
+-   Notation for the triphasic exponential model has been modified to more clearly relate to that of the biphasic model.
+
 Version 0.2.0:
 
 -   A triphasic exponential model has been added so that data from ART containing integrase inhibitors can also be fit (see `?ushr_triphasic()`)
@@ -268,7 +272,7 @@ Additional functionality
 
 `ushr` provides additional functionality to the examples documented here. Notable examples are:
 
--   For ART that includes an integrase inhibitor, a triphasic exponential model can be fit using `ushr_triphasic()`; this may be more appropriate than the biphasic model \[[10](#ref-Cardozo2017)\]. Results can be visualized using the same plotting/summary functions as above.
+-   For ART that includes an integrase inhibitor, a triphasic exponential model can be fit using `ushr_triphasic()` (see `?ushr_triphasic()`); this may be more appropriate than the biphasic model \[[10](#ref-Cardozo2017)\]. Results can be visualized using the same plotting/summary functions as above.
 -   Noisy clinical data can be simulated from an underlying biphasic model using the `simulate_data()` function.
 -   We provide an alternative, non-parametric method for estimating TTS that does not require prior model fitting.
 

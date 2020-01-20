@@ -10,8 +10,8 @@ ushr_triphasic(data, filter = TRUE, detection_threshold = 20,
   n_min_triphasic = 9, nsuppression = 1,
   forward_param_transform_fn = list(log, log, log, log, log, log),
   inv_param_transform_fn = list(exp, exp, exp, exp, exp, exp),
-  initial_params = c(A = 10000, delta = 1, B = 1000, gamma = 0.15, C =
-  10, omega = 0.05), searchmethod = "Nelder-Mead")
+  initial_params = c(A = 10000, delta = 1, A_b = 1000, delta_b = 0.15, B
+  = 10, gamma = 0.05), searchmethod = "Nelder-Mead")
 }
 \arguments{
 \item{data}{raw data set. Must be a data frame with the following columns: 'id' - stating the unique identifier for each subject; 'vl' - numeric vector stating the viral load measurements for each subject; 'time'- numeric vector stating the time at which each measurement was taken.}
@@ -40,7 +40,7 @@ ushr_triphasic(data, filter = TRUE, detection_threshold = 20,
 
 \item{inv_param_transform_fn}{list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward transformation functions. Defaults to exponential.}
 
-\item{initial_params}{named numeric vector of initial parameter guesses. Defaults to c(A = 10000, delta = 1, B = 1000, gamma = 0.15, C = 10, omega = 0.05).}
+\item{initial_params}{named numeric vector of initial parameter guesses. Defaults to c(A = 10000, delta = 1, A_b = 1000, delta_b = 0.15, B = 10, gamma = 0.05).}
 
 \item{searchmethod}{optimization algorithm to be passed to 'optim()'. Defaults to 'Nelder-Mead'.}
 }

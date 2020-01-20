@@ -18,7 +18,7 @@
 #' @param nsuppression numerical value (1 or 2) indicating whether suppression is defined as having one observation below the detection threshold, or two sustained observations. Default value is 1.
 #' @param forward_param_transform_fn list of transformation functions to be used when fitting the model in optim. Defaults to log transformations for all parameters (to allow unconstrained optimization).
 #' @param inv_param_transform_fn list of transformation functions to be used when back-transforming the transformed parameters. Should be the inverse of the forward transformation functions. Defaults to exponential.
-#' @param initial_params named numeric vector of initial parameter guesses. Defaults to c(A = 10000, delta = 1, B = 1000, gamma = 0.15, C = 10, omega = 0.05).
+#' @param initial_params named numeric vector of initial parameter guesses. Defaults to c(A = 10000, delta = 1, A_b = 1000, delta_b = 0.15, B = 10, gamma = 0.05).
 #' @param searchmethod optimization algorithm to be passed to 'optim()'. Defaults to 'Nelder-Mead'.
 #' @return a list containing the filtered data ('data_filtered'); parameter estimates for the triphasic model ('triphasicCI'); and predictions from the triphasic model ('triphasic_fits'').
 #' @export
@@ -39,7 +39,7 @@ ushr_triphasic <- function(data,
                            forward_param_transform_fn = list(log, log, log, log, log, log),
                            inv_param_transform_fn = list(exp, exp, exp, exp, exp, exp),
                            ## User defined fitting variables:
-                           initial_params = c(A = 10000, delta = 1, B = 1000, gamma = 0.15, C = 10, omega = 0.05),
+                           initial_params = c(A = 10000, delta = 1, A_b = 1000, delta_b = 0.15, B = 10, gamma = 0.05),
                            searchmethod = "Nelder-Mead"){
 
     if (!is.data.frame(data)) {

@@ -184,6 +184,7 @@ plot_pairs <- function(model_output, type = "biphasic", textsize = 9, pointsize 
                 GGally::ggpairs(., lower = "blank",
                                 upper = list(continuous = GGally::wrap("points", size = pointsize)),
                                 axisLabels = "none",
+                                columnLabels = c("A","A[b]", "B", "delta", "delta[b]", "gamma"),
                                 labeller = label_parsed, progress = FALSE) +
                 mytheme
         } else {
@@ -229,7 +230,7 @@ plot_pairs <- function(model_output, type = "biphasic", textsize = 9, pointsize 
                 spread(param, estimate) %>%
                 select(-id) %>%
                 pairs(., pch = 19, cex = pointsize, cex.axis = textsize,
-                      labels = c("A", "B", "C", expression(delta), expression(gamma), expression(omega)))
+                      labels = c("A", expression(A[b]), "B", expression(delta), expression(delta[b]), expression(gamma)))
         } else {
             stop("Invalid 'type' argumement. Must be one of 'single', 'biphasic', or 'triphasic'.")
         }
@@ -300,14 +301,14 @@ summarize_model <- function(model_output, data, stats = FALSE){
         triphasicfits <- model_output$triphasicCI %>%
             select(- lowerCI, - upperCI) %>% spread(param, estimate) %>%
             mutate(ShortLifespanProductive = 1/delta,
-                   ShortLifespanNonProductive = 1/gamma,
-                   LongLifespanNonProductive = 1/omega, Model = "Triphasic")
+                   ShortLifespanNonProductive = 1/delta_b,
+                   LongLifespanNonProductive = 1/gamma, Model = "Triphasic")
 
         triphasicstats <- model_output$triphasicCI %>%
             select(- lowerCI, - upperCI) %>% spread(param, estimate) %>%
             mutate(ShortLifespanProductive = 1/delta,
-                   ShortLifespanNonProductive = 1/gamma,
-                   LongLifespanNonProductive = 1/omega) %>%
+                   ShortLifespanNonProductive = 1/delta_b,
+                   LongLifespanNonProductive = 1/gamma) %>%
             gather(Param, estimate, A:LongLifespanNonProductive) %>%
             group_by(Param) %>%
             summarize(Median = median(estimate), SD = sd(estimate)) %>%

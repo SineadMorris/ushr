@@ -203,7 +203,7 @@ plot_TTS(TTSnonparametric, bins = 6, textsize = 7)
 
 `ushr` provides additional functionality to the examples documented here. Notable examples are:
 
-* For ART that includes an integrase inhibitor, a triphasic exponential model can be fit using `ushr_triphasic()`; this may be more appropriate than the biphasic model [@Cardozo2017]. Results can be visualized using the same plotting/summary functions as above.
+* For ART that includes an integrase inhibitor, a triphasic exponential model can be fit using `ushr_triphasic()` (see `?ushr_triphasic()`); this may be more appropriate than the biphasic model [@Cardozo2017]. Results can be visualized using the same plotting/summary functions as above.
 * Noisy clinical data can be simulated from an underlying biphasic model using the `simulate_data()` function. 
 
 Further details of all functions and user-specific customizations can be found in the documentation. 

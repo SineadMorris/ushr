@@ -1,3 +1,9 @@
+Version 0.2.1
+================
+
+* Notation for the triphasic exponential model has been modified to more clearly relate to that of the biphasic model.
+
+
 Version 0.2.0
 ================
 

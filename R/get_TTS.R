@@ -90,7 +90,7 @@ single_root <- function(timevec, params, suppression_threshold){
 #' @export
 #'
 triphasic_root <- function(timevec, params, suppression_threshold){
-    value <- params["A"] * exp (- timevec * params["delta"]) + params["B"] * exp( - timevec * params["gamma"]) + params["C"] * exp( - timevec * params["omega"]) - suppression_threshold
+    value <- params["A"] * exp (- timevec * params["delta"]) + params["A_b"] * exp (- timevec * params["delta_b"]) + params["B"] * exp( - timevec * params["gamma"]) - suppression_threshold
     as.numeric(value)
 }
 

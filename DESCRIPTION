@@ -1,8 +1,8 @@
 Package: ushr
 Type: Package
 Title: Understanding Suppression of HIV
-Version: 0.2.0
-Date: 2019-12-12
+Version: 0.2.1
+Date: 2020-01-20
 Authors@R: c(person("Sinead E.", "Morris", role = c("aut", "cre"),
                      email = "sinead.morris@columbia.edu",
 		     comment = c(ORCID = "0000-0001-8626-1698")),

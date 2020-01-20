@@ -13,7 +13,7 @@ get_optim_fit_triphasic(initial_params, param_names, free_param_index,
 
 \item{param_names}{names of parameter vector.}
 
-\item{free_param_index}{logical vector indicating whether the parameters A, delta, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE) for the biphasic model and c(FALSE, FALSE, TRUE, TRUE) for the single phase model.}
+\item{free_param_index}{logical vector indicating whether the parameters A, delta, A_b, delta_b, B, gamma are to be recovered. This should be c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE) for the triphasic model.}
 
 \item{data}{dataframe with columns for the subject's viral load measurements ('vl'), and timing of sampling ('time')}
 
