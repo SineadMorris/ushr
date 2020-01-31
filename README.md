@@ -18,7 +18,7 @@ Sinead E Morris (author and maintainer), Luise Dziobek-Garrett (contributor) and
 
 ##### Citing this package
 
-Citation information can be found using `citation("ushr")`; updated citations will be available in the upcoming paper: Morris SE et al. "ushr: Understanding suppression of HIV in R" (*in review*).
+Citation information can be found using `citation("ushr")`; updated citations will be available in the upcoming paper: Morris SE et al. "ushr: Understanding suppression of HIV in R" (*in press*).
 
 ##### Recent updates
 
