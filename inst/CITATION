@@ -1,4 +1,4 @@
-citHeader("To cite shinySIR, please use:")
+citHeader("To cite ushr, please use:")
 
 citEntry(entry = "article",
   author = "Sinead E. Morris, Luise Dziobek-Garrett, Andrew J. Yates",
