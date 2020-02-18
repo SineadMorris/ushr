@@ -32,13 +32,14 @@ More generally, `ushr` enables researchers without a strong mathematical or comp
 
 ## Citing this package
 
-Citation information can be found using `citation("ushr")`; updated citations will be available in the upcoming paper: Morris SE et al. "ushr: understanding suppression of HIV in R".
+Citation information can be found using `citation("ushr")`; the package paper is open access and available at [BMC Bioinformatics](https://rdcu.be/b1yZU).
+
 
 
 
 ## Getting further information
 
-If you encounter any bugs related to this package please contact the package author directly. Additional descriptions of the model and analysis performed by this package will be available in the upcoming papers: Morris SE et al. "Quantifying the dynamics of HIV decline in perinatally-infected infants on ART"; Morris SE et al. "ushr: understanding suppression of HIV in R" (manuscripts available upon request from the package author). Further details on the mathematical theory can also be found in the references cited below. <!--Package documentation is also available from CRAN-->
+If you encounter any bugs related to this package please contact the package author directly. Additional descriptions of the model and analysis performed by this package are available in [Morris et al. (2020) BMC Bioinformatics](https://rdcu.be/b1yZU). Further details on the mathematical theory can also be found in the references cited below. <!--Package documentation is also available from CRAN-->
 
 
 ## Background

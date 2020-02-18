@@ -18,7 +18,7 @@ Sinead E Morris (author and maintainer), Luise Dziobek-Garrett (contributor) and
 
 ##### Citing this package
 
-Citation information can be found using `citation("ushr")`; updated citations will be available in the upcoming paper: Morris SE, Dziobek-Garrett L, Yates AJ. **ushr: Understanding suppression of HIV in R.** *BMC Bioinformatics* 2020 (in press).
+Citation information can be found using `citation("ushr")`; the package paper is open access and available at [BMC Bioinformatics](https://rdcu.be/b1yZU).
 
 ##### Recent updates
 
@@ -34,7 +34,7 @@ Version 0.2.0:
 
 ##### Getting further information
 
-If you encounter any bugs related to this package please contact the package author directly. Additional descriptions of the model and analysis performed by the package can be found in the vignette; details will also be available in the upcoming paper: Morris SE et al. "ushr: understanding suppression of HIV in R" (manuscript available upon request). Further details on the mathematical theory can also be found in the references cited below.
+If you encounter any bugs related to this package please contact the package author directly. Additional descriptions of the model and analysis performed by the package can be found in the vignette; details are also be available in [Morris et al. (2020) BMC Bioinformatics](https://rdcu.be/b1yZU). Further details on the mathematical theory can also be found in the references cited below.
 
 Background
 ----------
