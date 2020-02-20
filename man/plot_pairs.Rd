@@ -19,7 +19,7 @@ plot_pairs(model_output, type = "biphasic", textsize = 9,
 \item{linesize}{numeric value for line width; only used for GGally plots. Default is 0.5.}
 }
 \description{
-This function creates pairwise scatterplots of the estimates parameters. The default plotting method requires GGally; if this packge is not available, base R is used instead.
+This function creates pairwise scatterplots of the estimates parameters. The default plotting method requires GGally; if this package is not available, base R is used instead.
 }
 \examples{
 

@@ -8,7 +8,7 @@ citEntry(entry = "article",
   volume  = "21",
   number  = "52",
   doi = "10.1186/s12859-020-3389-x",
-  textVersion = "Sinead E. Morris, Luise Dziobek Garrett, Andrew J. Yates, in collaboration with the EPIICAL Consortium (2020). ushr: Understanding suppression of HIV in R. BMC Bioinformatics 21(52)."
+  textVersion = "S. E. Morris, L. Dziobek-Garrett, A. J. Yates, in collaboration with the EPIICAL Consortium (2020). ushr: Understanding suppression of HIV in R. BMC Bioinformatics 21(52)."
 )
 
 

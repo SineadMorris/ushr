@@ -117,7 +117,7 @@ plot_model <- function(model_output, type = "biphasic", detection_threshold = 20
 
 #' Plot pairwise parameter distributions
 #'
-#' This function creates pairwise scatterplots of the estimates parameters. The default plotting method requires GGally; if this packge is not available, base R is used instead.
+#' This function creates pairwise scatterplots of the estimates parameters. The default plotting method requires GGally; if this package is not available, base R is used instead.
 #'
 #' @param model_output output from model fitting using ushr().
 #' @param type character string indicating whether the biphasic or single phase fits should be plotted. Must be either "biphasic", "single", or "triphasic". Defaults to "biphasic".

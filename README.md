@@ -34,7 +34,7 @@ Version 0.2.0:
 
 ##### Getting further information
 
-If you encounter any bugs related to this package please contact the package author directly. Additional descriptions of the model and analysis performed by the package can be found in the vignette; details are also be available in [Morris et al. (2020) BMC Bioinformatics](https://rdcu.be/b1yZU). Further details on the mathematical theory can also be found in the references cited below.
+If you encounter any bugs related to this package please contact the package author directly. Additional descriptions of the model and analyses performed by the package can be found in the vignette; details are also be available in [Morris et al. (2020) BMC Bioinformatics](https://rdcu.be/b1yZU). Further details on the mathematical theory can also be found in the references cited below.
 
 Background
 ----------
