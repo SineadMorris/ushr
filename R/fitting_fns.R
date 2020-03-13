@@ -164,12 +164,14 @@ fit_model <- function(data, id_vector, param_names,
     }
 
     notfitted  <- bind_rows(nofitlist) %>% rbind( bind_rows(noCIlist))
+
     if (nrow(notfitted)) {
         notfitted <- notfitted %>% filter(!is.na(index)) %>% arrange(index)
     }
+
     if(length(notfitted$id) > 0){
         fitted <- bind_rows(fitlist) %>% filter(!id %in% notfitted$id)
-    } else{ 
+    } else{
         fitted <- bind_rows(fitlist)
     }
 
