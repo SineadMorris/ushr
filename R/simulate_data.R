@@ -47,7 +47,7 @@ simulate_data <- function(nsubjects = 10, detection_threshold = 20, censortime =
 
     params <- t(apply(params, 1, switch_simulated_params))
 
-    paramdat <- params %>% tbl_df() %>% mutate(id = ids)
+    paramdat <- params %>% as_tibble() %>% mutate(id = ids)
 
     # 3. Choose number of observations for all subjects
     npoints <- sample(min_datapoints:max_datapoints, replace = TRUE, size = nsubjects)
