@@ -64,14 +64,7 @@ filter_data <- function(data, detection_threshold = 20, censortime = 365,
             # 2. Look at only those who reach control within user defined censortime
             filter(time <= censortime) %>% group_by(id) %>%
             filter(any(vl <= detection_threshold)) %>% ungroup() %>%
-            # 3a. Isolate data from the highest VL measurement (from points 1 - 3) to the first point below detection
-            filter(!is.na(vl)) %>% group_by(id) %>%
-            slice(which.max(vl[1:initial_buffer]):Position(function(x) x <= detection_threshold, vl)) %>%
-            ungroup() %>%
-            # 3b. Only keep VL sequences that are decreasing with user defined buffer...
-            group_by(id) %>% filter(all(vl <= cummin(vl) + decline_buffer)) %>%
-            # 4. ...AND have min # dps above the detection threshold
-            filter(length(vl[vl > detection_threshold]) >= n_min_single)
+            filter(!is.na(vl))
 
     } else if (nsuppression == 2) {
         data_filtered <- data %>% mutate(vl = case_when(vl <= detection_threshold ~ detection_threshold/2,
@@ -82,12 +75,17 @@ filter_data <- function(data, detection_threshold = 20, censortime = 365,
             mutate(firstbelow = intersect(which(vl <= detection_threshold),
                                           which(vl <= detection_threshold) + 1)[1] - 1 ) %>%
             mutate(firstbelow = time[firstbelow]) %>%
-            filter(time <= firstbelow) %>% ungroup() %>%
-            # Continue as above
-            group_by(id) %>%
+            filter(time <= firstbelow) %>% ungroup()
+    }
+
+    # 3a. Isolate data from the highest VL measurement (from points 1 - 3) to the first point below detection
+    if (nrow(data_filtered) > 0) {
+        data_filtered <- data_filtered %>% group_by(id) %>%
             slice(which.max(vl[1:initial_buffer]):Position(function(x) x <= detection_threshold, vl)) %>%
             ungroup() %>%
+            # 3b. Only keep VL sequences that are decreasing with user defined buffer...
             group_by(id) %>% filter(all(vl <= cummin(vl) + decline_buffer)) %>%
+            # 4. ...AND have min # dps above the detection threshold
             filter(length(vl[vl > detection_threshold]) >= n_min_single)
     }
 
@@ -96,7 +94,7 @@ filter_data <- function(data, detection_threshold = 20, censortime = 365,
         data_filtered <- data_filtered %>% group_by(id) %>%
             mutate(n = n(), index = 1:n(),
                    tag = ifelse(vl[n-1] - vl[n] < threshold_buffer, TRUE, FALSE) ) %>%
-        filter(!(tag == TRUE & index == n)) %>%
+            filter(!(tag == TRUE & index == n)) %>%
             ungroup() %>% select(- index, -n, -tag)
 }
     return(data_filtered)

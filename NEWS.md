@@ -1,3 +1,9 @@
+Version 0.2.2 
+==============
+
+* Fixes errors thrown with dplyr 1.0.0 release.
+
+
 Version 0.2.1
 ================
 

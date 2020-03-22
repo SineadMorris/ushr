@@ -22,15 +22,19 @@ Citation information can be found using `citation("ushr")`; the package paper is
 
 ##### Recent updates
 
+Version 0.2.2
+
+-   Fixes errors thrown with dplyr 1.0.0 release.
+
 Version 0.2.1
 
 -   Notation for the triphasic exponential model has been modified to more clearly relate to that of the biphasic model.
 
 Version 0.2.0:
 
--   A triphasic exponential model has been added so that data from ART containing integrase inhibitors can also be fit (see `?ushr_triphasic()`)
--   Users can now specify the range of initial observations from which the beginning of each individual trajectory is chosen (previously this was fixed to the first three observations)
--   There is now added functionality to view pairwise correlation plots for all estimated parameters
+-   Data from ART containing integrase inhibitors can be fit using a triphasic exponential model (see `?ushr_triphasic()`)
+-   Users can specify the range of initial observations from which the beginning of each individual trajectory is chosen
+-   Users can create pairwise correlation plots for all estimated parameters
 
 ##### Getting further information
 
@@ -181,7 +185,7 @@ actg315_summary$biphasicstats
 
     ## # A tibble: 6 x 4
     ##   Param              Median          SD Model   
-    ##   <chr>               <dbl>       <dbl> <chr>   
+    ## * <chr>               <dbl>       <dbl> <chr>   
     ## 1 A             135000      367000      Biphasic
     ## 2 B               1890        6540      Biphasic
     ## 3 delta              0.482       0.185  Biphasic
@@ -195,7 +199,7 @@ actg315_summary$singlestats
 
     ## # A tibble: 3 x 4
     ##   Param             Median        SD Model       
-    ##   <chr>              <dbl>     <dbl> <chr>       
+    ## * <chr>              <dbl>     <dbl> <chr>       
     ## 1 Bhat           26900     23300     Single phase
     ## 2 gammahat           0.154     0.098 Single phase
     ## 3 SingleLifespan     9.1       5.76  Single phase
