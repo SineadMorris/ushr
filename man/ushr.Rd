@@ -5,9 +5,9 @@
 \title{Master function}
 \usage{
 ushr(data, filter = TRUE, detection_threshold = 20, censortime = 365,
-  decline_buffer = 500, initial_buffer = 3, threshold_buffer = 10,
-  VL_max_decline = 10000, CI_max_diff = 1000, n_min_single = 3,
-  n_min_biphasic = 6, nsuppression = 1,
+  censor_value = 10, decline_buffer = 500, initial_buffer = 3,
+  threshold_buffer = 10, VL_max_decline = 10000, CI_max_diff = 1000,
+  n_min_single = 3, n_min_biphasic = 6, nsuppression = 1,
   forward_param_transform_fn = list(log, log, log, log),
   inv_param_transform_fn = list(exp, exp, exp, exp),
   initial_params = c(A = 10000, delta = 0.68, B = 1000, gamma = 0.03),
@@ -21,6 +21,8 @@ ushr(data, filter = TRUE, detection_threshold = 20, censortime = 365,
 \item{detection_threshold}{numeric value indicating the detection threshold of the assay used to measure viral load. Measurements below this value will be assumed to represent undetectable viral levels. Default value is 20.}
 
 \item{censortime}{numeric value indicating the maximum time point to include in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded from model fitting. Units are assumed to be same as the 'time' measurements. Default value is 365.}
+
+\item{censor_value}{positive numeric value indicating the maximum time point to include in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded. Units are assumed to be the same as the 'time' column. Default value is 365.}
 
 \item{decline_buffer}{numeric value indicating the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.}
 

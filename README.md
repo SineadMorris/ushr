@@ -22,9 +22,10 @@ Citation information can be found using `citation("ushr")`; the package paper is
 
 ##### Recent updates
 
-Version 0.2.2
+Versions 0.2.2 and 0.2.3
 
--   Fixes errors thrown with dplyr 1.0.0 release.
+-   Allows more flexible treatment of values below the detection threshold.
+-   Fixes errors thrown with dplyr 1.0.0 and tibble 3.0.0 releases.
 
 Version 0.2.1
 
@@ -129,7 +130,7 @@ print(head(actg315))
     ## 5  1   29   440.0479
     ## 6  1   57   129.9870
 
-We can then visualize these data using the `plot_data()` function.
+We can then visualize these data using the `plot_data()` function. The `detection_threshold` argument defines the detection threshold of the measurement assay.
 
 ``` r
 plot_data(actg315, detection_threshold = 100)
@@ -141,10 +142,10 @@ Each panel represents a different individual and the dashed horizontal line is t
 
 ### Model fitting and output visualization
 
-To fit the model to these data in just one line of code we use the `ushr()` function. This processes the data to filter out any individuals who do not suppression viral load, or who violate other inclusion criteria (described in the vignette), and then fits the model to each remaining trajectory. Note that only subjects with a minimum number of measurements above the detection threshold can reliably be fit. The number can be specified by the user, but we recommend at least six observations for the biphasic model and three for the single phase model.
+To fit the model to these data in just one line of code we use the `ushr()` function. This processes the data to filter out any individuals who do not suppression viral load, or who violate other inclusion criteria (described in the vignette), and then fits the model to each remaining trajectory. Note that only subjects with a minimum number of measurements above the detection threshold can reliably be fit. The number can be specified by the user, but we recommend at least six observations for the biphasic model and three for the single phase model. Note the `censor_value` argument specifies how measurements below the detection threshold should be treated (here we set them to half of the detection theshold in line with previous work \[[10](#ref-wu1999characterization)\]).
 
 ``` r
-model_output <- ushr(data = actg315, detection_threshold = 100)
+model_output <- ushr(data = actg315, detection_threshold = 100, censor_value = 50)
 ```
 
 With the fitted model output, we can then plot both the biphasic and single phase fits as follows
@@ -276,7 +277,7 @@ Additional functionality
 
 `ushr` provides additional functionality to the examples documented here. Notable examples are:
 
--   For ART that includes an integrase inhibitor, a triphasic exponential model can be fit using `ushr_triphasic()` (see `?ushr_triphasic()`); this may be more appropriate than the biphasic model \[[10](#ref-Cardozo2017)\]. Results can be visualized using the same plotting/summary functions as above.
+-   For ART that includes an integrase inhibitor, a triphasic exponential model can be fit using `ushr_triphasic()` (see `?ushr_triphasic()`); this may be more appropriate than the biphasic model \[[11](#ref-Cardozo2017)\]. Results can be visualized using the same plotting/summary functions as above.
 -   Noisy clinical data can be simulated from an underlying biphasic model using the `simulate_data()` function.
 -   We provide an alternative, non-parametric method for estimating TTS that does not require prior model fitting.
 
@@ -303,4 +304,6 @@ References
 
 9 Connick E, Lederman MM, Kotzin BL, Spritzler J, Kuritzkes DR, St. Clair M *et al.* **Immune Reconstitution in the First Year of Potent Antiretroviral Therapy and Its Relationship to Virologic Response**. *The Journal of Infectious Diseases* 2000; **181**:358–363.
 
-10 Cardozo EF, Andrade A, Mellors JW, Kuritzkes DR, Perelson AS, Ribeiro RM. **Treatment with integrase inhibitor suggests a new interpretation of HIV RNA decay curves that reveals a subset of cells with slow integration**. *PLoS Pathogens* 2017; **13**:e1006478.
+10 Wu H, Kuritzkes DR, McClernon DR, Kessler H, Connick E, Landay A *et al.* **Characterization of viral dynamics in human immunodeficiency virus type 1-infected patients treated with combination antiretroviral therapy: relationships to host factors, cellular restoration, and virologic end points**. *J Infect Dis* 1999; **179**:799–807.
+
+11 Cardozo EF, Andrade A, Mellors JW, Kuritzkes DR, Perelson AS, Ribeiro RM. **Treatment with integrase inhibitor suggests a new interpretation of HIV RNA decay curves that reveals a subset of cells with slow integration**. *PLoS Pathogens* 2017; **13**:e1006478.

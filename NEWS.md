@@ -1,3 +1,10 @@
+Version 0.2.3
+==============
+
+* Allows more flexible treatment of values below the detection threshold.
+* Fixes errors thrown with tibble 3.0.0 release.
+
+
 Version 0.2.2 
 ==============
 

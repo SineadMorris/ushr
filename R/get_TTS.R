@@ -8,7 +8,8 @@
 #' 3. Filtering out subjects who do not have a decreasing sequence of viral load (within some buffer range).
 #' @param data raw data set. Must be a data frame with the following columns: 'id' - stating the unique identifier for each subject; 'vl' - numeric vector stating the viral load measurements for each subject; 'time' - numeric vector stating the time at which each measurement was taken.
 #' @param suppression_threshold numeric value indicating the suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.
-#' @param censortime the maximum time point to include in the analysis. Subjects who do not suppress viral load below the suppression threshold within this time will be discarded from model fitting. Units are assumed to be the same as the 'time' column. Default value is 365.
+#' @param uppertime the maximum time point to include in the analysis. Subjects who do not suppress viral load below the suppression threshold within this time will be discarded from model fitting. Units are assumed to be the same as the 'time' column. Default value is 365.
+#' @param censor_value positive numeric value indicating the maximum time point to include in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded. Units are assumed to be the same as the 'time' column. Default value is 365.
 #' @param decline_buffer the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.
 #' @param initial_buffer numeric (integer) value indicating the maximum number of initial observations from which the beginning of each trajectory will be chosen. Default value is 3.
 #' @export
@@ -21,18 +22,31 @@
 #' filter_dataTTS(data = simulated_data)
 #'
 filter_dataTTS <- function(data, suppression_threshold = 20,
-                           censortime = 365, decline_buffer = 500, initial_buffer = 3){
+                           uppertime = 365, censor_value = 10,
+                           decline_buffer = 500, initial_buffer = 3){
 
     # Check that data frame includes columns for 'id', 'time', 'vl'
     if (!(all(c("vl", "time", "id") %in% names(data)))) {
         stop("Data frame must have named columns for 'id', 'time', and 'vl'")
     }
 
-    # 1. Change everything <= suppression_threshhold to 1/2 * dsuppression_threshhold
-    data_filtered <- data %>% mutate(vl = case_when(vl <= suppression_threshold ~ suppression_threshold/2,
+    if (censor_value > suppression_threshold) {
+        warning("censor_value must be less than or equal to the suppression threshold. Defaulting to half the suppression threshold.")
+
+        censor_value <- 0.5 * suppression_threshold
+    }
+
+    if (censor_value < 0) {
+        warning("censor_value must be positive. Defaulting to half the suppression threshold.")
+
+        censor_value <- 0.5 * suppression_threshold
+    }
+
+    # 1. Change everything <= suppression_threshhold to censor_Value
+    data_filtered <- data %>% mutate(vl = case_when(vl <= suppression_threshold ~ censor_value,
                                                     vl >= suppression_threshold ~ vl) ) %>%
-        # 2. Look at only those who reach control within user defined censortime
-        filter(time <= censortime) %>% group_by(id) %>%
+        # 2. Look at only those who reach control within user defined uppertime
+        filter(time <= uppertime) %>% group_by(id) %>%
         filter(any(vl <= suppression_threshold)) %>% ungroup() %>%
         # 3a. Isolate data from the highest VL measurement (from points 1 - 3) to the first point below detection
         filter(!is.na(vl)) %>% group_by(id) %>%
@@ -154,6 +168,7 @@ get_nonparametricTTS <- function(vl, suppression_threshold, time, npoints){
 #' @param data raw data set. Must be a data frame with the following columns: 'id' - stating the unique identifier for each subject; 'vl'- numeric vector stating the viral load measurements for each subject; 'time'  - numeric vector stating the time at which each measurement was taken. Only required if parametric = FALSE.
 #' @param suppression_threshold suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.
 #' @param uppertime the maximum time interval to search for the time to suppression. Default value is 365.
+#' @param censor_value positive numeric value indicating the maximum time point to include in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded. Units are assumed to be the same as the 'time' column. Default value is 365.
 #' @param decline_buffer the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.
 #' @param initial_buffer numeric (integer) value indicating the maximum number of initial observations from which the beginning of each trajectory will be chosen. Default value is 3.
 #' @param parametric logical TRUE/FALSE indicating whether time to suppression should be calculated using the parametric (TRUE) or non-parametric (FALSE) method. If TRUE, a fitted model object is required. If FALSE, the raw data frame is required. Defaults to TRUE.
@@ -170,7 +185,8 @@ get_nonparametricTTS <- function(vl, suppression_threshold, time, npoints){
 #' get_TTS(data = simulated_data, parametric = FALSE)
 #'
 get_TTS <- function(model_output = NULL, data = NULL,
-                    suppression_threshold = 20, uppertime = 365, decline_buffer = 500, initial_buffer = 3,
+                    suppression_threshold = 20, uppertime = 365, censor_value = 10,
+                    decline_buffer = 500, initial_buffer = 3,
                     parametric = TRUE, ARTstart = FALSE, npoints = 1000){
 
     # 1. Parametric TTS ----------------------------------------------------------------
@@ -243,7 +259,7 @@ get_TTS <- function(model_output = NULL, data = NULL,
         }
 
         # Filter out subjects to focus on those who reach suppression below the specified threshold.
-        data_filtered <- filter_dataTTS(data, suppression_threshold, uppertime, decline_buffer, initial_buffer)
+        data_filtered <- filter_dataTTS(data, suppression_threshold, uppertime, censor_value, decline_buffer, initial_buffer)
 
         if( nrow(data_filtered) == 0){
             stop("No individual trajectories remained after filtering. Do you need to set the arguments used by filter_dataTTS? (see ?filter_dataTTS)")
@@ -257,7 +273,7 @@ get_TTS <- function(model_output = NULL, data = NULL,
     if(ARTstart == TRUE){
         print("Calculating TTS as time since ART initiation...")
 
-        if(is.null(ART)){
+        if(is.null(data$ART)){
             print("Data frame is missing ART column. Returning original TTS values.")
         } else {
             ARTdata <- data %>% distinct(id, ART)

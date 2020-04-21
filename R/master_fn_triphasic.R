@@ -9,6 +9,7 @@
 #' @param data raw data set. Must be a data frame with the following columns: 'id' - stating the unique identifier for each subject; 'vl' - numeric vector stating the viral load measurements for each subject; 'time'- numeric vector stating the time at which each measurement was taken.
 #' @param detection_threshold numeric value indicating the detection threshold of the assay used to measure viral load. Measurements below this value will be assumed to represent undetectable viral levels. Default value is 20.
 #' @param censortime numeric value indicating the maximum time point to include in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded from model fitting. Units are assumed to be same as the 'time' measurements. Default value is 365.
+#' @param censor_value positive numeric value indicating the maximum time point to include in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded. Units are assumed to be the same as the 'time' column. Default value is 365.
 #' @param decline_buffer numeric value indicating the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.
 #' @param initial_buffer integer value indicating the maximum number of initial observations from which the beginning of each trajectory will be chosen. Default value is 3.
 #' @param threshold_buffer numeric value indicating the range above the detection threshold which represents potential skewing of model fits. Subjects with their last two data points within this range will have the last point removed. Default value is 10.
@@ -28,6 +29,7 @@ ushr_triphasic <- function(data,
                            filter = TRUE,
                            detection_threshold = 20,
                            censortime = 365,
+                           censor_value = 10,
                            decline_buffer = 500,
                            initial_buffer = 3,
                            threshold_buffer = 10,
@@ -59,7 +61,7 @@ ushr_triphasic <- function(data,
 
     ## 1. Data processing  ----------------------------------------------------------------
     if (filter) {
-        data_filtered <- filter_data(data, detection_threshold, censortime,
+        data_filtered <- filter_data(data, detection_threshold, censortime, censor_value,
                                      decline_buffer, initial_buffer, n_min_single = n_min_triphasic,
                                      threshold_buffer, nsuppression)
     } else {

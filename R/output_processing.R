@@ -360,7 +360,7 @@ summarize_model <- function(model_output, data, stats = FALSE){
             select(id, Included,
                    Model, ShortLifespanProductive, ShortLifespanNonProductive,
                    LongLifespanNonProductive) %>%
-            mutate_if(is.numeric, round, 2) %>% replace(., is.na(.), "")
+            mutate_if(is.numeric, round, 2) %>% mutate_all(~replace(., is.na(.), ""))
 
     } else if (length(model_output$singleCI) > 0 & length(model_output$biphasicCI) > 0){
         allfits <- biphasicfits %>% full_join(singlephasefits)
@@ -370,7 +370,7 @@ summarize_model <- function(model_output, data, stats = FALSE){
             left_join(allfits) %>%
             select(id, Included,
                    Model, ShortLifespan, LongLifespan, SingleLifespan) %>%
-            mutate_if(is.numeric, round, 2) %>% replace(., is.na(.), "")
+            mutate_if(is.numeric, round, 2) %>% mutate_all(~replace(., is.na(.), ""))
 
     } else if (length(model_output$singleCI) == 0 & length(model_output$biphasicCI) > 0){
         allfits <- biphasicfits
@@ -380,7 +380,7 @@ summarize_model <- function(model_output, data, stats = FALSE){
             left_join(allfits) %>%
             select(id, Included,
                    Model, ShortLifespan, LongLifespan) %>%
-            mutate_if(is.numeric, round, 2) %>% replace(., is.na(.), "")
+            mutate_if(is.numeric, round, 2) %>% mutate_all(~replace(., is.na(.), ""))
 
     } else if (length(model_output$singleCI) > 0 & length(model_output$biphasicCI) == 0){
         allfits <- singlephasefits
@@ -390,7 +390,7 @@ summarize_model <- function(model_output, data, stats = FALSE){
             left_join(allfits) %>%
             select(id, Included,
                    Model, SingleLifespan) %>%
-            mutate_if(is.numeric, round, 2) %>% replace(., is.na(.), "")
+            mutate_if(is.numeric, round, 2) %>% mutate_all(~replace(., is.na(.), ""))
     }
 
 

@@ -110,7 +110,7 @@ actg315 <- actg315raw %>%
 print(head(actg315))
 ```
 
-We can then visualize these data using the `plot_data()` function.
+We can then visualize these data using the `plot_data()` function. The `detection_threshold` argument defines the detection threshold of the measurement assay.
 
 ```{r plotdata, fig.height = 8, fig.width = 8}
 plot_data(actg315, detection_threshold = 100)
@@ -121,10 +121,10 @@ Each panel represents a different individual, the points are the viral load meas
 
 ### Model fitting and output visualization
 
-To fit the model to these data using just one line of code we call the `ushr()` function. This processes the data to filter out any individuals who do not meet the inclusion criteria defined above, and then fits either the single or biphasic model to each remaining trajectory, depending on the number of available observations (see the Background for more details). Note that the data processing step can be omitted using the `filter = FALSE` argument (default is TRUE); however this is not recommended unless rigorous processing efforts have already been made.
+To fit the model to these data using just one line of code we call the `ushr()` function. This processes the data to filter out any individuals who do not meet the inclusion criteria defined above, and then fits either the single or biphasic model to each remaining trajectory, depending on the number of available observations (see the Background for more details). Note that the data processing step can be omitted using the `filter = FALSE` argument (default is TRUE); however this is not recommended unless rigorous processing efforts have already been made. Note also that the `censor_value` argument specifies how measurements below the detection threshold should be treated (here we set them to half of the detection theshold in line with previous work [@wu1999characterization]).
 
 ```{r fits}
-model_output <- ushr(data = actg315, detection_threshold = 100)
+model_output <- ushr(data = actg315, detection_threshold = 100, censor_value = 50)
 
 ```
 
@@ -184,7 +184,7 @@ Alternatively, to calculate non-parametric TTS estimates, we set the argument `p
 ```{r TTSnonparametric}
 
 TTSnonparametric <- get_TTS(data = actg315, parametric = FALSE, 
-                                suppression_threshold = 100)
+                                suppression_threshold = 100, censor_value = 50)
 head(TTSnonparametric)
 
 TTSnonparametric %>% summarize(median = median(TTS), SD = sd(TTS), N = n())

@@ -5,8 +5,8 @@
 \title{Prepare input data}
 \usage{
 filter_data(data, detection_threshold = 20, censortime = 365,
-  decline_buffer = 500, initial_buffer = 3, n_min_single = 3,
-  threshold_buffer = 10, nsuppression = 1)
+  censor_value = 10, decline_buffer = 500, initial_buffer = 3,
+  n_min_single = 3, threshold_buffer = 10, nsuppression = 1)
 }
 \arguments{
 \item{data}{raw data set. Must be a data frame with the following columns: 'id' - stating the unique identifier for each subject; 'vl' - numeric vector with the viral load measurements for each subject; 'time' - numeric vector of the times at which each measurement was taken.}
@@ -15,7 +15,9 @@ filter_data(data, detection_threshold = 20, censortime = 365,
 
 \item{censortime}{numeric value indicating the maximum time point to include in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded. Units are assumed to be the same as the 'time' column. Default value is 365.}
 
-\item{decline_buffer}{numeric value indicating the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.}
+\item{censor_value}{positive numeric value indicating the maximum time point to include in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded. Units are assumed to be the same as the 'time' column. Default value is 365.}
+
+\item{decline_buffer}{numeric value indicating the value assigned to measurements below the detection threshold. Must be less than or equal to the detection threshold.}
 
 \item{initial_buffer}{numeric (integer) value indicating the maximum number of initial observations from which the beginning of each trajectory will be chosen. Default value is 3.}
 

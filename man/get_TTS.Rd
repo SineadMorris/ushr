@@ -5,8 +5,9 @@
 \title{Time to suppression (TTS) function}
 \usage{
 get_TTS(model_output = NULL, data = NULL, suppression_threshold = 20,
-  uppertime = 365, decline_buffer = 500, initial_buffer = 3,
-  parametric = TRUE, ARTstart = FALSE, npoints = 1000)
+  uppertime = 365, censor_value = 10, decline_buffer = 500,
+  initial_buffer = 3, parametric = TRUE, ARTstart = FALSE,
+  npoints = 1000)
 }
 \arguments{
 \item{model_output}{output from fitting model. Only required if parametric = TRUE.}
@@ -16,6 +17,8 @@ get_TTS(model_output = NULL, data = NULL, suppression_threshold = 20,
 \item{suppression_threshold}{suppression threshold: measurements below this value will be assumed to represent viral suppression. Typically this would be the detection threshold of the assay. Default value is 20.}
 
 \item{uppertime}{the maximum time interval to search for the time to suppression. Default value is 365.}
+
+\item{censor_value}{positive numeric value indicating the maximum time point to include in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded. Units are assumed to be the same as the 'time' column. Default value is 365.}
 
 \item{decline_buffer}{the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.}
 

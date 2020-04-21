@@ -12,7 +12,8 @@
 #' @param data raw data set. Must be a data frame with the following columns: 'id' - stating the unique identifier for each subject; 'vl' - numeric vector with the viral load measurements for each subject; 'time' - numeric vector of the times at which each measurement was taken.
 #' @param detection_threshold numeric value indicating the detection threshold of the assay used to measure viral load. Measurements below this value will be assumed to represent undetectable viral load levels. Default value is 20.
 #' @param censortime numeric value indicating the maximum time point to include in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded. Units are assumed to be the same as the 'time' column. Default value is 365.
-#' @param decline_buffer numeric value indicating the maximum allowable deviation of values away from a strictly decreasing sequence in viral load. This allows for e.g. measurement noise and small fluctuations in viral load. Default value is 500.
+#' @param censor_value positive numeric value indicating the maximum time point to include in the analysis. Subjects who do not suppress viral load below the detection threshold within this time will be discarded. Units are assumed to be the same as the 'time' column. Default value is 365.
+#' @param decline_buffer numeric value indicating the value assigned to measurements below the detection threshold. Must be less than or equal to the detection threshold.
 #' @param initial_buffer numeric (integer) value indicating the maximum number of initial observations from which the beginning of each trajectory will be chosen. Default value is 3.
 #' @param n_min_single numeric value indicating the minimum number of data points required to be included in the analysis. Defaults to 3. It is highly advised not to go below this threshold.
 #' @param threshold_buffer numerical value indicating the range above the detection threshold which represents potential skewing of model fits. Subjects with their last two data points within this range will have the last point removed. Default value is 10.
@@ -28,7 +29,8 @@
 #'
 #' filter_data(simulated_data)
 #'
-filter_data <- function(data, detection_threshold = 20, censortime = 365,
+filter_data <- function(data, detection_threshold = 20,
+                        censortime = 365, censor_value = 10,
                         decline_buffer = 500, initial_buffer = 3,
                         n_min_single = 3, threshold_buffer = 10, nsuppression = 1){
 
@@ -51,6 +53,19 @@ filter_data <- function(data, detection_threshold = 20, censortime = 365,
         data <- data %>% filter(!is.na(id))
     }
 
+    if (censor_value > detection_threshold) {
+        warning("censor_value must be less than or equal to the detection threshold. Defaulting to half the detection threshold.")
+
+        censor_value <- 0.5 * detection_threshold
+    }
+
+    if (censor_value < 0) {
+        warning("censor_value must be positive. Defaulting to half the detection threshold.")
+
+        censor_value <- 0.5 * detection_threshold
+    }
+
+
     if (!(nsuppression %in% c(1,2))) {
         warning("nsuppression must take the numeric value 1 or 2 to define the criteria for reaching suppression; reverting to default nsuppression = 1")
 
@@ -59,7 +74,7 @@ filter_data <- function(data, detection_threshold = 20, censortime = 365,
 
     if (nsuppression == 1) {
         # 1. Change everything <= detection_threshhold to 1/2 * detection_threshhold
-        data_filtered <- data %>% mutate(vl = case_when(vl <= detection_threshold ~ detection_threshold/2,
+        data_filtered <- data %>% mutate(vl = case_when(vl <= detection_threshold ~ censor_value,
                                                         vl >= detection_threshold ~ vl) ) %>%
             # 2. Look at only those who reach control within user defined censortime
             filter(time <= censortime) %>% group_by(id) %>%
@@ -67,7 +82,7 @@ filter_data <- function(data, detection_threshold = 20, censortime = 365,
             filter(!is.na(vl))
 
     } else if (nsuppression == 2) {
-        data_filtered <- data %>% mutate(vl = case_when(vl <= detection_threshold ~ detection_threshold/2,
+        data_filtered <- data %>% mutate(vl = case_when(vl <= detection_threshold ~ censor_value,
                                                         vl >= detection_threshold ~ vl) ) %>%
             filter(!is.na(vl)) %>%
             filter(time <= censortime) %>% group_by(id) %>%

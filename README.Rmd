@@ -36,9 +36,11 @@ Citation information can be found using `citation("ushr")`; the package paper is
 
 ##### Recent updates
 
-Version 0.2.2 
+Versions 0.2.2 and 0.2.3
 
-* Fixes errors thrown with dplyr 1.0.0 release.
+* Allows more flexible treatment of values below the detection threshold.
+* Fixes errors thrown with  dplyr 1.0.0 and tibble 3.0.0 releases.
+
 
 Version 0.2.1
 
@@ -136,7 +138,7 @@ actg315 <- actg315raw %>%
 print(head(actg315))
 ```
 
-We can then visualize these data using the `plot_data()` function.
+We can then visualize these data using the `plot_data()` function. The `detection_threshold` argument defines the detection threshold of the measurement assay.
 
 ```{r plotdata, fig.height = 8, fig.width = 8}
 plot_data(actg315, detection_threshold = 100)
@@ -147,10 +149,10 @@ Each panel represents a different individual and the dashed horizontal line is t
 
 ### Model fitting and output visualization
 
-To fit the model to these data in just one line of code we use the `ushr()` function. This processes the data to filter out any individuals who do not suppression viral load, or who violate other inclusion criteria (described in the vignette), and then fits the model to each remaining trajectory. Note that only subjects with a minimum number of measurements above the detection threshold can reliably be fit. The number can be specified by the user, but we recommend at least six observations for the biphasic model and three for the single phase model. 
+To fit the model to these data in just one line of code we use the `ushr()` function. This processes the data to filter out any individuals who do not suppression viral load, or who violate other inclusion criteria (described in the vignette), and then fits the model to each remaining trajectory. Note that only subjects with a minimum number of measurements above the detection threshold can reliably be fit. The number can be specified by the user, but we recommend at least six observations for the biphasic model and three for the single phase model. Note the `censor_value` argument specifies how measurements below the detection threshold should be treated (here we set them to half of the detection theshold in line with previous work [@wu1999characterization]).
 
 ```{r fits}
-model_output <- ushr(data = actg315, detection_threshold = 100)
+model_output <- ushr(data = actg315, detection_threshold = 100, censor_value = 50)
 
 ```
 
